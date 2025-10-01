@@ -1,0 +1,16 @@
+book_filename: "r4proteomics"
+new_session: true
+before_chapter_script: _common.R
+delete_merged_file: true
+output_dir: "_book"
+language:
+  ui:
+    chapter_name: "Day - "
+rmd_files:
+  - index.Rmd
+  - day1_intro_to_r.Rmd
+  - day2_proteomics_qc.Rmd
+  - day3_preprocessing_de.Rmd
+  - day4_functional_public.Rmd
+  - day5_real_data.Rmd
+
