@@ -34,8 +34,7 @@ jobs:
 
       - name: Install R packages
         run: |
-          Rscript -e 'install.packages(c("bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2"))'
-          Rscript -e 'install.packages(c("reshape2", "gridExtra", "tidyverse"))'
+          Rscript -e 'install.packages(c("bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2", "reshape2", "gridExtra", "tidyverse"))'
           Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")'
           Rscript -e 'BiocManager::install(c("limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4"))'
 
