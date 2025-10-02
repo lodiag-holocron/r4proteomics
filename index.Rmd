@@ -7,6 +7,7 @@ documentclass: book
 description: "Proteomics data analysis with R"
 url: 'https://github.com/lodiag-holocron/r4proteomics'
 github-repo: lodiag-holocron/r4proteomics
+cover-image: "r4proteomics.png"
 ---
 
 # Welcome {.unnumbered}
@@ -96,3 +97,4 @@ knitr::write_bib(c(
   'limma', 'vsn', 'sva', 'clusterProfiler'
 ), 'packages.bib')
 ```
+
