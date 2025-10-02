@@ -50,6 +50,7 @@
 <li><a class="" href="day2.html"><span class="header-section-number">2</span> Introduction to Proteomic Data &amp; Quality Control</a></li>
 <li><a class="" href="day3.html"><span class="header-section-number">3</span> Preprocessing and Differential Expression</a></li>
 <li><a class="active" href="day4.html"><span class="header-section-number">4</span> Functional Analysis, Longitudinal &amp; Public Data</a></li>
+<li><a class="" href="day5.html"><span class="header-section-number">5</span> Application on Real Data</a></li>
 </ul>
 
         <div class="book-extra">
@@ -101,27 +102,27 @@ GSEA principles and visualization.</p>
 <span><span class="co">#&gt; Formula: intensity ~ time + (1 + time | sample)</span></span>
 <span><span class="co">#&gt;    Data: df_long</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; REML criterion at convergence: 87.4</span></span>
+<span><span class="co">#&gt; REML criterion at convergence: 80.7</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -1.72988 -0.56368  0.07953  0.45765  3.11599 </span></span>
+<span><span class="co">#&gt; -2.05824 -0.69102  0.05962  0.56476  1.58102 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev. Corr</span></span>
-<span><span class="co">#&gt;  sample   (Intercept) 0.0000   0.0000       </span></span>
-<span><span class="co">#&gt;           time        0.1054   0.3246    NaN</span></span>
-<span><span class="co">#&gt;  Residual             0.9137   0.9559       </span></span>
+<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev. Corr </span></span>
+<span><span class="co">#&gt;  sample   (Intercept) 0.4073   0.6382        </span></span>
+<span><span class="co">#&gt;           time        0.3559   0.5966   -1.00</span></span>
+<span><span class="co">#&gt;  Residual             0.6565   0.8102        </span></span>
 <span><span class="co">#&gt; Number of obs: 30, groups:  sample, 10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)  0.24839    0.27595    0.90</span></span>
-<span><span class="co">#&gt; time        -0.03072    0.23712   -0.13</span></span>
+<span><span class="co">#&gt; (Intercept) -0.12299    0.30893  -0.398</span></span>
+<span><span class="co">#&gt; time         0.03639    0.26156   0.139</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;      (Intr)</span></span>
-<span><span class="co">#&gt; time -0.698</span></span>
+<span><span class="co">#&gt; time -0.877</span></span>
 <span><span class="co">#&gt; optimizer (nloptwrap) convergence code: 0 (OK)</span></span>
 <span><span class="co">#&gt; boundary (singular) fit: see help('isSingular')</span></span></code></pre></div>
 <div id="exercise" class="section level3" number="4.2.1">
@@ -147,7 +148,7 @@ GSEA principles and visualization.</p>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="day3.html"><span class="header-section-number">3</span> Preprocessing and Differential Expression</a></div>
-<div class="empty"></div>
+<div class="next"><a href="day5.html"><span class="header-section-number">5</span> Application on Real Data</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">

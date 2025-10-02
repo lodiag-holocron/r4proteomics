@@ -37,27 +37,27 @@ summary(m)
 #> Formula: intensity ~ time + (1 + time | sample)
 #>    Data: df_long
 #> 
-#> REML criterion at convergence: 87.4
+#> REML criterion at convergence: 80.7
 #> 
 #> Scaled residuals: 
 #>      Min       1Q   Median       3Q      Max 
-#> -1.72988 -0.56368  0.07953  0.45765  3.11599 
+#> -2.05824 -0.69102  0.05962  0.56476  1.58102 
 #> 
 #> Random effects:
-#>  Groups   Name        Variance Std.Dev. Corr
-#>  sample   (Intercept) 0.0000   0.0000       
-#>           time        0.1054   0.3246    NaN
-#>  Residual             0.9137   0.9559       
+#>  Groups   Name        Variance Std.Dev. Corr 
+#>  sample   (Intercept) 0.4073   0.6382        
+#>           time        0.3559   0.5966   -1.00
+#>  Residual             0.6565   0.8102        
 #> Number of obs: 30, groups:  sample, 10
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error t value
-#> (Intercept)  0.24839    0.27595    0.90
-#> time        -0.03072    0.23712   -0.13
+#> (Intercept) -0.12299    0.30893  -0.398
+#> time         0.03639    0.26156   0.139
 #> 
 #> Correlation of Fixed Effects:
 #>      (Intr)
-#> time -0.698
+#> time -0.877
 #> optimizer (nloptwrap) convergence code: 0 (OK)
 #> boundary (singular) fit: see help('isSingular')
 ```

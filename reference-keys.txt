@@ -82,3 +82,10 @@ module-1-functional-enrichment-gsea
 exercise
 module-2-public-data-integration
 exercise-1
+day5
+objectives-1
+modules
+full-analysis-pipeline
+group-discussion-interpretation
+presentation-reporting
+conclusion
