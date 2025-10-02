@@ -16,7 +16,7 @@ library(tidyverse)
 library(pheatmap)
 library(ggplot2)
 library(limma)
-``
+```
 
 ## Learning Objectives
 
@@ -557,4 +557,5 @@ qc_report <- generate_qc_report(my_data, my_metadata)
 # - Batch effects present?
 # - Next steps for preprocessing
 ```
+
 
