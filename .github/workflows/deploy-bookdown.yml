@@ -37,8 +37,8 @@ jobs:
           Rscript -e '
             options(repos = c(CRAN = "https://cloud.r-project.org"))
             install.packages(c(
-              "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2"
-              #"downlit", "xml2", "reshape2", "gridExtra", "tidyverse", ## not necessary for the day1
+              "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2"
+              #"reshape2", "gridExtra", "tidyverse", ## not necessary for the day1
               #"ggforce", "scatterpie", "png"
             ))
             if (!requireNamespace("BiocManager", quietly = TRUE))
