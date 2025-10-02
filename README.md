@@ -1,4 +1,4 @@
-# r4proteomics
+# r4proteomics <a href="https://lodiag-holocron.github.io/r4proteomics/"><img src="r4proteomics.png" align="right" height="139" alt="BioGA website" /></a>
 
 A **5-day training** on proteomics data analysis using **R**.
 
@@ -13,4 +13,5 @@ A **5-day training** on proteomics data analysis using **R**.
 ## Authors:
 
 * Miguel Casanova
+
 * Dany Mukesha
