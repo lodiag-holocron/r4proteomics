@@ -36,27 +36,27 @@ summary(m)
 #> Formula: intensity ~ time + (1 + time | sample)
 #>    Data: df_long
 #> 
-#> REML criterion at convergence: 65
+#> REML criterion at convergence: 72.1
 #> 
 #> Scaled residuals: 
-#>     Min      1Q  Median      3Q     Max 
-#> -1.2362 -0.4703 -0.1740  0.6994  1.5685 
+#>      Min       1Q   Median       3Q      Max 
+#> -2.00143 -0.50159  0.02763  0.35721  1.77192 
 #> 
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev. Corr 
-#>  sample   (Intercept) 0.16323  0.4040        
-#>           time        0.02183  0.1477   -0.12
-#>  Residual             0.34059  0.5836        
+#>  sample   (Intercept) 0.05964  0.2442        
+#>           time        0.15311  0.3913   -0.35
+#>  Residual             0.43016  0.6559        
 #> Number of obs: 30, groups:  sample, 10
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error t value
-#> (Intercept)   0.6365     0.2114   3.010
-#> time         -0.5349     0.1386  -3.859
+#> (Intercept)  0.16416    0.20448   0.803
+#> time        -0.07413    0.19188  -0.386
 #> 
 #> Correlation of Fixed Effects:
 #>      (Intr)
-#> time -0.605
+#> time -0.633
 ```
 
 ### Exercise
