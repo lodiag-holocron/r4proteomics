@@ -8,7 +8,7 @@ install_if_missing <- function(pkg) {
   }
 }
 
-required_packages <- c("tidyverse", "pheatmap", "ggplot2", "limma")
+required_packages <- c("tidyverse", "pheatmap", "ggplot2", "limma", "reshape")
 
 invisible(lapply(required_packages, install_if_missing))
 
@@ -557,5 +557,6 @@ qc_report <- generate_qc_report(my_data, my_metadata)
 # - Batch effects present?
 # - Next steps for preprocessing
 ```
+
 
 
