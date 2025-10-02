@@ -13,5 +13,4 @@ A **5-day training** on proteomics data analysis using **R**.
 ## Authors:
 
 * Miguel Casanova
-
 * Dany Mukesha
