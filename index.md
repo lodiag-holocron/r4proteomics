@@ -7,6 +7,7 @@ documentclass: book
 description: "Proteomics data analysis with R"
 url: 'https://github.com/lodiag-holocron/r4proteomics'
 github-repo: lodiag-holocron/r4proteomics
+cover-image: "r4proteomics.png"
 ---
 
 # Welcome {.unnumbered}
@@ -75,5 +76,6 @@ BiocManager::install(c(
 ## Acknowledgments {.unnumbered}
 
 This course was developed to provide hands-on training in proteomics data analysis.
+
 
 
