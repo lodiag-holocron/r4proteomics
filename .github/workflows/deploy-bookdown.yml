@@ -47,10 +47,10 @@ jobs:
             if (!requireNamespace("BiocManager", quietly = TRUE))
               install.packages("BiocManager")
             BiocManager::install(c(
-              "limma", "vsn"
-              #"sva", "clusterProfiler", "org.Hs.eg.db", "lme4", ## not necessary for the day1
-              #"KEGGREST", "AnnotationDbi", "annotate", "GO.db",
-              #"genefilter", "GOSemSim", "DOSE", "enrichplot"
+              "limma", "vsn",
+              "sva", "clusterProfiler", "org.Hs.eg.db", "lme4", ## not necessary for the day1
+              "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
+              "genefilter", "GOSemSim", "DOSE", "enrichplot"
             ), update = TRUE, ask = FALSE)'
 
       - name: Print R session info
