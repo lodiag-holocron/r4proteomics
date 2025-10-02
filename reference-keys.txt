@@ -76,3 +76,9 @@ basic-differential-expression
 volcano-plot
 ma-plot
 heatmap-of-de-proteins
+day4
+objectives
+module-1-functional-enrichment-gsea
+exercise
+module-2-public-data-integration
+exercise-1
