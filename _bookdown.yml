@@ -11,8 +11,9 @@ rmd_files:
   - day1_intro_to_r.Rmd
   - day2_proteomics_qc.Rmd
   - day3_preprocessing_de.Rmd
-  #- day4_functional_public.Rmd
+  - day4_functional_public.Rmd
   #- day5_real_data.Rmd
+
 
 
 
