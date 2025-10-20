@@ -2,7 +2,7 @@
 title: "r4proteomics"
 subtitle: "5-Day Training Course"
 author: "Miguel CASANOVA, PhD & Dany MUKESHA"
-date: "2025-10-02"
+date: "2025-10-20"
 documentclass: book
 description: "Proteomics data analysis with R"
 url: 'https://github.com/lodiag-holocron/r4proteomics'
