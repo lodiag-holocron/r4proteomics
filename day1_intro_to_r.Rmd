@@ -534,3 +534,7 @@ BiocManager::install(c("limma", "vsn"))
 - [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham
 - [RStudio Cheat Sheets](https://posit.co/resources/cheatsheets/)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/r) for questions
+
+## Miguel's test
+This is to test if the workflow is working.
+
