@@ -1,0 +1,686 @@
+---
+title: 'Day 1: Exercise Workbook'
+author: 'Name: _______________'
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
+    theme: cosmo
+  pdf_document:
+    toc: true
+subtitle: "Hands-on Practice for 5-Day Course"
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE)
+```
+
+# Course Overview
+
+This workbook contains all hands-on exercises for the 5-day R for
+Proteomics course. Complete each exercise and fill in your code in the
+designated sections.
+
+------------------------------------------------------------------------
+
+# DAY 1 EXERCISES: R Foundations & Data Import
+
+## Exercise 1.1: Basic R Operations (15 minutes)
+
+**Task:** Practice basic R arithmetic and variable assignment
+
+```{r ex1_1}
+# 1. Calculate the total number of measurements in your study
+# (800 proteins × 12 samples)
+total_measurements <- 
+
+# 2. Calculate the average confidence score for these proteins:
+# 40161.51, 15645.75, 15566.84, 14102.02, 8003.89
+confidence_scores <- c()
+average_confidence <- 
+
+# 3. Create a logical vector indicating which scores are above 15000
+high_confidence <- 
+
+# 4. How many proteins have high confidence?
+n_high_confidence <- 
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 1.2: Working with Vectors (20 minutes)
+
+**Task:** Analyze protein intensity data
+
+```{r ex1_2}
+# Sample intensities for one protein across 6 samples
+intensities <- c(25114306, 8316460, 35774923, 5694766, 13191243, 7946093)
+
+# 1. Calculate mean intensity
+
+
+# 2. Calculate standard deviation
+
+
+# 3. Calculate coefficient of variation (CV = sd/mean * 100)
+
+
+# 4. Find the maximum and minimum intensities
+
+
+
+# 5. Which sample has the highest intensity? (Hint: use which.max())
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 1.3: Creating Data Frames (25 minutes)
+
+**Task:** Build a small proteomics dataset
+
+```{r ex1_3}
+# Create a data frame with the following information:
+# Protein 1: F1LMU0, Mass: 222849.88, Sample1: 25114306, Sample2: 8316460
+# Protein 2: G3V8V3, Mass: 97288.37, Sample1: 18519364, Sample2: 20666356
+# Protein 3: A0A0G2JSP8, Mass: 43018.945, Sample1: 897562438, Sample2: 1066138029
+
+proteomics_df <- data.frame(
+
+)
+
+# 1. View the structure of your data frame
+
+
+# 2. Calculate the mean intensity for Sample1
+
+
+# 3. Filter proteins with Mass > 100000
+
+
+# 4. Add a new column with log10 transformed Sample1 values
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 1.4: Reading Your Data (30 minutes)
+
+**Task:** Load and explore your actual proteomics data
+
+```{r ex1_4}
+library(readxl)
+
+# 1. Read your Excel file
+my_data <- read_excel("YOUR_FILE_PATH.xlsx")
+
+# 2. Explore the data structure
+# - How many rows (proteins)?
+# - How many columns?
+# - What are the column names?
+
+
+
+
+# 3. View first 10 rows
+
+
+# 4. Calculate summary statistics for Mass column
+
+
+# 5. Check for missing values
+
+
+# 6. Calculate the mean intensity for sample_1
+
+
+```
+
+------------------------------------------------------------------------
+
+# DAY 2 EXERCISES: Data Wrangling
+
+## Exercise 2.1: dplyr Basics (30 minutes)
+
+**Task:** Practice select, filter, and mutate
+
+```{r ex2_1}
+library(tidyverse)
+
+# Using your loaded data:
+
+# 1. Select only Accession, Gene, Mass, and all sample columns
+
+
+# 2. Filter proteins with Confidence_score > 15000
+
+
+# 3. Filter proteins with Peptide_count > 100 AND Mass > 100000
+
+
+# 4. Create a new column with log10(Mass)
+
+
+# 5. Calculate fold change between sample_2 and sample_1
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 2.2: Piping Operations (30 minutes)
+
+**Task:** Chain multiple operations together
+
+```{r ex2_2}
+# Create a pipeline that:
+# 1. Filters high confidence proteins (>10000)
+# 2. Calculates mean intensity across all samples
+# 3. Selects Accession, Gene, and mean_intensity
+# 4. Arranges by mean_intensity (descending)
+# 5. Keeps top 20 proteins
+
+top_proteins <- my_data %>%
+
+
+
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 2.3: Reshaping Data (35 minutes)
+
+**Task:** Convert between wide and long formats
+
+```{r ex2_3}
+# 1. Convert your data to long format
+long_data <- my_data %>%
+  pivot_longer(
+    cols = ,
+    names_to = ,
+    values_to = 
+  )
+
+# 2. Calculate statistics by sample
+sample_stats <- long_data %>%
+  group_by() %>%
+  summarize(
+
+  )
+
+# 3. Identify which sample has the highest mean intensity
+
+
+# 4. Calculate CV for each protein across all samples
+protein_cv <- long_data %>%
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 2.4: Group Operations (25 minutes)
+
+**Task:** Perform grouped calculations
+
+```{r ex2_4}
+# 1. Create mass categories (Low: <50k, Medium: 50k-150k, High: >150k)
+categorized_data <- my_data %>%
+  mutate(
+    mass_category = case_when(
+
+    )
+  )
+
+# 2. Calculate average peptide count for each mass category
+
+
+# 3. Count how many proteins in each category
+
+
+# 4. Find the protein with highest confidence in each category
+
+
+```
+
+------------------------------------------------------------------------
+
+# DAY 3 EXERCISES: Data Visualization
+
+## Exercise 3.1: Basic Plots (30 minutes)
+
+**Task:** Create fundamental visualizations
+
+```{r ex3_1}
+library(ggplot2)
+
+# 1. Scatter plot: Mass vs Peptide_count
+# - Use log10 scale for Mass
+# - Color points by confidence score
+# - Add appropriate labels
+
+
+# 2. Histogram: Distribution of confidence scores
+# - Use 30 bins
+# - Add a vertical line at the median
+
+
+# 3. Density plot: Compare intensity distributions for 3 samples
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 3.2: Quality Control Plots (40 minutes)
+
+**Task:** Create QC visualizations for your data
+
+```{r ex3_2}
+# 1. Box plot: Compare intensities across all samples
+# - Use log10 transformation
+# - Rotate x-axis labels
+
+
+# 2. Calculate and plot CV distribution
+# - Create histogram of CV values
+# - Add vertical line at 30% CV threshold
+
+
+# 3. Correlation heatmap of all samples
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 3.3: Advanced Visualizations (35 minutes)
+
+**Task:** Create publication-quality figures
+
+```{r ex3_3}
+# 1. Create an MA plot comparing any two samples
+# - Calculate M (log fold change) and A (average intensity)
+# - Color points by significance threshold (|M| > 1)
+# - Add horizontal reference lines
+
+
+# 2. Create a volcano plot (use simulated p-values if needed)
+# - X-axis: log2 fold change
+# - Y-axis: -log10(p-value)
+# - Color by significance
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 3.4: Custom Themes (15 minutes)
+
+**Task:** Design a custom theme for your plots
+
+```{r ex3_4}
+# Create a custom theme for your organization
+my_custom_theme <- theme_minimal() +
+  theme(
+    # Customize as desired
+
+  )
+
+# Apply to a plot
+
+
+```
+
+------------------------------------------------------------------------
+
+# DAY 4 EXERCISES: Statistical Analysis
+
+## Exercise 4.1: Normalization (35 minutes)
+
+**Task:** Normalize your proteomics data
+
+```{r ex4_1}
+# 1. Calculate normalization factors using total intensity method
+
+
+# 2. Apply normalization to all sample columns
+
+
+# 3. Create before/after box plots to verify normalization
+
+
+# 4. Calculate and compare sample medians before and after
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 4.2: Missing Value Analysis (30 minutes)
+
+**Task:** Handle missing values in your dataset
+
+```{r ex4_2}
+# 1. Calculate percentage of missing values per protein
+
+
+# 2. Calculate percentage of missing values per sample
+
+
+# 3. Visualize missing value pattern
+
+
+# 4. Decide on threshold and filter proteins with too many missing values
+
+
+# 5. Impute remaining missing values
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 4.3: Differential Expression (45 minutes)
+
+**Task:** Perform complete differential expression analysis
+
+```{r ex4_3}
+# Define your groups based on experimental design
+group1_samples <- c("sample_1", "sample_2", "sample_3", ...)
+group2_samples <- c("sample_7", "sample_8", "sample_9", ...)
+
+# 1. Perform t-test for each protein
+de_results <- normalized_data %>%
+  rowwise() %>%
+  mutate(
+
+  )
+
+# 2. Apply multiple testing correction
+
+
+# 3. Calculate fold changes and log2 fold changes
+
+
+# 4. Identify significant proteins (p_adj < 0.05 & |log2FC| > 1)
+
+
+# 5. How many proteins are up-regulated? Down-regulated?
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 4.4: Create Results Summary (20 minutes)
+
+**Task:** Summarize your differential expression results
+
+```{r ex4_4}
+# 1. Create summary statistics
+
+
+# 2. Export significant proteins to CSV
+
+
+# 3. Create a table of top 10 up and down-regulated proteins
+
+
+```
+
+------------------------------------------------------------------------
+
+# DAY 5 EXERCISES: Advanced Analysis
+
+## Exercise 5.1: PCA Analysis (40 minutes)
+
+**Task:** Perform and interpret PCA
+
+```{r ex5_1}
+# 1. Prepare data for PCA (samples as rows)
+
+
+# 2. Perform PCA
+
+
+# 3. Calculate variance explained
+
+
+# 4. Create PCA plot (PC1 vs PC2)
+# - Color by experimental group
+# - Add sample labels
+# - Include variance explained in axis labels
+
+
+# 5. Create scree plot
+
+
+# 6. Interpret: Do samples cluster by group?
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 5.2: Clustering Analysis (35 minutes)
+
+**Task:** Perform hierarchical clustering
+
+```{r ex5_2}
+# 1. Perform hierarchical clustering on samples
+
+
+# 2. Create dendrogram
+
+
+# 3. Create heatmap of top 50 variable proteins
+
+
+# 4. Do the clusters match your experimental groups?
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 5.3: Comprehensive Visualization (30 minutes)
+
+**Task:** Create a multi-panel figure
+
+```{r ex5_3}
+library(gridExtra)
+
+# Create 4 plots:
+# 1. PCA plot
+# 2. Volcano plot
+# 3. Heatmap of top proteins
+# 4. Distribution plot
+
+# Arrange them in a 2x2 grid
+
+
+# Save the combined figure
+
+
+```
+
+------------------------------------------------------------------------
+
+## Exercise 5.4: Final Report (45 minutes)
+
+**Task:** Create a complete analysis report using R Markdown
+
+```{r ex5_4}
+# Create a new R Markdown file that includes:
+
+# 1. Introduction
+#    - Experimental design
+#    - Number of proteins and samples
+#    - Research question
+
+# 2. Methods
+#    - Data processing steps
+#    - Normalization method
+#    - Statistical tests used
+
+# 3. Results
+#    - QC plots (correlation, PCA)
+#    - Differential expression results
+#    - Key visualizations
+
+# 4. Discussion
+#    - Main findings
+#    - Biological interpretation
+#    - Limitations
+
+# 5. Conclusion
+
+# Knit to HTML and review your report
+```
+
+------------------------------------------------------------------------
+
+# FINAL PROJECT: Complete Analysis Pipeline
+
+## Project Requirements
+
+Perform a complete analysis of your proteomics dataset and deliver:
+
+### 1. R Script or R Markdown Document
+
+Include all code for: - Data import and cleaning - Quality control -
+Normalization - Statistical analysis - Visualization
+
+### 2. Results Package
+
+Provide: - Excel file with all results (multiple sheets) -
+High-resolution figures (PDF or PNG) \* Volcano plot \* PCA plot \*
+Correlation heatmap \* Top proteins heatmap \* Quality control plots
+
+### 3. Written Report
+
+Include: - Executive summary (1 page) - Methods description - Results
+with interpretations - List of significantly regulated proteins -
+Biological interpretation (if applicable)
+
+------------------------------------------------------------------------
+
+## Evaluation Criteria
+
+Your project will be evaluated on:
+
+-   **Code Quality (25%)**
+    -   Well-organized and commented
+    -   Follows best practices
+    -   Reproducible
+-   **Statistical Rigor (25%)**
+    -   Appropriate methods
+    -   Proper normalization
+    -   Multiple testing correction
+-   **Visualizations (25%)**
+    -   Clear and informative
+    -   Publication quality
+    -   Appropriate plot types
+-   **Interpretation (25%)**
+    -   Accurate conclusions
+    -   Biological context
+    -   Acknowledgment of limitations
+
+------------------------------------------------------------------------
+
+## Submission Checklist
+
+-   [ ] R Script or R Markdown file
+-   [ ] Excel results file
+-   [ ] All figures (high resolution)
+-   [ ] Written report (PDF or HTML)
+-   [ ] README file with instructions
+-   [ ] All files organized in logical folders
+
+**Deadline:** End of Day 5, 5:00 PM
+
+------------------------------------------------------------------------
+
+## Additional Challenge (Optional)
+
+For advanced students:
+
+1.  Implement batch effect correction
+2.  Perform pathway enrichment analysis
+3.  Create an interactive Shiny app
+4.  Implement machine learning classification
+5.  Compare multiple normalization methods
+
+------------------------------------------------------------------------
+
+## Getting Help
+
+**During Exercises:**
+
+-   Ask instructors for clarification
+-   Discuss with classmates
+-   Consult R documentation (`?function_name`)
+
+**Resources:**
+
+- Course presentation slides 
+- R Cheat sheets (provided) 
+- Online documentation
+
+**Common Issues:**
+
+- File path problems → Use `here` package or relative paths 
+- Package not found → Install with `install.packages()` 
+- Function not working → Check help with `?function` 
+- Error messages → Read carefully, Google the error
+
+------------------------------------------------------------------------
+
+## Notes Section
+
+Use this space for your notes, insights, and reminders:
+
+```         
+DAY 1 NOTES:
+_____________________________________________________________
+_____________________________________________________________
+_____________________________________________________________
+
+DAY 2 NOTES:
+_____________________________________________________________
+_____________________________________________________________
+_____________________________________________________________
+
+DAY 3 NOTES:
+_____________________________________________________________
+_____________________________________________________________
+_____________________________________________________________
+
+DAY 4 NOTES:
+_____________________________________________________________
+_____________________________________________________________
+_____________________________________________________________
+
+DAY 5 NOTES:
+_____________________________________________________________
+_____________________________________________________________
+_____________________________________________________________
+```
+
+------------------------------------------------------------------------
+
+## Congratulations!
+
+You've completed the R for Proteomics exercises. Keep practicing and
+exploring more!
