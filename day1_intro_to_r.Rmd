@@ -30,6 +30,29 @@ R is a powerful programming language and environment specifically designed for s
    - Visit [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
    - Download the free Desktop version
    - Run the installer
+   
+3. **Install Required R Packages**
+
+    Open an R session in the terminal or RStudio:
+    
+    ```r
+    # Install CRAN packages
+    install.packages(c(
+      "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
+      "reshape2", "gridExtra", "tidyverse", "lme4",
+      "ggforce", "scatterpie", "png"  # Optional
+    ))
+    
+    # Install Bioconductor packages
+    if (!requireNamespace("BiocManager", quietly = TRUE))
+      install.packages("BiocManager")
+    
+    BiocManager::install(c(
+      "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4",
+      "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
+      "genefilter", "GOSemSim", "DOSE", "enrichplot"
+    ), update = TRUE, ask = FALSE)
+    ```
 
 ### RStudio Interface Tour
 
@@ -63,10 +86,6 @@ The **Console** is for:
 2 ^ 3        # Exponentiation
 17 %% 5      # Modulo (remainder)
 
-# Assignment operator
-x <- 10      # Assign 10 to x
-y = 5        # Alternative (but <- is preferred)
-
 # Comparison operators
 5 == 5       # Equal to
 5 != 3       # Not equal to
@@ -79,6 +98,52 @@ y = 5        # Alternative (but <- is preferred)
 TRUE & FALSE  # AND
 TRUE | FALSE  # OR
 !TRUE         # NOT
+
+# Scientific notation
+1.5e6  # 1,500,000
+```
+
+**Tip:** Use descriptive variable names with underscores
+
+### Variables & Assignment
+
+```{r}
+# Assignment operator
+x <- 10      # Assign 10 to x
+y = 5        # Alternative (but <- is preferred)
+
+## Assign values to variables
+protein_count <- 800
+sample_size <- 12
+study_name <- "Proteomics_2025"
+
+## View variables
+protein_count
+sample_size
+
+## Use variables in calculations
+total_measurements <- protein_count * sample_size
+total_measurements
+```
+
+### Data Types
+
+```{r data_types}
+# Numeric
+intensity <- 25114306.44
+class(intensity)
+
+# Character (text)
+accession <- "F1LMU0"
+class(accession)
+
+# Logical
+is_significant <- TRUE
+class(is_significant)
+
+# Check type
+is.numeric(intensity)
+is.character(accession)
 ```
 
 ### Creating Your First Script
@@ -135,6 +200,9 @@ print(passed_qc)
 # Sequences
 seq_1_10 <- 1:10
 seq_custom <- seq(from = 0, to = 100, by = 10)
+
+# Vector operations
+mean(ages)
 ```
 
 ### Indexing and Subsetting
@@ -192,6 +260,36 @@ patient_data[2, "age"]      # Same, using column name
 # Subset by condition
 patient_data[patient_data$age > 30, ]
 patient_data[patient_data$treatment == "A", ]
+```
+
+#### Exploring Data Frames
+
+```{r explore_df}
+# View first rows
+head(patient_data, 2)
+
+# Dimensions
+dim(patient_data)
+nrow(patient_data)
+ncol(patient_data)
+
+# Column names
+colnames(patient_data)
+```
+
+#### Accessing Data Frame Elements
+
+```{r access_df}
+# Access column by name
+patient_data$name
+
+# Access using brackets [row, column]
+patient_data[1, 3]        # Row 1, column 3
+patient_data[1:2, ]       # First 2 rows, all columns
+patient_data[, "treatment"]    # All rows, Mass column
+
+# Subset data
+patient_data[patient_data$age > 30, ]
 ```
 
 ### Lists
@@ -458,7 +556,7 @@ for (sample_name in names(sample_data)) {
 }
 ```
 
-## Importing and Exploring Data
+## Module 4: Importing and Exploring Data
 
 ### Reading CSV Files
 
@@ -499,6 +597,410 @@ summary(protein_data)
 
 # Table for categorical data
 table(protein_data$condition)
+```
+
+
+## Module 5: Data Wrangling with tidyverse
+
+### Introduction to tidyverse
+
+**What is tidyverse?**
+
+- Collection of R packages for data science
+- Consistent syntax and design philosophy
+- Main packages: dplyr, tidyr, ggplot2, readr
+
+**Why tidyverse?**
+
+- Readable, intuitive code
+- Pipe operator `%>%` for chaining operations
+- Faster learning curve
+- Industry standard
+
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '/08_pkgs/r4proteomics/')
+```
+
+```{r load_tidyverse}
+library(tidyverse)
+```
+
+---
+
+### The Pipe Operator %>%
+
+**Traditional approach:**
+```{r no_pipe}
+x <- c(1, 2, 3, 4, 5)
+result <- mean(log10(sqrt(x)))
+result
+```
+
+**With pipe operator:**
+```{r with_pipe}
+result <- x %>% 
+  sqrt() %>% 
+  log10() %>% 
+  mean()
+result
+```
+
+**Read as:** "Take x, THEN take square root, THEN take log10, THEN calculate mean"
+
+---
+
+### dplyr: Grammar of Data Manipulation
+
+**Key Functions:**
+
+- `select()` - Choose columns
+- `filter()` - Choose rows based on conditions
+- `mutate()` - Create or modify columns
+- `arrange()` - Sort data
+- `summarize()` - Calculate summary statistics
+- `group_by()` - Group data for operations
+
+---
+
+### Your Actual Proteomics Data Structure
+
+```{r create_sample_data}
+# Simulate your data structure
+set.seed(123)
+proteomics_data <- readxl::read_excel(
+    path = "examples/2126001_Protein Export_ex.xlsx", #this should the file example that genethon provided
+    skip = 1
+)
+proteomics_data <- proteomics_data %>%
+    select(where(~ any(!is.na(.))))
+
+head(proteomics_data[, 1:10])
+```
+
+Good practice:
+Convert all column names to lowercase and replace spaces with underscores `_`,
+to keep the naming of colmuns cleaner and more consistent.
+
+```{r}
+#colnames(proteomics_data) <- tolower(colnames(proteomics_data))
+colnames(proteomics_data) <- gsub(" ", "_", tolower(colnames(proteomics_data)))
+```
+
+
+---
+
+### select(): Choose Columns
+
+```{r select_demo}
+# Select specific columns
+proteomics_data %>%
+  select(accession, gene, mass, `2126001_029_f5`) %>%
+  head(3)
+
+# Select range of columns
+proteomics_data %>%
+  select(accession:mass) %>%
+  head(3)
+
+# Select columns containing "sample"
+proteomics_data %>%
+  select(accession, contains("f5")) %>%
+  head(3)
+```
+
+---
+
+### filter(): Choose Rows
+
+```{r filter_demo}
+# Filter high mass proteins
+proteomics_data %>%
+  filter(mass > 100000) %>%
+  select(accession, gene, mass)
+
+# Multiple conditions (AND)
+proteomics_data %>%
+  filter(mass > 100000 & peptide_count > 100) %>%
+  select(accession, gene, mass, peptide_count)
+
+# OR conditions
+proteomics_data %>%
+  filter(mass > 200000 | peptide_count > 300) %>%
+  select(accession, gene, mass, peptide_count)
+```
+
+---
+
+### mutate(): Create New Columns
+
+```{r mutate_demo}
+# Calculate log10 transformed values
+proteomics_data %>%
+  mutate(
+    log10_mass = log10(mass)
+  ) %>%
+  select(accession, mass, log10_mass, `2126001_029_f5`) %>%
+  head(3)
+```
+
+---
+
+### arrange(): Sort Data
+
+```{r arrange_demo}
+# Sort by mass (ascending)
+proteomics_data %>%
+  arrange(mass) %>%
+  select(accession, gene, mass) %>%
+  head(3)
+
+# Sort descending
+proteomics_data %>%
+  arrange(desc(mass)) %>%
+  select(accession, gene, mass) %>%
+  head(3)
+
+# Sort by multiple columns
+proteomics_data %>%
+  arrange(desc(peptide_count), mass) %>%
+  select(accession, peptide_count, mass) %>%
+  head(3)
+```
+
+---
+
+### summarize(): Calculate Statistics
+
+```{r summarize_demo}
+# Calculate summary statistics
+proteomics_data %>%
+  summarize(
+    n_proteins = n(),
+    mean_mass = mean(mass),
+    median_mass = median(mass),
+    sd_mass = sd(mass),
+    mean_intensity = mean(`2126001_029_f5`)
+  )
+
+# Multiple samples
+proteomics_data %>%
+  summarize(
+    mean_s1 = mean(`2126001_029_f5`),
+    mean_s2 = mean(`2126001_359_f9`),
+    cv_s1 = sd(`2126001_029_f5`) / mean(`2126001_029_f5`) * 100
+  )
+```
+
+---
+
+### group_by(): Grouped Operations
+
+```{r groupby_demo}
+# Create groups based on mass
+proteomics_data_grouped <- proteomics_data %>%
+  mutate(
+    mass_category = case_when(
+      mass < 50000 ~ "Low",
+      mass < 150000 ~ "Medium",
+      TRUE ~ "High"
+    )
+  )
+
+# Calculate statistics by group
+proteomics_data_grouped %>%
+  group_by(mass_category) %>%
+  summarize(
+    n_proteins = n(),
+    mean_peptides = mean(peptide_count),
+    mean_confidence = mean(confidence_score)
+  )
+```
+
+---
+
+### Combining Operations: Pipeline
+
+```{r pipeline_demo}
+# Complete analysis pipeline
+results <- proteomics_data %>%
+  # Filter high confidence proteins
+  filter(confidence_score > 10000) %>%
+  # Calculate mean intensity across samples
+  mutate(
+    mean_intensity = rowMeans(select(., starts_with("sample")))
+  ) %>%
+  # Keep relevant columns
+  select(accession, gene, mass, confidence_score, mean_intensity) %>%
+  # Sort by mean intensity
+  arrange(desc(mean_intensity))
+
+head(results)
+```
+
+---
+
+### tidyr: Reshaping Data
+
+**Key Functions:**
+
+- `pivot_longer()` - Wide to long format
+- `pivot_wider()` - Long to wide format
+- `separate()` - Split one column into multiple
+- `unite()` - Combine columns
+
+**Why reshape?** Different analyses and visualizations require different formats
+
+---
+
+### Wide vs Long Format
+
+**Wide format (your current data):**
+```
+accession  `2126001_029_f5`  `2126001_359_f9`  sample_3
+F1LMU0     2511430   8316460   3577492
+G3V8V3     1851936   2066635   2986710
+```
+
+**Long format:**
+```
+accession  Sample     Intensity
+F1LMU0     `2126001_029_f5`   2511430
+F1LMU0     `2126001_359_f9`   8316460
+F1LMU0     sample_3   3577492
+G3V8V3     `2126001_029_f5`   1851936
+```
+
+---
+
+### pivot_longer(): Wide to Long
+
+```{r pivot_longer_demo}
+# Convert to long format
+proteomics_long <- proteomics_data %>%
+  pivot_longer(
+    cols = starts_with("2"),
+    names_to = "Sample",
+    values_to = "Intensity"
+  )
+
+head(proteomics_long, 10)
+```
+
+---
+
+### Why Long Format?
+
+**Advantages for analysis:**
+
+- Easier grouping and summarizing
+- Better for ggplot2 visualizations
+- Facilitates statistical modeling
+- Standard format for many tools
+
+```{r long_analysis}
+# Calculate statistics by sample
+proteomics_long %>%
+  group_by(Sample) %>%
+  summarize(
+    mean_intensity = mean(Intensity),
+    median_intensity = median(Intensity),
+    n_proteins = n()
+  ) %>%
+  head(6)
+```
+
+---
+
+### pivot_wider(): Long to Wide
+
+```{r pivot_wider_demo}
+# Convert back to wide format
+proteomics_wide <- proteomics_long %>%
+  pivot_wider(
+    names_from = Sample,
+    values_from = Intensity
+  )
+
+head(proteomics_wide[, 1:10])
+```
+
+---
+
+### Working with Strings
+
+```{r string_demo}
+# Extract gene names
+proteomics_data %>%
+  mutate(
+    # Convert to uppercase
+    gene_upper = toupper(gene),
+    # Detect pattern
+    is_kinase = str_detect(description, "kinase"),
+    # Extract words
+    first_word = word(description, 1)
+  ) %>%
+  select(gene, description, is_kinase, first_word) %>%
+  head(3)
+```
+
+---
+
+### Handling Missing Values
+
+```{r missing_values}
+# Create data with missing values
+data_with_na <- proteomics_data %>%
+  mutate(
+    `2126001_029_f5` = ifelse(`2126001_029_f5` < quantile(`2126001_029_f5`, 0.2), 
+                     NA, `2126001_029_f5`)
+  )
+
+# Check missing values
+data_with_na %>%
+  summarize(
+    n_total = n(),
+    n_missing_s1 = sum(is.na(`2126001_029_f5`)),
+    percent_missing = mean(is.na(`2126001_029_f5`)) * 100
+  )
+
+# Remove rows with NA
+data_with_na %>%
+  filter(!is.na(`2126001_029_f5`)) %>%
+  nrow()
+
+# Replace NA with value
+data_with_na %>%
+  mutate(`2126001_029_f5` = replace_na(`2126001_029_f5`, 0)) %>%
+  head(3)
+```
+
+---
+
+### Hands-On Exercise
+
+**Task:** Transform and analyze your proteomics data
+
+```{r day2_exercise, eval=FALSE}
+# 1. Load your data
+my_data <- read_excel("your_data.xlsx")
+
+# 2. Filter and calculate
+high_quality <- my_data %>%
+  filter(confidence_score > 10000, peptide_count > 50) %>%
+  mutate(mean_intensity = rowMeans(select(., starts_with("sample"))))
+
+# 3. Convert to long format
+long_data <- my_data %>%
+  pivot_longer(cols = starts_with("sample"),
+               names_to = "Sample",
+               values_to = "Intensity")
+
+# 4. Calculate CV per protein
+cv_data <- long_data %>%
+  group_by(accession) %>%
+  summarize(mean_int = mean(Intensity, na.rm = TRUE),
+            sd_int = sd(Intensity, na.rm = TRUE),
+            cv = (sd_int / mean_int) * 100)
 ```
 
 ## Day 1 Summary

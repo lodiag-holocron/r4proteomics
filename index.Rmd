@@ -10,7 +10,7 @@ github-repo: lodiag-holocron/r4proteomics
 cover-image: "r4proteomics.png"
 ---
 
-# Welcome {.unnumbered}
+# Welcome <a href="https://lodiag-holocron.github.io/r4proteomics/"><img src="r4proteomics.png" align="right" height="110" alt="r4proteomics website" /></a> {.unnumbered} 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -73,17 +73,22 @@ Before starting Day 1, please ensure you have installed:
 # Install R (version >= 4.3.0) from https://cran.r-project.org/
 # Install RStudio from https://posit.co/download/rstudio-desktop/
 
-# Install required packages
-install.packages(c("tidyverse", "bookdown", "knitr", "rmarkdown"))
+# Install required CRAN packages
+install.packages(c(
+  "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
+  "reshape2", "gridExtra", "tidyverse", "lme4",
+  "ggforce", "scatterpie", "png"  # Optional
+))
 
 # Install Bioconductor packages
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
 
 BiocManager::install(c(
-  "limma", "vsn", "sva", "clusterProfiler",
-  "org.Hs.eg.db", "ReactomePA", "enrichplot"
-))
+  "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4",
+  "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
+  "genefilter", "GOSemSim", "DOSE", "enrichplot"
+), update = TRUE, ask = FALSE)
 ```
 
 ## Acknowledgments {.unnumbered}
