@@ -4,17 +4,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Welcome | r4proteomics</title>
+<title>Welcome  | r4proteomics</title>
 <meta name="author" content="Miguel CASANOVA, PhD &amp; Dany MUKESHA">
 <meta name="description" content="Proteomics data analysis with R">
 <meta name="generator" content="bookdown 0.45 with bs4_book()">
-<meta property="og:title" content="Welcome | r4proteomics">
+<meta property="og:title" content="Welcome  | r4proteomics">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://github.com/lodiag-holocron/r4proteomics">
 <meta property="og:image" content="https://github.com/lodiag-holocron/r4proteomics/r4proteomics.png">
 <meta property="og:description" content="Proteomics data analysis with R">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Welcome | r4proteomics">
+<meta name="twitter:title" content="Welcome  | r4proteomics">
 <meta name="twitter:description" content="Proteomics data analysis with R">
 <meta name="twitter:image" content="https://github.com/lodiag-holocron/r4proteomics/r4proteomics.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -47,7 +47,7 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
-<li><a class="active" href="index.html">Welcome</a></li>
+<li><a class="active" href="index.html">Welcome </a></li>
 <li><a class="" href="day1.html"><span class="header-section-number">1</span> Introduction to R and RStudio</a></li>
 <li><a class="" href="day2.html"><span class="header-section-number">2</span> Introduction to Proteomic Data &amp; Quality Control</a></li>
 <li><a class="" href="day3.html"><span class="header-section-number">3</span> Preprocessing and Differential Expression</a></li>
@@ -61,7 +61,7 @@
       </nav>
 </div>
   </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><!--bookdown:title:end--><!--bookdown:title:start--><div id="welcome" class="section level1 unnumbered">
-<h1>Welcome<a class="anchor" aria-label="anchor" href="#welcome"><i class="fas fa-link"></i></a>
+<h1>Welcome <a href="https://lodiag-holocron.github.io/r4proteomics/"><img src="r4proteomics.png" align="right" height="110" alt="r4proteomics website"></a><a class="anchor" aria-label="anchor" href="#welcome"><i class="fas fa-link"></i></a>
 </h1>
 <div id="about-this-course" class="section level2 unnumbered">
 <h2>About This Course<a class="anchor" aria-label="anchor" href="#about-this-course"><i class="fas fa-link"></i></a>
@@ -121,17 +121,22 @@
 <code class="sourceCode R"><span><span class="co"># Install R (version &gt;= 4.3.0) from https://cran.r-project.org/</span></span>
 <span><span class="co"># Install RStudio from https://posit.co/download/rstudio-desktop/</span></span>
 <span></span>
-<span><span class="co"># Install required packages</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"bookdown"</span>, <span class="st">"knitr"</span>, <span class="st">"rmarkdown"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Install required CRAN packages</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"bookdown"</span>, <span class="st">"rmarkdown"</span>, <span class="st">"knitr"</span>, <span class="st">"pheatmap"</span>, <span class="st">"ggplot2"</span>, <span class="st">"downlit"</span>, <span class="st">"xml2"</span>,</span>
+<span>  <span class="st">"reshape2"</span>, <span class="st">"gridExtra"</span>, <span class="st">"tidyverse"</span>, <span class="st">"lme4"</span>,</span>
+<span>  <span class="st">"ggforce"</span>, <span class="st">"scatterpie"</span>, <span class="st">"png"</span>  <span class="co"># Optional</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Install Bioconductor packages</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.github.io/BiocManager/">"BiocManager"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"limma"</span>, <span class="st">"vsn"</span>, <span class="st">"sva"</span>, <span class="st">"clusterProfiler"</span>,</span>
-<span>  <span class="st">"org.Hs.eg.db"</span>, <span class="st">"ReactomePA"</span>, <span class="st">"enrichplot"</span></span>
-<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="st">"limma"</span>, <span class="st">"vsn"</span>, <span class="st">"sva"</span>, <span class="st">"clusterProfiler"</span>, <span class="st">"org.Hs.eg.db"</span>, <span class="st">"lme4"</span>,</span>
+<span>  <span class="st">"KEGGREST"</span>, <span class="st">"AnnotationDbi"</span>, <span class="st">"annotate"</span>, <span class="st">"GO.db"</span>,</span>
+<span>  <span class="st">"genefilter"</span>, <span class="st">"GOSemSim"</span>, <span class="st">"DOSE"</span>, <span class="st">"enrichplot"</span></span>
+<span><span class="op">)</span>, update <span class="op">=</span> <span class="cn">TRUE</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div id="acknowledgments" class="section level2 unnumbered">
 <h2>Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"><i class="fas fa-link"></i></a>
@@ -146,7 +151,7 @@
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
-<li><a class="nav-link" href="#welcome">Welcome</a></li>
+<li><a class="nav-link" href="#welcome">Welcome </a></li>
 <li><a class="nav-link" href="#about-this-course">About This Course</a></li>
 <li><a class="nav-link" href="#prerequisites">Prerequisites</a></li>
 <li><a class="nav-link" href="#course-materials">Course Materials</a></li>

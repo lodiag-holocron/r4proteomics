@@ -47,7 +47,7 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="index.html">Welcome </a></li>
 <li><a class="active" href="day1.html"><span class="header-section-number">1</span> Introduction to R and RStudio</a></li>
 <li><a class="" href="day2.html"><span class="header-section-number">2</span> Introduction to Proteomic Data &amp; Quality Control</a></li>
 <li><a class="" href="day3.html"><span class="header-section-number">3</span> Preprocessing and Differential Expression</a></li>
@@ -92,7 +92,7 @@
 </h3>
 <ol style="list-style-type: decimal">
 <li>
-<strong>Install R</strong> (version 4.3.0 or higher)
+<p><strong>Install R</strong> (version 4.3.0 or higher)</p>
 <ul>
 <li>Visit <a href="https://cran.r-project.org/">https://cran.r-project.org/</a>
 </li>
@@ -101,13 +101,34 @@
 </ul>
 </li>
 <li>
-<strong>Install RStudio Desktop</strong>
+<p><strong>Install RStudio Desktop</strong></p>
 <ul>
 <li>Visit <a href="https://posit.co/download/rstudio-desktop/">https://posit.co/download/rstudio-desktop/</a>
 </li>
 <li>Download the free Desktop version</li>
 <li>Run the installer</li>
 </ul>
+</li>
+<li>
+<p><strong>Install Required R Packages</strong></p>
+<p>Open an R session in the terminal or RStudio:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install CRAN packages</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"bookdown"</span>, <span class="st">"rmarkdown"</span>, <span class="st">"knitr"</span>, <span class="st">"pheatmap"</span>, <span class="st">"ggplot2"</span>, <span class="st">"downlit"</span>, <span class="st">"xml2"</span>,</span>
+<span>  <span class="st">"reshape2"</span>, <span class="st">"gridExtra"</span>, <span class="st">"tidyverse"</span>, <span class="st">"lme4"</span>,</span>
+<span>  <span class="st">"ggforce"</span>, <span class="st">"scatterpie"</span>, <span class="st">"png"</span>  <span class="co"># Optional</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Install Bioconductor packages</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"limma"</span>, <span class="st">"vsn"</span>, <span class="st">"sva"</span>, <span class="st">"clusterProfiler"</span>, <span class="st">"org.Hs.eg.db"</span>, <span class="st">"lme4"</span>,</span>
+<span>  <span class="st">"KEGGREST"</span>, <span class="st">"AnnotationDbi"</span>, <span class="st">"annotate"</span>, <span class="st">"GO.db"</span>,</span>
+<span>  <span class="st">"genefilter"</span>, <span class="st">"GOSemSim"</span>, <span class="st">"DOSE"</span>, <span class="st">"enrichplot"</span></span>
+<span><span class="op">)</span>, update <span class="op">=</span> <span class="cn">TRUE</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </li>
 </ol>
 </div>
@@ -144,7 +165,7 @@
 <h3>
 <span class="header-section-number">1.2.5</span> Basic Operators<a class="anchor" aria-label="anchor" href="#basic-operators"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Arithmetic operators</span></span>
 <span><span class="fl">5</span> <span class="op">+</span> <span class="fl">3</span>        <span class="co"># Addition</span></span>
 <span><span class="co">#&gt; [1] 8</span></span>
@@ -158,10 +179,6 @@
 <span><span class="co">#&gt; [1] 8</span></span>
 <span><span class="fl">17</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">5</span>      <span class="co"># Modulo (remainder)</span></span>
 <span><span class="co">#&gt; [1] 2</span></span>
-<span></span>
-<span><span class="co"># Assignment operator</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">10</span>      <span class="co"># Assign 10 to x</span></span>
-<span><span class="va">y</span> <span class="op">=</span> <span class="fl">5</span>        <span class="co"># Alternative (but &lt;- is preferred)</span></span>
 <span></span>
 <span><span class="co"># Comparison operators</span></span>
 <span><span class="fl">5</span> <span class="op">==</span> <span class="fl">5</span>       <span class="co"># Equal to</span></span>
@@ -183,13 +200,69 @@
 <span><span class="cn">TRUE</span> <span class="op">|</span> <span class="cn">FALSE</span>  <span class="co"># OR</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="op">!</span><span class="cn">TRUE</span>         <span class="co"># NOT</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span></span>
+<span><span class="co"># Scientific notation</span></span>
+<span><span class="fl">1.5e6</span>  <span class="co"># 1,500,000</span></span>
+<span><span class="co">#&gt; [1] 1500000</span></span></code></pre></div>
+<p><strong>Tip:</strong> Use descriptive variable names with underscores</p>
 </div>
-<div id="creating-your-first-script" class="section level3" number="1.2.6">
+<div id="variables-assignment" class="section level3" number="1.2.6">
 <h3>
-<span class="header-section-number">1.2.6</span> Creating Your First Script<a class="anchor" aria-label="anchor" href="#creating-your-first-script"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.2.6</span> Variables &amp; Assignment<a class="anchor" aria-label="anchor" href="#variables-assignment"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Assignment operator</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">10</span>      <span class="co"># Assign 10 to x</span></span>
+<span><span class="va">y</span> <span class="op">=</span> <span class="fl">5</span>        <span class="co"># Alternative (but &lt;- is preferred)</span></span>
+<span></span>
+<span><span class="co">## Assign values to variables</span></span>
+<span><span class="va">protein_count</span> <span class="op">&lt;-</span> <span class="fl">800</span></span>
+<span><span class="va">sample_size</span> <span class="op">&lt;-</span> <span class="fl">12</span></span>
+<span><span class="va">study_name</span> <span class="op">&lt;-</span> <span class="st">"Proteomics_2025"</span></span>
+<span></span>
+<span><span class="co">## View variables</span></span>
+<span><span class="va">protein_count</span></span>
+<span><span class="co">#&gt; [1] 800</span></span>
+<span><span class="va">sample_size</span></span>
+<span><span class="co">#&gt; [1] 12</span></span>
+<span></span>
+<span><span class="co">## Use variables in calculations</span></span>
+<span><span class="va">total_measurements</span> <span class="op">&lt;-</span> <span class="va">protein_count</span> <span class="op">*</span> <span class="va">sample_size</span></span>
+<span><span class="va">total_measurements</span></span>
+<span><span class="co">#&gt; [1] 9600</span></span></code></pre></div>
+</div>
+<div id="data-types" class="section level3" number="1.2.7">
+<h3>
+<span class="header-section-number">1.2.7</span> Data Types<a class="anchor" aria-label="anchor" href="#data-types"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Numeric</span></span>
+<span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="fl">25114306.44</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">intensity</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "numeric"</span></span>
+<span></span>
+<span><span class="co"># Character (text)</span></span>
+<span><span class="va">accession</span> <span class="op">&lt;-</span> <span class="st">"F1LMU0"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "character"</span></span>
+<span></span>
+<span><span class="co"># Logical</span></span>
+<span><span class="va">is_significant</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">is_significant</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "logical"</span></span>
+<span></span>
+<span><span class="co"># Check type</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">is.numeric</a></span><span class="op">(</span><span class="va">intensity</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/character.html">is.character</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+<div id="creating-your-first-script" class="section level3" number="1.2.8">
+<h3>
+<span class="header-section-number">1.2.8</span> Creating Your First Script<a class="anchor" aria-label="anchor" href="#creating-your-first-script"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a new R script: File &gt; New File &gt; R Script</span></span>
 <span><span class="co"># Or use Ctrl+Shift+N (Windows/Linux) or Cmd+Shift+N (Mac)</span></span>
 <span></span>
@@ -199,9 +272,9 @@
 <span><span class="co"># Save your script: File &gt; Save</span></span>
 <span><span class="co"># Run code: Ctrl+Enter (Windows/Linux) or Cmd+Return (Mac)</span></span></code></pre></div>
 </div>
-<div id="exercise-1.1-first-steps" class="section level3" number="1.2.7">
+<div id="exercise-1.1-first-steps" class="section level3" number="1.2.9">
 <h3>
-<span class="header-section-number">1.2.7</span> Exercise 1.1: First Steps<a class="anchor" aria-label="anchor" href="#exercise-1.1-first-steps"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.2.9</span> Exercise 1.1: First Steps<a class="anchor" aria-label="anchor" href="#exercise-1.1-first-steps"><i class="fas fa-link"></i></a>
 </h3>
 <p>Create a new R script and:</p>
 <ol style="list-style-type: decimal">
@@ -212,7 +285,7 @@
 </li>
 <li>Calculate what percentage 123 is of the total</li>
 </ol>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="va">result1</span> <span class="op">&lt;-</span> <span class="fl">123</span> <span class="op">+</span> <span class="fl">456</span></span>
 <span><span class="va">total</span> <span class="op">&lt;-</span> <span class="va">result1</span></span>
@@ -233,7 +306,7 @@
 <span class="header-section-number">1.3.1</span> Vectors<a class="anchor" aria-label="anchor" href="#vectors"><i class="fas fa-link"></i></a>
 </h3>
 <p>Vectors are the most basic data structure in R. They contain elements of the same type.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Numeric vectors</span></span>
 <span><span class="va">ages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">25</span>, <span class="fl">30</span>, <span class="fl">35</span>, <span class="fl">40</span>, <span class="fl">45</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">ages</span><span class="op">)</span></span>
@@ -251,13 +324,17 @@
 <span></span>
 <span><span class="co"># Sequences</span></span>
 <span><span class="va">seq_1_10</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
-<span><span class="va">seq_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">0</span>, to <span class="op">=</span> <span class="fl">100</span>, by <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">seq_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">0</span>, to <span class="op">=</span> <span class="fl">100</span>, by <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Vector operations</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">ages</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 35</span></span></code></pre></div>
 </div>
 <div id="indexing-and-subsetting" class="section level3" number="1.3.2">
 <h3>
 <span class="header-section-number">1.3.2</span> Indexing and Subsetting<a class="anchor" aria-label="anchor" href="#indexing-and-subsetting"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Access elements by position (1-indexed!)</span></span>
 <span><span class="va">ages</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>           <span class="co"># First element</span></span>
 <span><span class="co">#&gt; [1] 25</span></span>
@@ -281,7 +358,7 @@
 <span class="header-section-number">1.3.3</span> Data Frames<a class="anchor" aria-label="anchor" href="#data-frames"><i class="fas fa-link"></i></a>
 </h3>
 <p>Data frames are the most common structure for storing tabular data.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a data frame</span></span>
 <span><span class="va">patient_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
 <span>  patient_id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
@@ -361,13 +438,63 @@
 <span><span class="co">#&gt; 1          1   Alice  25         A     TRUE</span></span>
 <span><span class="co">#&gt; 3          3 Charlie  35         A    FALSE</span></span>
 <span><span class="co">#&gt; 5          5     Eve  45         A    FALSE</span></span></code></pre></div>
+<div id="exploring-data-frames" class="section level4" number="1.3.3.1">
+<h4>
+<span class="header-section-number">1.3.3.1</span> Exploring Data Frames<a class="anchor" aria-label="anchor" href="#exploring-data-frames"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># View first rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">patient_data</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   patient_id  name age treatment response</span></span>
+<span><span class="co">#&gt; 1          1 Alice  25         A     TRUE</span></span>
+<span><span class="co">#&gt; 2          2   Bob  30         B     TRUE</span></span>
+<span></span>
+<span><span class="co"># Dimensions</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">patient_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 5 5</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">patient_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 5</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">patient_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 5</span></span>
+<span></span>
+<span><span class="co"># Column names</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">patient_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "patient_id" "name"       "age"        "treatment" </span></span>
+<span><span class="co">#&gt; [5] "response"</span></span></code></pre></div>
+</div>
+<div id="accessing-data-frame-elements" class="section level4" number="1.3.3.2">
+<h4>
+<span class="header-section-number">1.3.3.2</span> Accessing Data Frame Elements<a class="anchor" aria-label="anchor" href="#accessing-data-frame-elements"><i class="fas fa-link"></i></a>
+</h4>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Access column by name</span></span>
+<span><span class="va">patient_data</span><span class="op">$</span><span class="va">name</span></span>
+<span><span class="co">#&gt; [1] "Alice"   "Bob"     "Charlie" "Diana"   "Eve"</span></span>
+<span></span>
+<span><span class="co"># Access using brackets [row, column]</span></span>
+<span><span class="va">patient_data</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">]</span>        <span class="co"># Row 1, column 3</span></span>
+<span><span class="co">#&gt; [1] 25</span></span>
+<span><span class="va">patient_data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="op">]</span>       <span class="co"># First 2 rows, all columns</span></span>
+<span><span class="co">#&gt;   patient_id  name age treatment response</span></span>
+<span><span class="co">#&gt; 1          1 Alice  25         A     TRUE</span></span>
+<span><span class="co">#&gt; 2          2   Bob  30         B     TRUE</span></span>
+<span><span class="va">patient_data</span><span class="op">[</span>, <span class="st">"treatment"</span><span class="op">]</span>    <span class="co"># All rows, Mass column</span></span>
+<span><span class="co">#&gt; [1] "A" "B" "A" "B" "A"</span></span>
+<span></span>
+<span><span class="co"># Subset data</span></span>
+<span><span class="va">patient_data</span><span class="op">[</span><span class="va">patient_data</span><span class="op">$</span><span class="va">age</span> <span class="op">&gt;</span> <span class="fl">30</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt;   patient_id    name age treatment response</span></span>
+<span><span class="co">#&gt; 3          3 Charlie  35         A    FALSE</span></span>
+<span><span class="co">#&gt; 4          4   Diana  40         B     TRUE</span></span>
+<span><span class="co">#&gt; 5          5     Eve  45         A    FALSE</span></span></code></pre></div>
+</div>
 </div>
 <div id="lists" class="section level3" number="1.3.4">
 <h3>
 <span class="header-section-number">1.3.4</span> Lists<a class="anchor" aria-label="anchor" href="#lists"><i class="fas fa-link"></i></a>
 </h3>
 <p>Lists can contain elements of different types and structures.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a list</span></span>
 <span><span class="va">experiment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
 <span>  experiment_id <span class="op">=</span> <span class="st">"EXP001"</span>,</span>
@@ -390,7 +517,7 @@
 <span class="header-section-number">1.3.5</span> Factors<a class="anchor" aria-label="anchor" href="#factors"><i class="fas fa-link"></i></a>
 </h3>
 <p>Factors are used for categorical data.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create factor</span></span>
 <span><span class="va">treatment_factor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Control"</span>, <span class="st">"Drug A"</span>, <span class="st">"Drug B"</span>, <span class="st">"Control"</span>, <span class="st">"Drug A"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">treatment_factor</span><span class="op">)</span></span>
@@ -415,7 +542,7 @@
 <h3>
 <span class="header-section-number">1.3.6</span> Type Coercion<a class="anchor" aria-label="anchor" href="#type-coercion"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Implicit coercion</span></span>
 <span><span class="va">mixed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="st">"three"</span>, <span class="fl">4</span><span class="op">)</span>  <span class="co"># All converted to character</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">mixed</span><span class="op">)</span></span>
@@ -446,7 +573,7 @@
 <li>Random p-values between 0 and 1</li>
 <li>Significance status (TRUE if p-value &lt; 0.05)</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span>  <span class="co"># For reproducibility</span></span>
 <span></span>
@@ -486,7 +613,7 @@
 <h3>
 <span class="header-section-number">1.4.1</span> Conditional Statements<a class="anchor" aria-label="anchor" href="#conditional-statements"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># if statement</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span></span>
@@ -529,7 +656,7 @@
 <h3>
 <span class="header-section-number">1.4.2</span> Loops<a class="anchor" aria-label="anchor" href="#loops"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># for loop</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Iteration:"</span>, <span class="va">i</span><span class="op">)</span><span class="op">)</span></span>
@@ -578,7 +705,7 @@
 <h3>
 <span class="header-section-number">1.4.3</span> Functions<a class="anchor" aria-label="anchor" href="#functions"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Basic function</span></span>
 <span><span class="va">greet</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">message</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Hello,"</span>, <span class="va">name</span>, <span class="st">"!"</span><span class="op">)</span></span>
@@ -620,7 +747,7 @@
 <h3>
 <span class="header-section-number">1.4.4</span> Apply Family Functions<a class="anchor" aria-label="anchor" href="#apply-family-functions"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create sample data</span></span>
 <span><span class="va">protein_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">150</span>, <span class="fl">200</span>, <span class="fl">250</span>, </span>
@@ -678,7 +805,7 @@
 <li>Returns “Pass” if CV &lt; 20%, “Fail” otherwise</li>
 </ol>
 <p>Apply this function to multiple samples using a loop.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="va">calculate_cv_status</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">abundances</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">cv</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">abundances</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">abundances</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span>
@@ -709,15 +836,15 @@
 <span><span class="co">#&gt; sample3 - CV: 0.7 % - Status: Pass</span></span></code></pre></div>
 </div>
 </div>
-<div id="importing-and-exploring-data" class="section level2" number="1.5">
+<div id="module-4-importing-and-exploring-data" class="section level2" number="1.5">
 <h2>
-<span class="header-section-number">1.5</span> Importing and Exploring Data<a class="anchor" aria-label="anchor" href="#importing-and-exploring-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.5</span> Module 4: Importing and Exploring Data<a class="anchor" aria-label="anchor" href="#module-4-importing-and-exploring-data"><i class="fas fa-link"></i></a>
 </h2>
 <div id="reading-csv-files" class="section level3" number="1.5.1">
 <h3>
 <span class="header-section-number">1.5.1</span> Reading CSV Files<a class="anchor" aria-label="anchor" href="#reading-csv-files"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read CSV</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"data/proteins.csv"</span><span class="op">)</span></span>
 <span></span>
@@ -732,7 +859,7 @@
 <h3>
 <span class="header-section-number">1.5.2</span> Basic Data Exploration<a class="anchor" aria-label="anchor" href="#basic-data-exploration"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create example data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">protein_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
@@ -784,9 +911,591 @@
 <span><span class="co">#&gt;        50        50</span></span></code></pre></div>
 </div>
 </div>
-<div id="day-1-summary" class="section level2" number="1.6">
+<div id="module-5-data-wrangling-with-tidyverse" class="section level2" number="1.6">
 <h2>
-<span class="header-section-number">1.6</span> Day 1 Summary<a class="anchor" aria-label="anchor" href="#day-1-summary"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.6</span> Module 5: Data Wrangling with tidyverse<a class="anchor" aria-label="anchor" href="#module-5-data-wrangling-with-tidyverse"><i class="fas fa-link"></i></a>
+</h2>
+<div id="introduction-to-tidyverse" class="section level3" number="1.6.1">
+<h3>
+<span class="header-section-number">1.6.1</span> Introduction to tidyverse<a class="anchor" aria-label="anchor" href="#introduction-to-tidyverse"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>What is tidyverse?</strong></p>
+<ul>
+<li>Collection of R packages for data science</li>
+<li>Consistent syntax and design philosophy</li>
+<li>Main packages: dplyr, tidyr, ggplot2, readr</li>
+</ul>
+<p><strong>Why tidyverse?</strong></p>
+<ul>
+<li>Readable, intuitive code</li>
+<li>Pipe operator <code>%&gt;%</code> for chaining operations</li>
+<li>Faster learning curve</li>
+<li>Industry standard</li>
+</ul>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div id="the-pipe-operator" class="section level3" number="1.6.2">
+<h3>
+<span class="header-section-number">1.6.2</span> The Pipe Operator %&gt;%<a class="anchor" aria-label="anchor" href="#the-pipe-operator"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Traditional approach:</strong></p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">result</span></span>
+<span><span class="co">#&gt; [1] 0.2079181</span></span></code></pre></div>
+<p><strong>With pipe operator:</strong></p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">result</span></span>
+<span><span class="co">#&gt; [1] 0.2079181</span></span></code></pre></div>
+<p><strong>Read as:</strong> “Take x, THEN take square root, THEN take log10, THEN calculate mean”</p>
+<hr>
+</div>
+<div id="dplyr-grammar-of-data-manipulation" class="section level3" number="1.6.3">
+<h3>
+<span class="header-section-number">1.6.3</span> dplyr: Grammar of Data Manipulation<a class="anchor" aria-label="anchor" href="#dplyr-grammar-of-data-manipulation"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Key Functions:</strong></p>
+<ul>
+<li>
+<code><a href="https://dplyr.tidyverse.org/reference/select.html">select()</a></code> - Choose columns</li>
+<li>
+<code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> - Choose rows based on conditions</li>
+<li>
+<code><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate()</a></code> - Create or modify columns</li>
+<li>
+<code><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange()</a></code> - Sort data</li>
+<li>
+<code><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize()</a></code> - Calculate summary statistics</li>
+<li>
+<code><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by()</a></code> - Group data for operations</li>
+</ul>
+<hr>
+</div>
+<div id="your-actual-proteomics-data-structure" class="section level3" number="1.6.4">
+<h3>
+<span class="header-section-number">1.6.4</span> Your Actual Proteomics Data Structure<a class="anchor" aria-label="anchor" href="#your-actual-proteomics-data-structure"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Simulate your data structure</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">proteomics_data</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_excel</a></span><span class="op">(</span></span>
+<span>    path <span class="op">=</span> <span class="st">"examples/2126001_Protein Export_ex.xlsx"</span>, <span class="co">#this should the file example that genethon provided</span></span>
+<span>    skip <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">proteomics_data</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/where.html">where</a></span><span class="op">(</span><span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/any.html">any</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">proteomics_data</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 10</span></span>
+<span><span class="co">#&gt;   Accession  Gene       `Peptide count` `Unique peptides`</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;                &lt;dbl&gt;             &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     F1LMU0                 338               138</span></span>
+<span><span class="co">#&gt; 2 G3V8V3     G3V8V3                 146               113</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8 A0A0G2JSP8             117               109</span></span>
+<span><span class="co">#&gt; 4 Q64578     AT2A1                  126                89</span></span>
+<span><span class="co">#&gt; 5 D4AEH9     D4AEH9                  87                83</span></span>
+<span><span class="co">#&gt; 6 P15429     ENOB                   110                83</span></span>
+<span><span class="co">#&gt; # ℹ 6 more variables: `Confidence score` &lt;dbl&gt;, Mass &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   Description &lt;chr&gt;, `2126001_029_F5` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `2126001_359_F9` &lt;dbl&gt;, `2126001_401_F1` &lt;dbl&gt;</span></span></code></pre></div>
+<p>Good practice:
+Convert all column names to lowercase and replace spaces with underscores <code>_</code>,
+to keep the naming of colmuns cleaner and more consistent.</p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#colnames(proteomics_data) &lt;- tolower(colnames(proteomics_data))</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">proteomics_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">" "</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">proteomics_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div id="select-choose-columns" class="section level3" number="1.6.5">
+<h3>
+<span class="header-section-number">1.6.5</span> select(): Choose Columns<a class="anchor" aria-label="anchor" href="#select-choose-columns"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Select specific columns</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span>, <span class="va">`2126001_029_f5`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span><span class="co">#&gt;   accession  gene          mass `2126001_029_f5`</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;            &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     F1LMU0     222850.        25114306.</span></span>
+<span><span class="co">#&gt; 2 G3V8V3     G3V8V3      97288.        18519365.</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8 A0A0G2JSP8  43019.       897562438.</span></span>
+<span></span>
+<span><span class="co"># Select range of columns</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span><span class="op">:</span><span class="va">mass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 6</span></span>
+<span><span class="co">#&gt;   accession  gene       peptide_count unique_peptides</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;              &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     F1LMU0               338             138</span></span>
+<span><span class="co">#&gt; 2 G3V8V3     G3V8V3               146             113</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8 A0A0G2JSP8           117             109</span></span>
+<span><span class="co">#&gt; # ℹ 2 more variables: confidence_score &lt;dbl&gt;, mass &lt;dbl&gt;</span></span>
+<span></span>
+<span><span class="co"># Select columns containing "sample"</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">contains</a></span><span class="op">(</span><span class="st">"f5"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 2</span></span>
+<span><span class="co">#&gt;   accession  `2126001_029_f5`</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                 &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0            25114306.</span></span>
+<span><span class="co">#&gt; 2 G3V8V3            18519365.</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8       897562438.</span></span></code></pre></div>
+<hr>
+</div>
+<div id="filter-choose-rows" class="section level3" number="1.6.6">
+<h3>
+<span class="header-section-number">1.6.6</span> filter(): Choose Rows<a class="anchor" aria-label="anchor" href="#filter-choose-rows"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Filter high mass proteins</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">mass</span> <span class="op">&gt;</span> <span class="fl">100000</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 87 × 3</span></span>
+<span><span class="co">#&gt;    accession  gene          mass</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 F1LMU0     F1LMU0     222850.</span></span>
+<span><span class="co">#&gt;  2 Q64578     AT2A1      109409.</span></span>
+<span><span class="co">#&gt;  3 D4AEH9     D4AEH9     174331.</span></span>
+<span><span class="co">#&gt;  4 G3V7K1     G3V7K1     164712.</span></span>
+<span><span class="co">#&gt;  5 A0A0G2K5P5 A0A0G2K5P5 187602.</span></span>
+<span><span class="co">#&gt;  6 D3ZA38     D3ZA38     128936.</span></span>
+<span><span class="co">#&gt;  7 Q03626     MUG1       165326 </span></span>
+<span><span class="co">#&gt;  8 Q8R4I6     Q8R4I6     103013.</span></span>
+<span><span class="co">#&gt;  9 D3ZHA0     FLNC       290984.</span></span>
+<span><span class="co">#&gt; 10 A0A096MK15 A0A096MK15 772118.</span></span>
+<span><span class="co">#&gt; # ℹ 77 more rows</span></span>
+<span></span>
+<span><span class="co"># Multiple conditions (AND)</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">mass</span> <span class="op">&gt;</span> <span class="fl">100000</span> <span class="op">&amp;</span> <span class="va">peptide_count</span> <span class="op">&gt;</span> <span class="fl">100</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span>, <span class="va">peptide_count</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 7 × 4</span></span>
+<span><span class="co">#&gt;   accession  gene          mass peptide_count</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;         &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     F1LMU0     222850.           338</span></span>
+<span><span class="co">#&gt; 2 Q64578     AT2A1      109409.           126</span></span>
+<span><span class="co">#&gt; 3 A0A096MK15 A0A096MK15 772118.           133</span></span>
+<span><span class="co">#&gt; 4 F1LRV9     F1LRV9     223400.           240</span></span>
+<span><span class="co">#&gt; 5 G3V6E1     G3V6E1     219575.           173</span></span>
+<span><span class="co">#&gt; 6 F1LMY4     RYR1       565491.           104</span></span>
+<span><span class="co">#&gt; 7 A0A0G2K5J1 A0A0G2K5J1 563314.           102</span></span>
+<span></span>
+<span><span class="co"># OR conditions</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">mass</span> <span class="op">&gt;</span> <span class="fl">200000</span> <span class="op">|</span> <span class="va">peptide_count</span> <span class="op">&gt;</span> <span class="fl">300</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span>, <span class="va">peptide_count</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 29 × 4</span></span>
+<span><span class="co">#&gt;    accession  gene          mass peptide_count</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;         &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 F1LMU0     F1LMU0     222850.           338</span></span>
+<span><span class="co">#&gt;  2 D3ZHA0     FLNC       290984.            55</span></span>
+<span><span class="co">#&gt;  3 A0A096MK15 A0A096MK15 772118.           133</span></span>
+<span><span class="co">#&gt;  4 F1LRV9     F1LRV9     223400.           240</span></span>
+<span><span class="co">#&gt;  5 A0A0G2JU96 A0A0G2JU96 571866.            34</span></span>
+<span><span class="co">#&gt;  6 M0R9L0     M0R9L0     220194.            28</span></span>
+<span><span class="co">#&gt;  7 A0A0G2K7B6 A0A0G2K7B6 242460.            24</span></span>
+<span><span class="co">#&gt;  8 F7F9U6     F7F9U6     517417.            16</span></span>
+<span><span class="co">#&gt;  9 A0A0G2JUP3 A0A0G2JUP3 815466.             8</span></span>
+<span><span class="co">#&gt; 10 G3V6E1     G3V6E1     219575.           173</span></span>
+<span><span class="co">#&gt; # ℹ 19 more rows</span></span></code></pre></div>
+<hr>
+</div>
+<div id="mutate-create-new-columns" class="section level3" number="1.6.7">
+<h3>
+<span class="header-section-number">1.6.7</span> mutate(): Create New Columns<a class="anchor" aria-label="anchor" href="#mutate-create-new-columns"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calculate log10 transformed values</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    log10_mass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">mass</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">mass</span>, <span class="va">log10_mass</span>, <span class="va">`2126001_029_f5`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span><span class="co">#&gt;   accession     mass log10_mass `2126001_029_f5`</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt;            &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     222850.       5.35        25114306.</span></span>
+<span><span class="co">#&gt; 2 G3V8V3      97288.       4.99        18519365.</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8  43019.       4.63       897562438.</span></span></code></pre></div>
+<hr>
+</div>
+<div id="arrange-sort-data" class="section level3" number="1.6.8">
+<h3>
+<span class="header-section-number">1.6.8</span> arrange(): Sort Data<a class="anchor" aria-label="anchor" href="#arrange-sort-data"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Sort by mass (ascending)</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">mass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
+<span><span class="co">#&gt;   accession gene    mass</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 P29418    ATP5E  5767.</span></span>
+<span><span class="co">#&gt; 2 Q9JJW3    ATPMK  6408.</span></span>
+<span><span class="co">#&gt; 3 A9UMV7    A9UMV7 6539.</span></span>
+<span></span>
+<span><span class="co"># Sort descending</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">mass</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
+<span><span class="co">#&gt;   accession  gene          mass</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 A0A0G2JUP3 A0A0G2JUP3 815466.</span></span>
+<span><span class="co">#&gt; 2 A0A096MK15 A0A096MK15 772118.</span></span>
+<span><span class="co">#&gt; 3 F1M1J2     F1M1J2     623402.</span></span>
+<span></span>
+<span><span class="co"># Sort by multiple columns</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">peptide_count</span><span class="op">)</span>, <span class="va">mass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">peptide_count</span>, <span class="va">mass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 3</span></span>
+<span><span class="co">#&gt;   accession peptide_count    mass</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;             &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0              338 222850.</span></span>
+<span><span class="co">#&gt; 2 F1LRV9              240 223400.</span></span>
+<span><span class="co">#&gt; 3 G3V6E1              173 219575.</span></span></code></pre></div>
+<hr>
+</div>
+<div id="summarize-calculate-statistics" class="section level3" number="1.6.9">
+<h3>
+<span class="header-section-number">1.6.9</span> summarize(): Calculate Statistics<a class="anchor" aria-label="anchor" href="#summarize-calculate-statistics"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calculate summary statistics</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
+<span>    n_proteins <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    mean_mass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">mass</span><span class="op">)</span>,</span>
+<span>    median_mass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">mass</span><span class="op">)</span>,</span>
+<span>    sd_mass <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">mass</span><span class="op">)</span>,</span>
+<span>    mean_intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 5</span></span>
+<span><span class="co">#&gt;   n_proteins mean_mass median_mass sd_mass mean_intensity</span></span>
+<span><span class="co">#&gt;        &lt;int&gt;     &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1        824    57788.      39318.  75984.       3059149.</span></span>
+<span></span>
+<span><span class="co"># Multiple samples</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
+<span>    mean_s1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span><span class="op">)</span>,</span>
+<span>    mean_s2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">`2126001_359_f9`</span><span class="op">)</span>,</span>
+<span>    cv_s1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span><span class="co">#&gt;    mean_s1  mean_s2 cv_s1</span></span>
+<span><span class="co">#&gt;      &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 3059149. 3367563. 1102.</span></span></code></pre></div>
+<hr>
+</div>
+<div id="group_by-grouped-operations" class="section level3" number="1.6.10">
+<h3>
+<span class="header-section-number">1.6.10</span> group_by(): Grouped Operations<a class="anchor" aria-label="anchor" href="#group_by-grouped-operations"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create groups based on mass</span></span>
+<span><span class="va">proteomics_data_grouped</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    mass_category <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span><span class="op">(</span></span>
+<span>      <span class="va">mass</span> <span class="op">&lt;</span> <span class="fl">50000</span> <span class="op">~</span> <span class="st">"Low"</span>,</span>
+<span>      <span class="va">mass</span> <span class="op">&lt;</span> <span class="fl">150000</span> <span class="op">~</span> <span class="st">"Medium"</span>,</span>
+<span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"High"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate statistics by group</span></span>
+<span><span class="va">proteomics_data_grouped</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">mass_category</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
+<span>    n_proteins <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    mean_peptides <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">peptide_count</span><span class="op">)</span>,</span>
+<span>    mean_confidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">confidence_score</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span><span class="co">#&gt;   mass_category n_proteins mean_peptides mean_confidence</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;              &lt;int&gt;         &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 High                  43         45.8            4136.</span></span>
+<span><span class="co">#&gt; 2 Low                  529          8.71            814.</span></span>
+<span><span class="co">#&gt; 3 Medium               252         13.6            1176.</span></span></code></pre></div>
+<hr>
+</div>
+<div id="combining-operations-pipeline" class="section level3" number="1.6.11">
+<h3>
+<span class="header-section-number">1.6.11</span> Combining Operations: Pipeline<a class="anchor" aria-label="anchor" href="#combining-operations-pipeline"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Complete analysis pipeline</span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># Filter high confidence proteins</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">confidence_score</span> <span class="op">&gt;</span> <span class="fl">10000</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># Calculate mean intensity across samples</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    mean_intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">.</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">"sample"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># Keep relevant columns</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span>, <span class="va">confidence_score</span>, <span class="va">mean_intensity</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># Sort by mean intensity</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">mean_intensity</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 5</span></span>
+<span><span class="co">#&gt;   accession  gene       mass confidence_score mean_intensity</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;     &lt;dbl&gt;            &lt;dbl&gt;          &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     F1LMU0   2.23e5           40162.            NaN</span></span>
+<span><span class="co">#&gt; 2 G3V8V3     G3V8V3   9.73e4           15646.            NaN</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8 A0A0G2J… 4.30e4           15567.            NaN</span></span>
+<span><span class="co">#&gt; 4 Q64578     AT2A1    1.09e5           14102.            NaN</span></span>
+<span><span class="co">#&gt; 5 P15429     ENOB     4.70e4           12564.            NaN</span></span>
+<span><span class="co">#&gt; 6 P05065     ALDOA    3.94e4           11642.            NaN</span></span></code></pre></div>
+<hr>
+</div>
+<div id="tidyr-reshaping-data" class="section level3" number="1.6.12">
+<h3>
+<span class="header-section-number">1.6.12</span> tidyr: Reshaping Data<a class="anchor" aria-label="anchor" href="#tidyr-reshaping-data"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Key Functions:</strong></p>
+<ul>
+<li>
+<code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code> - Wide to long format</li>
+<li>
+<code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code> - Long to wide format</li>
+<li>
+<code><a href="https://tidyr.tidyverse.org/reference/separate.html">separate()</a></code> - Split one column into multiple</li>
+<li>
+<code><a href="https://tidyr.tidyverse.org/reference/unite.html">unite()</a></code> - Combine columns</li>
+</ul>
+<p><strong>Why reshape?</strong> Different analyses and visualizations require different formats</p>
+<hr>
+</div>
+<div id="wide-vs-long-format" class="section level3" number="1.6.13">
+<h3>
+<span class="header-section-number">1.6.13</span> Wide vs Long Format<a class="anchor" aria-label="anchor" href="#wide-vs-long-format"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Wide format (your current data):</strong></p>
+<pre><code>accession  `2126001_029_f5`  `2126001_359_f9`  sample_3
+F1LMU0     2511430   8316460   3577492
+G3V8V3     1851936   2066635   2986710</code></pre>
+<p><strong>Long format:</strong></p>
+<pre><code>accession  Sample     Intensity
+F1LMU0     `2126001_029_f5`   2511430
+F1LMU0     `2126001_359_f9`   8316460
+F1LMU0     sample_3   3577492
+G3V8V3     `2126001_029_f5`   1851936</code></pre>
+<hr>
+</div>
+<div id="pivot_longer-wide-to-long" class="section level3" number="1.6.14">
+<h3>
+<span class="header-section-number">1.6.14</span> pivot_longer(): Wide to Long<a class="anchor" aria-label="anchor" href="#pivot_longer-wide-to-long"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert to long format</span></span>
+<span><span class="va">proteomics_long</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span></span>
+<span>    cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">"2"</span><span class="op">)</span>,</span>
+<span>    names_to <span class="op">=</span> <span class="st">"Sample"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"Intensity"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">proteomics_long</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 10 × 9</span></span>
+<span><span class="co">#&gt;    accession gene   peptide_count unique_peptides</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  2 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  3 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  4 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  5 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  6 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  7 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  8 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt;  9 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt; 10 F1LMU0    F1LMU0           338             138</span></span>
+<span><span class="co">#&gt; # ℹ 5 more variables: confidence_score &lt;dbl&gt;, mass &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   description &lt;chr&gt;, Sample &lt;chr&gt;, Intensity &lt;dbl&gt;</span></span></code></pre></div>
+<hr>
+</div>
+<div id="why-long-format" class="section level3" number="1.6.15">
+<h3>
+<span class="header-section-number">1.6.15</span> Why Long Format?<a class="anchor" aria-label="anchor" href="#why-long-format"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Advantages for analysis:</strong></p>
+<ul>
+<li>Easier grouping and summarizing</li>
+<li>Better for ggplot2 visualizations</li>
+<li>Facilitates statistical modeling</li>
+<li>Standard format for many tools</li>
+</ul>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calculate statistics by sample</span></span>
+<span><span class="va">proteomics_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Sample</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
+<span>    mean_intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Intensity</span><span class="op">)</span>,</span>
+<span>    median_intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">Intensity</span><span class="op">)</span>,</span>
+<span>    n_proteins <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span><span class="co">#&gt;   Sample          mean_intensity median_intensity n_proteins</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;                    &lt;dbl&gt;            &lt;dbl&gt;      &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1 2126001_029_f5        3059149.           91354.        824</span></span>
+<span><span class="co">#&gt; 2 2126001_068_f3        3782834.           76089.        824</span></span>
+<span><span class="co">#&gt; 3 2126001_134_f11       3189430.           84892.        824</span></span>
+<span><span class="co">#&gt; 4 2126001_180_f2        2687642.          129483.        824</span></span>
+<span><span class="co">#&gt; 5 2126001_198_f12       2881252.           93655.        824</span></span>
+<span><span class="co">#&gt; 6 2126001_270_f7        2088286.           95672.        824</span></span></code></pre></div>
+<hr>
+</div>
+<div id="pivot_wider-long-to-wide" class="section level3" number="1.6.16">
+<h3>
+<span class="header-section-number">1.6.16</span> pivot_wider(): Long to Wide<a class="anchor" aria-label="anchor" href="#pivot_wider-long-to-wide"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Convert back to wide format</span></span>
+<span><span class="va">proteomics_wide</span> <span class="op">&lt;-</span> <span class="va">proteomics_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span></span>
+<span>    names_from <span class="op">=</span> <span class="va">Sample</span>,</span>
+<span>    values_from <span class="op">=</span> <span class="va">Intensity</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">proteomics_wide</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 10</span></span>
+<span><span class="co">#&gt;   accession  gene       peptide_count unique_peptides</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;              &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     F1LMU0               338             138</span></span>
+<span><span class="co">#&gt; 2 G3V8V3     G3V8V3               146             113</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8 A0A0G2JSP8           117             109</span></span>
+<span><span class="co">#&gt; 4 Q64578     AT2A1                126              89</span></span>
+<span><span class="co">#&gt; 5 D4AEH9     D4AEH9                87              83</span></span>
+<span><span class="co">#&gt; 6 P15429     ENOB                 110              83</span></span>
+<span><span class="co">#&gt; # ℹ 6 more variables: confidence_score &lt;dbl&gt;, mass &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   description &lt;chr&gt;, `2126001_029_f5` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `2126001_359_f9` &lt;dbl&gt;, `2126001_401_f1` &lt;dbl&gt;</span></span></code></pre></div>
+<hr>
+</div>
+<div id="working-with-strings" class="section level3" number="1.6.17">
+<h3>
+<span class="header-section-number">1.6.17</span> Working with Strings<a class="anchor" aria-label="anchor" href="#working-with-strings"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Extract gene names</span></span>
+<span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    <span class="co"># Convert to uppercase</span></span>
+<span>    gene_upper <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">toupper</a></span><span class="op">(</span><span class="va">gene</span><span class="op">)</span>,</span>
+<span>    <span class="co"># Detect pattern</span></span>
+<span>    is_kinase <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html">str_detect</a></span><span class="op">(</span><span class="va">description</span>, <span class="st">"kinase"</span><span class="op">)</span>,</span>
+<span>    <span class="co"># Extract words</span></span>
+<span>    first_word <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/word.html">word</a></span><span class="op">(</span><span class="va">description</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">gene</span>, <span class="va">description</span>, <span class="va">is_kinase</span>, <span class="va">first_word</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 4</span></span>
+<span><span class="co">#&gt;   gene       description                is_kinase first_word</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;                      &lt;lgl&gt;     &lt;chr&gt;     </span></span>
+<span><span class="co">#&gt; 1 F1LMU0     Myosin heavy chain 4       FALSE     Myosin    </span></span>
+<span><span class="co">#&gt; 2 G3V8V3     Alpha-1,4 glucan phosphor… FALSE     Alpha-1,4 </span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8 Creatine kinase            TRUE      Creatine</span></span></code></pre></div>
+<hr>
+</div>
+<div id="handling-missing-values" class="section level3" number="1.6.18">
+<h3>
+<span class="header-section-number">1.6.18</span> Handling Missing Values<a class="anchor" aria-label="anchor" href="#handling-missing-values"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create data with missing values</span></span>
+<span><span class="va">data_with_na</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    `2126001_029_f5` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span>, <span class="fl">0.2</span><span class="op">)</span>, </span>
+<span>                     <span class="cn">NA</span>, <span class="va">`2126001_029_f5`</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Check missing values</span></span>
+<span><span class="va">data_with_na</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
+<span>    n_total <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    n_missing_s1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    percent_missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 × 3</span></span>
+<span><span class="co">#&gt;   n_total n_missing_s1 percent_missing</span></span>
+<span><span class="co">#&gt;     &lt;int&gt;        &lt;int&gt;           &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1     824          165            20.0</span></span>
+<span></span>
+<span><span class="co"># Remove rows with NA</span></span>
+<span><span class="va">data_with_na</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 659</span></span>
+<span></span>
+<span><span class="co"># Replace NA with value</span></span>
+<span><span class="va">data_with_na</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>`2126001_029_f5` <span class="op">=</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/replace_na.html">replace_na</a></span><span class="op">(</span><span class="va">`2126001_029_f5`</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 3 × 19</span></span>
+<span><span class="co">#&gt;   accession  gene       peptide_count unique_peptides</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;              &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 F1LMU0     F1LMU0               338             138</span></span>
+<span><span class="co">#&gt; 2 G3V8V3     G3V8V3               146             113</span></span>
+<span><span class="co">#&gt; 3 A0A0G2JSP8 A0A0G2JSP8           117             109</span></span>
+<span><span class="co">#&gt; # ℹ 15 more variables: confidence_score &lt;dbl&gt;, mass &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   description &lt;chr&gt;, `2126001_029_f5` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `2126001_359_f9` &lt;dbl&gt;, `2126001_401_f1` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `2126001_180_f2` &lt;dbl&gt;, `2126001_416_f6` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `2126001_422_f10` &lt;dbl&gt;, `2126001_068_f3` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `2126001_134_f11` &lt;dbl&gt;, `2126001_270_f7` &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   `2126001_198_f12` &lt;dbl&gt;, `2126001_312_f8` &lt;dbl&gt;, …</span></span></code></pre></div>
+<hr>
+</div>
+<div id="hands-on-exercise" class="section level3" number="1.6.19">
+<h3>
+<span class="header-section-number">1.6.19</span> Hands-On Exercise<a class="anchor" aria-label="anchor" href="#hands-on-exercise"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Task:</strong> Transform and analyze your proteomics data</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># 1. Load your data</span></span>
+<span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">read_excel</span><span class="op">(</span><span class="st">"your_data.xlsx"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Filter and calculate</span></span>
+<span><span class="va">high_quality</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">confidence_score</span> <span class="op">&gt;</span> <span class="fl">10000</span>, <span class="va">peptide_count</span> <span class="op">&gt;</span> <span class="fl">50</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>mean_intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">.</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">"sample"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 3. Convert to long format</span></span>
+<span><span class="va">long_data</span> <span class="op">&lt;-</span> <span class="va">my_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">starts_with</a></span><span class="op">(</span><span class="st">"sample"</span><span class="op">)</span>,</span>
+<span>               names_to <span class="op">=</span> <span class="st">"Sample"</span>,</span>
+<span>               values_to <span class="op">=</span> <span class="st">"Intensity"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 4. Calculate CV per protein</span></span>
+<span><span class="va">cv_data</span> <span class="op">&lt;-</span> <span class="va">long_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">accession</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>mean_int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">Intensity</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>            sd_int <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">Intensity</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>            cv <span class="op">=</span> <span class="op">(</span><span class="va">sd_int</span> <span class="op">/</span> <span class="va">mean_int</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="day-1-summary" class="section level2" number="1.7">
+<h2>
+<span class="header-section-number">1.7</span> Day 1 Summary<a class="anchor" aria-label="anchor" href="#day-1-summary"><i class="fas fa-link"></i></a>
 </h2>
 <p>Today you learned:</p>
 <ul>
@@ -798,16 +1507,16 @@
 <li>✓ Writing custom functions</li>
 <li>✓ Importing and exploring data</li>
 </ul>
-<div id="homework" class="section level3" number="1.6.1">
+<div id="homework" class="section level3" number="1.7.1">
 <h3>
-<span class="header-section-number">1.6.1</span> Homework<a class="anchor" aria-label="anchor" href="#homework"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.1</span> Homework<a class="anchor" aria-label="anchor" href="#homework"><i class="fas fa-link"></i></a>
 </h3>
 <ol style="list-style-type: decimal">
 <li>Install all required packages for Day 2</li>
 <li>Practice writing functions for data manipulation</li>
 <li>Explore the built-in datasets in R (use <code><a href="https://rdrr.io/r/utils/data.html">data()</a></code> to see available datasets)</li>
 </ol>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install packages for Day 2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"pheatmap"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -817,9 +1526,9 @@
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"limma"</span>, <span class="st">"vsn"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div id="additional-resources" class="section level2" number="1.7">
+<div id="additional-resources" class="section level2" number="1.8">
 <h2>
-<span class="header-section-number">1.7</span> Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.8</span> Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li>
@@ -831,7 +1540,7 @@
 </div>
 </div>
   <div class="chapter-nav">
-<div class="prev"><a href="index.html">Welcome</a></div>
+<div class="prev"><a href="index.html">Welcome </a></div>
 <div class="next"><a href="day2.html"><span class="header-section-number">2</span> Introduction to Proteomic Data &amp; Quality Control</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
@@ -845,8 +1554,10 @@
 <li><a class="nav-link" href="#rstudio-interface-tour"><span class="header-section-number">1.2.3</span> RStudio Interface Tour</a></li>
 <li><a class="nav-link" href="#scripts-vs-console"><span class="header-section-number">1.2.4</span> Scripts vs Console</a></li>
 <li><a class="nav-link" href="#basic-operators"><span class="header-section-number">1.2.5</span> Basic Operators</a></li>
-<li><a class="nav-link" href="#creating-your-first-script"><span class="header-section-number">1.2.6</span> Creating Your First Script</a></li>
-<li><a class="nav-link" href="#exercise-1.1-first-steps"><span class="header-section-number">1.2.7</span> Exercise 1.1: First Steps</a></li>
+<li><a class="nav-link" href="#variables-assignment"><span class="header-section-number">1.2.6</span> Variables &amp; Assignment</a></li>
+<li><a class="nav-link" href="#data-types"><span class="header-section-number">1.2.7</span> Data Types</a></li>
+<li><a class="nav-link" href="#creating-your-first-script"><span class="header-section-number">1.2.8</span> Creating Your First Script</a></li>
+<li><a class="nav-link" href="#exercise-1.1-first-steps"><span class="header-section-number">1.2.9</span> Exercise 1.1: First Steps</a></li>
 </ul>
 </li>
 <li>
@@ -870,15 +1581,38 @@
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#importing-and-exploring-data"><span class="header-section-number">1.5</span> Importing and Exploring Data</a><ul class="nav navbar-nav">
+<a class="nav-link" href="#module-4-importing-and-exploring-data"><span class="header-section-number">1.5</span> Module 4: Importing and Exploring Data</a><ul class="nav navbar-nav">
 <li><a class="nav-link" href="#reading-csv-files"><span class="header-section-number">1.5.1</span> Reading CSV Files</a></li>
 <li><a class="nav-link" href="#basic-data-exploration"><span class="header-section-number">1.5.2</span> Basic Data Exploration</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#day-1-summary"><span class="header-section-number">1.6</span> Day 1 Summary</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#homework"><span class="header-section-number">1.6.1</span> Homework</a></li></ul>
+<a class="nav-link" href="#module-5-data-wrangling-with-tidyverse"><span class="header-section-number">1.6</span> Module 5: Data Wrangling with tidyverse</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#introduction-to-tidyverse"><span class="header-section-number">1.6.1</span> Introduction to tidyverse</a></li>
+<li><a class="nav-link" href="#the-pipe-operator"><span class="header-section-number">1.6.2</span> The Pipe Operator %&gt;%</a></li>
+<li><a class="nav-link" href="#dplyr-grammar-of-data-manipulation"><span class="header-section-number">1.6.3</span> dplyr: Grammar of Data Manipulation</a></li>
+<li><a class="nav-link" href="#your-actual-proteomics-data-structure"><span class="header-section-number">1.6.4</span> Your Actual Proteomics Data Structure</a></li>
+<li><a class="nav-link" href="#select-choose-columns"><span class="header-section-number">1.6.5</span> select(): Choose Columns</a></li>
+<li><a class="nav-link" href="#filter-choose-rows"><span class="header-section-number">1.6.6</span> filter(): Choose Rows</a></li>
+<li><a class="nav-link" href="#mutate-create-new-columns"><span class="header-section-number">1.6.7</span> mutate(): Create New Columns</a></li>
+<li><a class="nav-link" href="#arrange-sort-data"><span class="header-section-number">1.6.8</span> arrange(): Sort Data</a></li>
+<li><a class="nav-link" href="#summarize-calculate-statistics"><span class="header-section-number">1.6.9</span> summarize(): Calculate Statistics</a></li>
+<li><a class="nav-link" href="#group_by-grouped-operations"><span class="header-section-number">1.6.10</span> group_by(): Grouped Operations</a></li>
+<li><a class="nav-link" href="#combining-operations-pipeline"><span class="header-section-number">1.6.11</span> Combining Operations: Pipeline</a></li>
+<li><a class="nav-link" href="#tidyr-reshaping-data"><span class="header-section-number">1.6.12</span> tidyr: Reshaping Data</a></li>
+<li><a class="nav-link" href="#wide-vs-long-format"><span class="header-section-number">1.6.13</span> Wide vs Long Format</a></li>
+<li><a class="nav-link" href="#pivot_longer-wide-to-long"><span class="header-section-number">1.6.14</span> pivot_longer(): Wide to Long</a></li>
+<li><a class="nav-link" href="#why-long-format"><span class="header-section-number">1.6.15</span> Why Long Format?</a></li>
+<li><a class="nav-link" href="#pivot_wider-long-to-wide"><span class="header-section-number">1.6.16</span> pivot_wider(): Long to Wide</a></li>
+<li><a class="nav-link" href="#working-with-strings"><span class="header-section-number">1.6.17</span> Working with Strings</a></li>
+<li><a class="nav-link" href="#handling-missing-values"><span class="header-section-number">1.6.18</span> Handling Missing Values</a></li>
+<li><a class="nav-link" href="#hands-on-exercise"><span class="header-section-number">1.6.19</span> Hands-On Exercise</a></li>
+</ul>
 </li>
-<li><a class="nav-link" href="#additional-resources"><span class="header-section-number">1.7</span> Additional Resources</a></li>
+<li>
+<a class="nav-link" href="#day-1-summary"><span class="header-section-number">1.7</span> Day 1 Summary</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#homework"><span class="header-section-number">1.7.1</span> Homework</a></li></ul>
+</li>
+<li><a class="nav-link" href="#additional-resources"><span class="header-section-number">1.8</span> Additional Resources</a></li>
 </ul>
 
       <div class="book-extra">

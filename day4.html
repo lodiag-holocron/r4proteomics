@@ -47,7 +47,7 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="index.html">Welcome </a></li>
 <li><a class="" href="day1.html"><span class="header-section-number">1</span> Introduction to R and RStudio</a></li>
 <li><a class="" href="day2.html"><span class="header-section-number">2</span> Introduction to Proteomic Data &amp; Quality Control</a></li>
 <li><a class="" href="day3.html"><span class="header-section-number">3</span> Preprocessing and Differential Expression</a></li>
@@ -82,14 +82,14 @@
 </h2>
 <p>Introduce enrichment (GO, KEGG, Reactome).<br>
 GSEA principles and visualization.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># example with clusterProfiler</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yulab-smu.top/contribution-knowledge-mining/">clusterProfiler</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
 <span><span class="co"># Suppose `de_genes` is a vector of gene IDs with statistics</span></span>
 <span><span class="va">ego</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/clusterProfiler/man/enrichGO.html">enrichGO</a></span><span class="op">(</span><span class="va">de_genes</span>, OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span>, keyType <span class="op">=</span> <span class="st">"ENSEMBL"</span>, ont <span class="op">=</span> <span class="st">"BP"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/enrichplot/man/dotplot.html">dotplot</a></span><span class="op">(</span><span class="va">ego</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/">lme4</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
 <span><span class="va">df_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
@@ -104,27 +104,27 @@ GSEA principles and visualization.</p>
 <span><span class="co">#&gt; Formula: intensity ~ time + (1 + time | sample)</span></span>
 <span><span class="co">#&gt;    Data: df_long</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; REML criterion at convergence: 83.1</span></span>
+<span><span class="co">#&gt; REML criterion at convergence: 88.8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Scaled residuals: </span></span>
 <span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -2.27428 -0.58149 -0.01406  0.45636  1.80064 </span></span>
+<span><span class="co">#&gt; -1.37427 -0.71031 -0.08807  0.44624  2.13362 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Random effects:</span></span>
 <span><span class="co">#&gt;  Groups   Name        Variance Std.Dev. Corr </span></span>
-<span><span class="co">#&gt;  sample   (Intercept) 0.3612   0.6010        </span></span>
-<span><span class="co">#&gt;           time        0.1477   0.3843   -1.00</span></span>
-<span><span class="co">#&gt;  Residual             0.7869   0.8871        </span></span>
+<span><span class="co">#&gt;  sample   (Intercept) 0.152563 0.3906        </span></span>
+<span><span class="co">#&gt;           time        0.002323 0.0482   -1.00</span></span>
+<span><span class="co">#&gt;  Residual             1.005856 1.0029        </span></span>
 <span><span class="co">#&gt; Number of obs: 30, groups:  sample, 10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Fixed effects:</span></span>
 <span><span class="co">#&gt;             Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept)  -0.2454     0.3189  -0.770</span></span>
-<span><span class="co">#&gt; time          0.2154     0.2326   0.926</span></span>
+<span><span class="co">#&gt; (Intercept)  -0.3177     0.3148  -1.009</span></span>
+<span><span class="co">#&gt; time         -0.1402     0.2248  -0.624</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
 <span><span class="co">#&gt;      (Intr)</span></span>
-<span><span class="co">#&gt; time -0.842</span></span>
+<span><span class="co">#&gt; time -0.737</span></span>
 <span><span class="co">#&gt; optimizer (nloptwrap) convergence code: 0 (OK)</span></span>
 <span><span class="co">#&gt; boundary (singular) fit: see help('isSingular')</span></span></code></pre></div>
 <div id="exercise" class="section level3" number="4.2.1">

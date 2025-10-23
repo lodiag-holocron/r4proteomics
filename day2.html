@@ -47,7 +47,7 @@
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
         <ul class="book-toc list-unstyled">
-<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="index.html">Welcome </a></li>
 <li><a class="" href="day1.html"><span class="header-section-number">1</span> Introduction to R and RStudio</a></li>
 <li><a class="active" href="day2.html"><span class="header-section-number">2</span> Introduction to Proteomic Data &amp; Quality Control</a></li>
 <li><a class="" href="day3.html"><span class="header-section-number">3</span> Preprocessing and Differential Expression</a></li>
@@ -110,7 +110,7 @@
 <span class="header-section-number">2.2.2</span> Structure of Proteomic Data Matrices<a class="anchor" aria-label="anchor" href="#structure-of-proteomic-data-matrices"><i class="fas fa-link"></i></a>
 </h3>
 <p>Typical structure: <strong>Proteins × Samples</strong></p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example proteomic data structure</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span></span>
@@ -176,7 +176,7 @@
 <h3>
 <span class="header-section-number">2.2.3</span> Understanding Your Data<a class="anchor" aria-label="anchor" href="#understanding-your-data"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sample metadata</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    sample_id condition  batch timepoint</span></span>
@@ -227,7 +227,7 @@
 <li>Average number of missing values per protein</li>
 <li>Which sample has the most missing values?</li>
 </ol>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"1. Total proteins:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1. Total proteins: 50</span></span>
@@ -253,7 +253,7 @@
 <span class="header-section-number">2.3.1</span> Missing Data Analysis<a class="anchor" aria-label="anchor" href="#missing-data-analysis"><i class="fas fa-link"></i></a>
 </h3>
 <p>Missing data is common in proteomics. Understanding the pattern is crucial.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate missingness</span></span>
 <span><span class="va">missing_per_protein</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">missing_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -265,17 +265,17 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">missing_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Protein"</span>, <span class="st">"Sample"</span>, <span class="st">"Missing"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot missing data heatmap</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">missing_df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sample</span>, y <span class="op">=</span> <span class="va">Protein</span>, fill <span class="op">=</span> <span class="va">Missing</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_tile</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"TRUE"</span> <span class="op">=</span> <span class="st">"red"</span>, <span class="st">"FALSE"</span> <span class="op">=</span> <span class="st">"grey90"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>axis.text.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>        axis.ticks.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Missing Data Pattern"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">missing_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sample</span>, y <span class="op">=</span> <span class="va">Protein</span>, fill <span class="op">=</span> <span class="va">Missing</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_tile.html">geom_tile</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"TRUE"</span> <span class="op">=</span> <span class="st">"red"</span>, <span class="st">"FALSE"</span> <span class="op">=</span> <span class="st">"grey90"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        axis.ticks.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Missing Data Pattern"</span>,</span>
 <span>       subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Red = Missing ("</span>, </span>
 <span>                        <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">missing_df</span><span class="op">$</span><span class="va">Missing</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"% total)"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/missing-data-1.png" width="672"></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Histogram of missing values per protein</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">missing_per_protein</span>,</span>
@@ -289,12 +289,12 @@
 <h3>
 <span class="header-section-number">2.3.2</span> Detecting Outliers and Extreme Values<a class="anchor" aria-label="anchor" href="#detecting-outliers-and-extreme-values"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Box plots for each sample</span></span>
 <span><span class="va">protein_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span></span>
 <span><span class="va">protein_df</span><span class="op">$</span><span class="va">protein_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">protein_df</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">protein_long</span> <span class="op">&lt;-</span> <span class="fu">pivot_longer</span><span class="op">(</span><span class="va">protein_df</span>, </span>
+<span><span class="va">protein_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">protein_df</span>, </span>
 <span>                             cols <span class="op">=</span> <span class="op">-</span><span class="va">protein_id</span>,</span>
 <span>                             names_to <span class="op">=</span> <span class="st">"sample_id"</span>,</span>
 <span>                             values_to <span class="op">=</span> <span class="st">"abundance"</span><span class="op">)</span></span>
@@ -303,23 +303,23 @@
 <span><span class="va">protein_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="va">sample_metadata</span>, by <span class="op">=</span> <span class="st">"sample_id"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Boxplot</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_id</span>, y <span class="op">=</span> <span class="va">abundance</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_boxplot</span><span class="op">(</span>outlier.size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Abundance Distribution by Sample"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_id</span>, y <span class="op">=</span> <span class="va">abundance</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>outlier.size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Abundance Distribution by Sample"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Sample"</span>, y <span class="op">=</span> <span class="st">"Log2 Abundance"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/outliers-1.png" width="672"></div>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Density plots</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span>, color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_density</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Density Plot of Protein Abundances"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span>, color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Density Plot of Protein Abundances"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Log2 Abundance"</span>, y <span class="op">=</span> <span class="st">"Density"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/outliers-2.png" width="672"></div>
 </div>
 <div id="batch-effects-detection" class="section level3" number="2.3.3">
@@ -327,7 +327,7 @@
 <span class="header-section-number">2.3.3</span> Batch Effects Detection<a class="anchor" aria-label="anchor" href="#batch-effects-detection"><i class="fas fa-link"></i></a>
 </h3>
 <p>Batch effects are systematic non-biological variations.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># PCA colored by batch</span></span>
 <span><span class="va">pca_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pca_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/prcomp.html">prcomp</a></span><span class="op">(</span><span class="va">pca_data</span>, scale. <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -345,31 +345,31 @@
 <span><span class="va">var_explained</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">pca_result</span><span class="op">)</span><span class="op">$</span><span class="va">importance</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span> <span class="op">*</span> <span class="fl">100</span></span>
 <span></span>
 <span><span class="co"># PCA plot by batch</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">pca_df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">PC1</span>, y <span class="op">=</span> <span class="va">PC2</span>, color <span class="op">=</span> <span class="va">batch</span>, shape <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"PCA Analysis - Batch Effect Detection"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">pca_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">PC1</span>, y <span class="op">=</span> <span class="va">PC2</span>, color <span class="op">=</span> <span class="va">batch</span>, shape <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"PCA Analysis - Batch Effect Detection"</span>,</span>
 <span>       x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"PC1 ("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">var_explained</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)"</span><span class="op">)</span>,</span>
 <span>       y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"PC2 ("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">var_explained</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/batch-effects-1.png" width="672"></div>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># PCA plot by condition</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">pca_df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">PC1</span>, y <span class="op">=</span> <span class="va">PC2</span>, color <span class="op">=</span> <span class="va">condition</span>, shape <span class="op">=</span> <span class="va">batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"PCA Analysis - Biological Conditions"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">pca_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">PC1</span>, y <span class="op">=</span> <span class="va">PC2</span>, color <span class="op">=</span> <span class="va">condition</span>, shape <span class="op">=</span> <span class="va">batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"PCA Analysis - Biological Conditions"</span>,</span>
 <span>       x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"PC1 ("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">var_explained</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)"</span><span class="op">)</span>,</span>
 <span>       y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"PC2 ("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">var_explained</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/batch-effects-2.png" width="672"></div>
 </div>
 <div id="sample-correlation-analysis" class="section level3" number="2.3.4">
 <h3>
 <span class="header-section-number">2.3.4</span> Sample Correlation Analysis<a class="anchor" aria-label="anchor" href="#sample-correlation-analysis"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate sample correlations</span></span>
 <span><span class="va">cor_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">protein_matrix</span>, use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span></span>
 <span></span>
@@ -394,7 +394,7 @@
 <li>Identify if there are any outlier samples (median abundance far from others)</li>
 <li>Check for batch effects using PCA</li>
 </ol>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="co"># 1. Proteins with &gt;50% missing</span></span>
 <span><span class="va">missing_pct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
@@ -429,31 +429,31 @@
 <h3>
 <span class="header-section-number">2.4.1</span> Distribution of Intensities<a class="anchor" aria-label="anchor" href="#distribution-of-intensities"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Histogram of all values</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_histogram</span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">50</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span>, color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Distribution of Protein Abundances"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">50</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span>, color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Distribution of Protein Abundances"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Log2 Abundance"</span>, y <span class="op">=</span> <span class="st">"Frequency"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/intensity-distribution-1.png" width="672"></div>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Violin plots by condition</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">condition</span>, y <span class="op">=</span> <span class="va">abundance</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_violin</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_boxplot</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.1</span>, fill <span class="op">=</span> <span class="st">"white"</span>, outlier.size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Abundance Distribution by Condition"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">condition</span>, y <span class="op">=</span> <span class="va">abundance</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.1</span>, fill <span class="op">=</span> <span class="st">"white"</span>, outlier.size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Abundance Distribution by Condition"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Condition"</span>, y <span class="op">=</span> <span class="st">"Log2 Abundance"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/intensity-distribution-2.png" width="672"></div>
 </div>
 <div id="hierarchical-clustering" class="section level3" number="2.4.2">
 <h3>
 <span class="header-section-number">2.4.2</span> Hierarchical Clustering<a class="anchor" aria-label="anchor" href="#hierarchical-clustering"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove proteins with too many missing values</span></span>
 <span><span class="va">complete_proteins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.3</span></span>
 <span><span class="va">filtered_matrix</span> <span class="op">&lt;-</span> <span class="va">protein_matrix</span><span class="op">[</span><span class="va">complete_proteins</span>, <span class="op">]</span></span>
@@ -484,7 +484,7 @@
 <h3>
 <span class="header-section-number">2.4.3</span> Sample Similarity Analysis<a class="anchor" aria-label="anchor" href="#sample-similarity-analysis"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate Euclidean distances between samples</span></span>
 <span><span class="va">sample_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">filtered_matrix</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sample_dist_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">sample_dist</span><span class="op">)</span></span>
@@ -496,7 +496,7 @@
 <span>         main <span class="op">=</span> <span class="st">"Sample-Sample Distance Matrix"</span>,</span>
 <span>         color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"white"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/similarity-1.png" width="672"></div>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># MDS plot (alternative to PCA)</span></span>
 <span><span class="va">mds_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html">cmdscale</a></span><span class="op">(</span><span class="va">sample_dist</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -507,43 +507,43 @@
 <span><span class="op">)</span></span>
 <span><span class="va">mds_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html">merge</a></span><span class="op">(</span><span class="va">mds_df</span>, <span class="va">sample_metadata</span>, by <span class="op">=</span> <span class="st">"sample_id"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mds_df</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">MDS1</span>, y <span class="op">=</span> <span class="va">MDS2</span>, color <span class="op">=</span> <span class="va">condition</span>, shape <span class="op">=</span> <span class="va">batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"MDS Plot of Sample Similarity"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mds_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">MDS1</span>, y <span class="op">=</span> <span class="va">MDS2</span>, color <span class="op">=</span> <span class="va">condition</span>, shape <span class="op">=</span> <span class="va">batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"MDS Plot of Sample Similarity"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"MDS Dimension 1"</span>, y <span class="op">=</span> <span class="st">"MDS Dimension 2"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_color_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/similarity-2.png" width="672"></div>
 </div>
 <div id="coefficient-of-variation-analysis" class="section level3" number="2.4.4">
 <h3>
 <span class="header-section-number">2.4.4</span> Coefficient of Variation Analysis<a class="anchor" aria-label="anchor" href="#coefficient-of-variation-analysis"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate CV for each protein</span></span>
 <span><span class="va">calculate_cv</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">cv_by_condition</span> <span class="op">&lt;-</span> <span class="va">protein_long</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">protein_id</span>, <span class="va">condition</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarise</span><span class="op">(</span>cv <span class="op">=</span> <span class="fu">calculate_cv</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
+<span><span class="va">cv_by_condition</span> <span class="op">&lt;-</span> <span class="va">protein_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">protein_id</span>, <span class="va">condition</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>cv <span class="op">=</span> <span class="fu">calculate_cv</span><span class="op">(</span><span class="va">abundance</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot CV distribution</span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">cv_by_condition</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">cv</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_histogram</span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span>, alpha <span class="op">=</span> <span class="fl">0.7</span>, position <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Coefficient of Variation Distribution"</span>,</span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">cv_by_condition</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cv</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span>, alpha <span class="op">=</span> <span class="fl">0.7</span>, position <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Coefficient of Variation Distribution"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"CV (%)"</span>, y <span class="op">=</span> <span class="st">"Count"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">condition</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">condition</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/cv-analysis-1.png" width="672"></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Summary statistics</span></span>
-<span><span class="va">cv_summary</span> <span class="op">&lt;-</span> <span class="va">cv_by_condition</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">condition</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu">summarise</span><span class="op">(</span></span>
+<span><span class="va">cv_summary</span> <span class="op">&lt;-</span> <span class="va">cv_by_condition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">condition</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span></span>
 <span>    mean_cv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">cv</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>    median_cv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html">median</a></span><span class="op">(</span><span class="va">cv</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>    sd_cv <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">cv</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -566,7 +566,7 @@
 <li>Identify the top 10 most variable proteins</li>
 <li>Check if samples cluster by biological condition</li>
 </ol>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="co"># 1. Data quality report</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"=== DATA QUALITY REPORT ===\n\n"</span><span class="op">)</span></span>
@@ -594,18 +594,18 @@
 <span><span class="co">#&gt;  [7] "P00016" "P00025" "P00017" "P00031"</span></span>
 <span></span>
 <span><span class="co"># Plot top variable proteins</span></span>
-<span><span class="va">top10_data</span> <span class="op">&lt;-</span> <span class="va">protein_long</span> <span class="op">%&gt;%</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">protein_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">top10_variable</span><span class="op">)</span></span>
+<span><span class="va">top10_data</span> <span class="op">&lt;-</span> <span class="va">protein_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">protein_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">top10_variable</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">top10_data</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_id</span>, y <span class="op">=</span> <span class="va">abundance</span>, color <span class="op">=</span> <span class="va">condition</span>, group <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span> <span class="va">protein_id</span>, scales <span class="op">=</span> <span class="st">"free_y"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Top 10 Most Variable Proteins"</span>, x <span class="op">=</span> <span class="st">"Sample"</span>, y <span class="op">=</span> <span class="st">"Abundance"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">top10_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample_id</span>, y <span class="op">=</span> <span class="va">abundance</span>, color <span class="op">=</span> <span class="va">condition</span>, group <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">protein_id</span>, scales <span class="op">=</span> <span class="st">"free_y"</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Top 10 Most Variable Proteins"</span>, x <span class="op">=</span> <span class="st">"Sample"</span>, y <span class="op">=</span> <span class="st">"Abundance"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/exercise-2-3-solution-1.png" width="672"></div>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># 3. Clustering by condition</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"\n3. Checking sample clustering by condition:\n"</span><span class="op">)</span></span>
@@ -621,7 +621,7 @@
 <h2>
 <span class="header-section-number">2.5</span> Creating Quality Control Reports<a class="anchor" aria-label="anchor" href="#creating-quality-control-reports"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Function to generate QC report</span></span>
 <span><span class="va">generate_qc_report</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data_matrix</span>, <span class="va">metadata</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -736,7 +736,7 @@
 <li>Practice identifying batch effects</li>
 <li>Create custom QC visualizations</li>
 </ol>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare for Day 3</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"preprocessCore"</span>, <span class="st">"matrixStats"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -757,7 +757,7 @@
 <h2>
 <span class="header-section-number">2.8</span> Case Study: Real Proteomic Dataset<a class="anchor" aria-label="anchor" href="#case-study-real-proteomic-dataset"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example workflow for your own data</span></span>
 <span><span class="co"># 1. Load data</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"your_protein_data.csv"</span>, row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
