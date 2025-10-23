@@ -618,7 +618,7 @@ table(protein_data$condition)
 - Industry standard
 
 ```{r, setup, include=FALSE}
-knitr::opts_knit$set(root.dir = '/08_pkgs/r4proteomics/')
+#knitr::opts_knit$set(root.dir = '/08_pkgs/r4proteomics/') # may need to avoid re-setup
 ```
 
 ```{r load_tidyverse}
@@ -1036,3 +1036,4 @@ BiocManager::install(c("limma", "vsn"))
 - [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham
 - [RStudio Cheat Sheets](https://posit.co/resources/cheatsheets/)
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/r) for questions
+
