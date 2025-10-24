@@ -6,10 +6,10 @@
 
 By the end of Day 1, you will be able to:
 
-- Install and navigate RStudio effectively
-- Understand basic R data structures (vectors, data frames, lists)
-- Import and explore simple datasets
-- Write basic control flow structures and functions
+-   Install and navigate RStudio effectively
+-   Understand basic R data structures (vectors, data frames, lists)
+-   Import and explore simple datasets
+-   Write basic control flow structures and functions
 
 ## Module 1: Setting Up and Getting Started with R {#day1-mod1}
 
@@ -19,32 +19,34 @@ R is a powerful programming language and environment specifically designed for s
 
 ### Installing R and RStudio
 
-1. **Install R** (version 4.3.0 or higher)
-   - Visit [https://cran.r-project.org/](https://cran.r-project.org/)
-   - Download the version appropriate for your operating system
-   - Run the installer
+1.  **Install R** (version 4.3.0 or higher)
 
-2. **Install RStudio Desktop**
-   - Visit [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
-   - Download the free Desktop version
-   - Run the installer
-   
-3. **Install Required R Packages**
+    -   Visit <https://cran.r-project.org/>
+    -   Download the version appropriate for your operating system
+    -   Run the installer
+
+2.  **Install RStudio Desktop**
+
+    -   Visit <https://posit.co/download/rstudio-desktop/>
+    -   Download the free Desktop version
+    -   Run the installer
+
+3.  **Install Required R Packages**
 
     Open an R session in the terminal or RStudio:
-    
-    ```r
+
+    ``` r
     # Install CRAN packages
     install.packages(c(
       "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
       "reshape2", "gridExtra", "tidyverse", "lme4",
       "ggforce", "scatterpie", "png"  # Optional
     ))
-    
+
     # Install Bioconductor packages
     if (!requireNamespace("BiocManager", quietly = TRUE))
       install.packages("BiocManager")
-    
+
     BiocManager::install(c(
       "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4",
       "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
@@ -56,22 +58,16 @@ R is a powerful programming language and environment specifically designed for s
 
 RStudio has four main panes:
 
-1. **Source Editor** (top-left): Where you write and edit your scripts
-2. **Console** (bottom-left): Where code is executed and results appear
-3. **Environment/History** (top-right): Shows objects in memory and command history
-4. **Files/Plots/Packages/Help** (bottom-right): File browser, plot viewer, package manager, and help documentation
+1.  **Source Editor** (top-left): Where you write and edit your scripts
+2.  **Console** (bottom-left): Where code is executed and results appear
+3.  **Environment/History** (top-right): Shows objects in memory and command history
+4.  **Files/Plots/Packages/Help** (bottom-right): File browser, plot viewer, package manager, and help documentation
 
 ### Scripts vs Console
 
-The **Console** is for:
-- Quick calculations
-- Testing commands
-- Interactive exploration
+The **Console** is for: - Quick calculations - Testing commands - Interactive exploration
 
-**Scripts** (.R or .Rmd files) are for:
-- Saving your work
-- Creating reproducible analyses
-- Organizing complex workflows
+**Scripts** (.R or .Rmd files) are for: - Saving your work - Creating reproducible analyses - Organizing complex workflows
 
 ### Basic Operators
 
@@ -189,10 +185,10 @@ message("Hello, Proteomics World!")
 
 Create a new R script and:
 
-1. Calculate the sum of 123 and 456
-2. Assign the result to a variable called `total`
-3. Print the value of `total`
-4. Calculate what percentage 123 is of the total
+1.  Calculate the sum of 123 and 456
+2.  Assign the result to a variable called `total`
+3.  Print the value of `total`
+4.  Calculate what percentage 123 is of the total
 
 
 ```{.r .fold-hide}
@@ -478,10 +474,10 @@ is.character(mixed)
 
 Create a data frame for a proteomic experiment with:
 
-- 10 protein IDs (P001 to P010)
-- Random abundance values between 100 and 5000
-- Random p-values between 0 and 1
-- Significance status (TRUE if p-value < 0.05)
+-   10 protein IDs (P001 to P010)
+-   Random abundance values between 100 and 5000
+-   Random p-values between 0 and 1
+-   Significance status (TRUE if p-value \< 0.05)
 
 
 ```{.r .fold-hide}
@@ -707,9 +703,9 @@ print(vector_means)
 
 Write a function that:
 
-1. Takes a vector of protein abundances
-2. Calculates the coefficient of variation (CV = sd/mean * 100)
-3. Returns "Pass" if CV < 20%, "Fail" otherwise
+1.  Takes a vector of protein abundances
+2.  Calculates the coefficient of variation (CV = sd/mean \* 100)
+3.  Returns "Pass" if CV \< 20%, "Fail" otherwise
 
 Apply this function to multiple samples using a loop.
 
@@ -745,7 +741,153 @@ for (sample_name in names(sample_data)) {
 #> sample3 - CV: 0.7 % - Status: Pass
 ```
 
-## Module 4: Importing and Exploring Data
+## Module 4: Data Visualization with `ggplot2` {#day1-mod5}
+
+In this module, we will explore how to visualize data using **ggplot2**, one of the most powerful and flexible plotting systems in R.
+
+------------------------------------------------------------------------
+
+### Loading Required Packages
+
+
+``` r
+# Load necessary library
+library(ggplot2)
+```
+
+------------------------------------------------------------------------
+
+### Example Dataset
+
+We'll first create an example dataset representing protein abundance under two conditions: *Control* and *Treatment*.
+
+
+``` r
+set.seed(42)
+
+# Simulate realistic protein abundance data
+
+n_proteins <- 100
+
+protein_data <- data.frame(
+protein_id = paste0("P", sprintf("%03d", 1:n_proteins)),
+abundance = c(
+rnorm(n_proteins / 2, mean = 1000, sd = 150),   # Control group
+rnorm(n_proteins / 2, mean = 1300, sd = 180)    # Treatment group
+),
+condition = rep(c("Control", "Treatment"), each = n_proteins / 2)
+)
+
+# Add a few outliers to make the data more realistic
+outlier_indices <- sample(1:n_proteins, 3)
+protein_data$abundance[outlier_indices] <- 
+  protein_data$abundance[outlier_indices] * runif(3, 1.5, 2)
+
+head(protein_data)
+#>   protein_id abundance condition
+#> 1       P001 1205.6438   Control
+#> 2       P002  915.2953   Control
+#> 3       P003 1054.4693   Control
+#> 4       P004 1094.9294   Control
+#> 5       P005 1060.6402   Control
+#> 6       P006  984.0813   Control
+```
+
+------------------------------------------------------------------------
+
+### Histogram: Distribution of Protein Abundance
+
+A **histogram** helps visualize the distribution of continuous variables such as protein abundance.
+
+
+``` r
+ggplot(protein_data, aes(x = abundance)) +
+  geom_histogram(binwidth = 100, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Protein Abundance",
+    x = "Abundance",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+<img src="day1_intro_to_r_files/figure-html/ggplot-histogram-1.png" width="672" />
+
+------------------------------------------------------------------------
+
+### Boxplot: Comparing Conditions
+
+A **boxplot** provides a compact summary of abundance values across conditions.
+
+
+``` r
+ggplot(protein_data, aes(x = condition, y = abundance, fill = condition)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Protein Abundance by Condition",
+    x = "Condition",
+    y = "Abundance"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+<img src="day1_intro_to_r_files/figure-html/ggplot-boxplot-1.png" width="672" />
+
+------------------------------------------------------------------------
+
+### Scatter Plot: Individual Points with Mean Values
+
+A **scatter plot** with **jittering** can display individual data points while avoiding overlap. Adding **mean points** provides an overview of group averages.
+
+
+``` r
+ggplot(protein_data, aes(x = condition, y = abundance, color = condition)) +
+  geom_jitter(width = 0.2, alpha = 0.6) +
+  stat_summary(fun = mean, geom = "point", size = 4, shape = 18, color = "black") +
+  labs(
+    title = "Abundance per Condition with Mean Values",
+    x = "Condition",
+    y = "Abundance"
+  ) +
+  theme_minimal()
+```
+
+<img src="day1_intro_to_r_files/figure-html/ggplot-scatter-1.png" width="672" />
+
+------------------------------------------------------------------------
+
+### Density Plot: Distribution by Condition
+
+A **density plot** shows the smoothed distribution of abundance values for each condition.
+
+
+``` r
+ggplot(protein_data, aes(x = abundance, fill = condition)) +
+  geom_density(alpha = 0.5) +
+  labs(
+    title = "Density Plot of Protein Abundance by Condition",
+    x = "Abundance",
+    y = "Density"
+  ) +
+  theme_minimal()
+```
+
+<img src="day1_intro_to_r_files/figure-html/ggplot-density-1.png" width="672" />
+
+------------------------------------------------------------------------
+
+### Summary
+
+In this module, you learned how to:
+
+-   Visualize distributions using histograms and density plots
+-   Compare groups using boxplots
+-   Display individual data points with jitter and summary statistics
+
+These visualizations are essential for exploring proteomics data and identifying trends or outliers before further statistical analysis.
+
+## Module 5: Importing and Exploring Data
 
 ### Reading CSV Files
 
@@ -817,23 +959,22 @@ table(protein_data$condition)
 #>        50        50
 ```
 
-
-## Module 5: Data Wrangling with tidyverse
+## Module 6: Data Wrangling with tidyverse
 
 ### Introduction to tidyverse
 
 **What is tidyverse?**
 
-- Collection of R packages for data science
-- Consistent syntax and design philosophy
-- Main packages: dplyr, tidyr, ggplot2, readr
+-   Collection of R packages for data science
+-   Consistent syntax and design philosophy
+-   Main packages: dplyr, tidyr, ggplot2, readr
 
 **Why tidyverse?**
 
-- Readable, intuitive code
-- Pipe operator `%>%` for chaining operations
-- Faster learning curve
-- Industry standard
+-   Readable, intuitive code
+-   Pipe operator `%>%` for chaining operations
+-   Faster learning curve
+-   Industry standard
 
 
 
@@ -842,11 +983,12 @@ table(protein_data$condition)
 library(tidyverse)
 ```
 
----
+------------------------------------------------------------------------
 
-### The Pipe Operator %>%
+### The Pipe Operator %\>%
 
 **Traditional approach:**
+
 
 ``` r
 x <- c(1, 2, 3, 4, 5)
@@ -856,6 +998,7 @@ result
 ```
 
 **With pipe operator:**
+
 
 ``` r
 result <- x %>% 
@@ -868,20 +1011,20 @@ result
 
 **Read as:** "Take x, THEN take square root, THEN take log10, THEN calculate mean"
 
----
+------------------------------------------------------------------------
 
 ### dplyr: Grammar of Data Manipulation
 
 **Key Functions:**
 
-- `select()` - Choose columns
-- `filter()` - Choose rows based on conditions
-- `mutate()` - Create or modify columns
-- `arrange()` - Sort data
-- `summarize()` - Calculate summary statistics
-- `group_by()` - Group data for operations
+-   `select()` - Choose columns
+-   `filter()` - Choose rows based on conditions
+-   `mutate()` - Create or modify columns
+-   `arrange()` - Sort data
+-   `summarize()` - Calculate summary statistics
+-   `group_by()` - Group data for operations
 
----
+------------------------------------------------------------------------
 
 ### Your Actual Proteomics Data Structure
 
@@ -911,9 +1054,7 @@ head(proteomics_data[, 1:10])
 #> #   `2126001_359_F9` <dbl>, `2126001_401_F1` <dbl>
 ```
 
-Good practice:
-Convert all column names to lowercase and replace spaces with underscores `_`,
-to keep the naming of colmuns cleaner and more consistent.
+Good practice: Convert all column names to lowercase and replace spaces with underscores `_`, to keep the naming of colmuns cleaner and more consistent.
 
 
 ``` r
@@ -921,8 +1062,7 @@ to keep the naming of colmuns cleaner and more consistent.
 colnames(proteomics_data) <- gsub(" ", "_", tolower(colnames(proteomics_data)))
 ```
 
-
----
+------------------------------------------------------------------------
 
 ### select(): Choose Columns
 
@@ -963,7 +1103,7 @@ proteomics_data %>%
 #> 3 A0A0G2JSP8       897562438.
 ```
 
----
+------------------------------------------------------------------------
 
 ### filter(): Choose Rows
 
@@ -1023,7 +1163,7 @@ proteomics_data %>%
 #> # ℹ 19 more rows
 ```
 
----
+------------------------------------------------------------------------
 
 ### mutate(): Create New Columns
 
@@ -1044,7 +1184,7 @@ proteomics_data %>%
 #> 3 A0A0G2JSP8  43019.       4.63       897562438.
 ```
 
----
+------------------------------------------------------------------------
 
 ### arrange(): Sort Data
 
@@ -1087,7 +1227,7 @@ proteomics_data %>%
 #> 3 G3V6E1              173 219575.
 ```
 
----
+------------------------------------------------------------------------
 
 ### summarize(): Calculate Statistics
 
@@ -1120,7 +1260,7 @@ proteomics_data %>%
 #> 1 3059149. 3367563. 1102.
 ```
 
----
+------------------------------------------------------------------------
 
 ### group_by(): Grouped Operations
 
@@ -1152,7 +1292,7 @@ proteomics_data_grouped %>%
 #> 3 Medium               252         13.6            1176.
 ```
 
----
+------------------------------------------------------------------------
 
 ### Combining Operations: Pipeline
 
@@ -1183,32 +1323,34 @@ head(results)
 #> 6 P05065     ALDOA    3.94e4           11642.            NaN
 ```
 
----
+------------------------------------------------------------------------
 
 ### tidyr: Reshaping Data
 
 **Key Functions:**
 
-- `pivot_longer()` - Wide to long format
-- `pivot_wider()` - Long to wide format
-- `separate()` - Split one column into multiple
-- `unite()` - Combine columns
+-   `pivot_longer()` - Wide to long format
+-   `pivot_wider()` - Long to wide format
+-   `separate()` - Split one column into multiple
+-   `unite()` - Combine columns
 
 **Why reshape?** Different analyses and visualizations require different formats
 
----
+------------------------------------------------------------------------
 
 ### Wide vs Long Format
 
 **Wide format (your current data):**
-```
+
+```         
 accession  `2126001_029_f5`  `2126001_359_f9`  sample_3
 F1LMU0     2511430   8316460   3577492
 G3V8V3     1851936   2066635   2986710
 ```
 
 **Long format:**
-```
+
+```         
 accession  Sample     Intensity
 F1LMU0     `2126001_029_f5`   2511430
 F1LMU0     `2126001_359_f9`   8316460
@@ -1216,7 +1358,7 @@ F1LMU0     sample_3   3577492
 G3V8V3     `2126001_029_f5`   1851936
 ```
 
----
+------------------------------------------------------------------------
 
 ### pivot_longer(): Wide to Long
 
@@ -1248,16 +1390,16 @@ head(proteomics_long, 10)
 #> #   description <chr>, Sample <chr>, Intensity <dbl>
 ```
 
----
+------------------------------------------------------------------------
 
 ### Why Long Format?
 
 **Advantages for analysis:**
 
-- Easier grouping and summarizing
-- Better for ggplot2 visualizations
-- Facilitates statistical modeling
-- Standard format for many tools
+-   Easier grouping and summarizing
+-   Better for ggplot2 visualizations
+-   Facilitates statistical modeling
+-   Standard format for many tools
 
 
 ``` r
@@ -1281,7 +1423,7 @@ proteomics_long %>%
 #> 6 2126001_270_f7        2088286.           95672.        824
 ```
 
----
+------------------------------------------------------------------------
 
 ### pivot_wider(): Long to Wide
 
@@ -1309,7 +1451,7 @@ head(proteomics_wide[, 1:10])
 #> #   `2126001_359_f9` <dbl>, `2126001_401_f1` <dbl>
 ```
 
----
+------------------------------------------------------------------------
 
 ### Working with Strings
 
@@ -1335,7 +1477,7 @@ proteomics_data %>%
 #> 3 A0A0G2JSP8 Creatine kinase            TRUE      Creatine
 ```
 
----
+------------------------------------------------------------------------
 
 ### Handling Missing Values
 
@@ -1385,7 +1527,7 @@ data_with_na %>%
 #> #   `2126001_198_f12` <dbl>, `2126001_312_f8` <dbl>, …
 ```
 
----
+------------------------------------------------------------------------
 
 ### Hands-On Exercise
 
@@ -1419,19 +1561,19 @@ cv_data <- long_data %>%
 
 Today you learned:
 
-- ✓ How to set up R and RStudio
-- ✓ Basic R operators and syntax
-- ✓ Data structures: vectors, data frames, lists, factors
-- ✓ Indexing and subsetting data
-- ✓ Control flow: if/else, loops
-- ✓ Writing custom functions
-- ✓ Importing and exploring data
+-   [x] How to set up R and RStudio
+-   [x] Basic R operators and syntax
+-   [x] Data structures: vectors, data frames, lists, factors
+-   [x] Indexing and subsetting data
+-   [x] Control flow: if/else, loops
+-   [x] Writing custom functions
+-   [x] Importing and exploring data
 
 ### Homework
 
-1. Install all required packages for Day 2
-2. Practice writing functions for data manipulation
-3. Explore the built-in datasets in R (use `data()` to see available datasets)
+1.  Install all required packages for Day 2
+2.  Practice writing functions for data manipulation
+3.  Explore the built-in datasets in R (use `data()` to see available datasets)
 
 
 ``` r
@@ -1446,7 +1588,6 @@ BiocManager::install(c("limma", "vsn"))
 
 ## Additional Resources
 
-- [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham
-- [RStudio Cheat Sheets](https://posit.co/resources/cheatsheets/)
-- [Stack Overflow](https://stackoverflow.com/questions/tagged/r) for questions
-
+-   [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham
+-   [RStudio Cheat Sheets](https://posit.co/resources/cheatsheets/)
+-   [Stack Overflow](https://stackoverflow.com/questions/tagged/r) for questions

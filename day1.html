@@ -94,7 +94,7 @@
 <li>
 <p><strong>Install R</strong> (version 4.3.0 or higher)</p>
 <ul>
-<li>Visit <a href="https://cran.r-project.org/">https://cran.r-project.org/</a>
+<li>Visit <a href="https://cran.r-project.org/" class="uri">https://cran.r-project.org/</a>
 </li>
 <li>Download the version appropriate for your operating system</li>
 <li>Run the installer</li>
@@ -103,7 +103,7 @@
 <li>
 <p><strong>Install RStudio Desktop</strong></p>
 <ul>
-<li>Visit <a href="https://posit.co/download/rstudio-desktop/">https://posit.co/download/rstudio-desktop/</a>
+<li>Visit <a href="https://posit.co/download/rstudio-desktop/" class="uri">https://posit.co/download/rstudio-desktop/</a>
 </li>
 <li>Download the free Desktop version</li>
 <li>Run the installer</li>
@@ -152,14 +152,8 @@
 <h3>
 <span class="header-section-number">1.2.4</span> Scripts vs Console<a class="anchor" aria-label="anchor" href="#scripts-vs-console"><i class="fas fa-link"></i></a>
 </h3>
-<p>The <strong>Console</strong> is for:
-- Quick calculations
-- Testing commands
-- Interactive exploration</p>
-<p><strong>Scripts</strong> (.R or .Rmd files) are for:
-- Saving your work
-- Creating reproducible analyses
-- Organizing complex workflows</p>
+<p>The <strong>Console</strong> is for: - Quick calculations - Testing commands - Interactive exploration</p>
+<p><strong>Scripts</strong> (.R or .Rmd files) are for: - Saving your work - Creating reproducible analyses - Organizing complex workflows</p>
 </div>
 <div id="basic-operators" class="section level3" number="1.2.5">
 <h3>
@@ -836,15 +830,149 @@
 <span><span class="co">#&gt; sample3 - CV: 0.7 % - Status: Pass</span></span></code></pre></div>
 </div>
 </div>
-<div id="module-4-importing-and-exploring-data" class="section level2" number="1.5">
+<div id="day1-mod5" class="section level2" number="1.5">
 <h2>
-<span class="header-section-number">1.5</span> Module 4: Importing and Exploring Data<a class="anchor" aria-label="anchor" href="#module-4-importing-and-exploring-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.5</span> Module 4: Data Visualization with <code>ggplot2</code><a class="anchor" aria-label="anchor" href="#day1-mod5"><i class="fas fa-link"></i></a>
 </h2>
-<div id="reading-csv-files" class="section level3" number="1.5.1">
+<p>In this module, we will explore how to visualize data using <strong>ggplot2</strong>, one of the most powerful and flexible plotting systems in R.</p>
+<hr>
+<div id="loading-required-packages" class="section level3" number="1.5.1">
 <h3>
-<span class="header-section-number">1.5.1</span> Reading CSV Files<a class="anchor" aria-label="anchor" href="#reading-csv-files"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.5.1</span> Loading Required Packages<a class="anchor" aria-label="anchor" href="#loading-required-packages"><i class="fas fa-link"></i></a>
 </h3>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load necessary library</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div id="example-dataset" class="section level3" number="1.5.2">
+<h3>
+<span class="header-section-number">1.5.2</span> Example Dataset<a class="anchor" aria-label="anchor" href="#example-dataset"><i class="fas fa-link"></i></a>
+</h3>
+<p>We’ll first create an example dataset representing protein abundance under two conditions: <em>Control</em> and <em>Treatment</em>.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Simulate realistic protein abundance data</span></span>
+<span></span>
+<span><span class="va">n_proteins</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span></span>
+<span><span class="va">protein_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>protein_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%03d"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_proteins</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>abundance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n_proteins</span> <span class="op">/</span> <span class="fl">2</span>, mean <span class="op">=</span> <span class="fl">1000</span>, sd <span class="op">=</span> <span class="fl">150</span><span class="op">)</span>,   <span class="co"># Control group</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n_proteins</span> <span class="op">/</span> <span class="fl">2</span>, mean <span class="op">=</span> <span class="fl">1300</span>, sd <span class="op">=</span> <span class="fl">180</span><span class="op">)</span>    <span class="co"># Treatment group</span></span>
+<span><span class="op">)</span>,</span>
+<span>condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Control"</span>, <span class="st">"Treatment"</span><span class="op">)</span>, each <span class="op">=</span> <span class="va">n_proteins</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add a few outliers to make the data more realistic</span></span>
+<span><span class="va">outlier_indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n_proteins</span>, <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="va">protein_data</span><span class="op">$</span><span class="va">abundance</span><span class="op">[</span><span class="va">outlier_indices</span><span class="op">]</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="va">protein_data</span><span class="op">$</span><span class="va">abundance</span><span class="op">[</span><span class="va">outlier_indices</span><span class="op">]</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">1.5</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">protein_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   protein_id abundance condition</span></span>
+<span><span class="co">#&gt; 1       P001 1205.6438   Control</span></span>
+<span><span class="co">#&gt; 2       P002  915.2953   Control</span></span>
+<span><span class="co">#&gt; 3       P003 1054.4693   Control</span></span>
+<span><span class="co">#&gt; 4       P004 1094.9294   Control</span></span>
+<span><span class="co">#&gt; 5       P005 1060.6402   Control</span></span>
+<span><span class="co">#&gt; 6       P006  984.0813   Control</span></span></code></pre></div>
+<hr>
+</div>
+<div id="histogram-distribution-of-protein-abundance" class="section level3" number="1.5.3">
+<h3>
+<span class="header-section-number">1.5.3</span> Histogram: Distribution of Protein Abundance<a class="anchor" aria-label="anchor" href="#histogram-distribution-of-protein-abundance"><i class="fas fa-link"></i></a>
+</h3>
+<p>A <strong>histogram</strong> helps visualize the distribution of continuous variables such as protein abundance.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">100</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span>, color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Distribution of Protein Abundance"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Abundance"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Count"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="day1_intro_to_r_files/figure-html/ggplot-histogram-1.png" width="672"></div>
+<hr>
+</div>
+<div id="boxplot-comparing-conditions" class="section level3" number="1.5.4">
+<h3>
+<span class="header-section-number">1.5.4</span> Boxplot: Comparing Conditions<a class="anchor" aria-label="anchor" href="#boxplot-comparing-conditions"><i class="fas fa-link"></i></a>
+</h3>
+<p>A <strong>boxplot</strong> provides a compact summary of abundance values across conditions.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">condition</span>, y <span class="op">=</span> <span class="va">abundance</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Protein Abundance by Condition"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Abundance"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="day1_intro_to_r_files/figure-html/ggplot-boxplot-1.png" width="672"></div>
+<hr>
+</div>
+<div id="scatter-plot-individual-points-with-mean-values" class="section level3" number="1.5.5">
+<h3>
+<span class="header-section-number">1.5.5</span> Scatter Plot: Individual Points with Mean Values<a class="anchor" aria-label="anchor" href="#scatter-plot-individual-points-with-mean-values"><i class="fas fa-link"></i></a>
+</h3>
+<p>A <strong>scatter plot</strong> with <strong>jittering</strong> can display individual data points while avoiding overlap. Adding <strong>mean points</strong> provides an overview of group averages.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">condition</span>, y <span class="op">=</span> <span class="va">abundance</span>, color <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.2</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_summary.html">stat_summary</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="va">mean</span>, geom <span class="op">=</span> <span class="st">"point"</span>, size <span class="op">=</span> <span class="fl">4</span>, shape <span class="op">=</span> <span class="fl">18</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Abundance per Condition with Mean Values"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Condition"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Abundance"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="day1_intro_to_r_files/figure-html/ggplot-scatter-1.png" width="672"></div>
+<hr>
+</div>
+<div id="density-plot-distribution-by-condition" class="section level3" number="1.5.6">
+<h3>
+<span class="header-section-number">1.5.6</span> Density Plot: Distribution by Condition<a class="anchor" aria-label="anchor" href="#density-plot-distribution-by-condition"><i class="fas fa-link"></i></a>
+</h3>
+<p>A <strong>density plot</strong> shows the smoothed distribution of abundance values for each condition.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Density Plot of Protein Abundance by Condition"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Abundance"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Density"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="day1_intro_to_r_files/figure-html/ggplot-density-1.png" width="672"></div>
+<hr>
+</div>
+<div id="summary" class="section level3" number="1.5.7">
+<h3>
+<span class="header-section-number">1.5.7</span> Summary<a class="anchor" aria-label="anchor" href="#summary"><i class="fas fa-link"></i></a>
+</h3>
+<p>In this module, you learned how to:</p>
+<ul>
+<li>Visualize distributions using histograms and density plots</li>
+<li>Compare groups using boxplots</li>
+<li>Display individual data points with jitter and summary statistics</li>
+</ul>
+<p>These visualizations are essential for exploring proteomics data and identifying trends or outliers before further statistical analysis.</p>
+</div>
+</div>
+<div id="module-5-importing-and-exploring-data" class="section level2" number="1.6">
+<h2>
+<span class="header-section-number">1.6</span> Module 5: Importing and Exploring Data<a class="anchor" aria-label="anchor" href="#module-5-importing-and-exploring-data"><i class="fas fa-link"></i></a>
+</h2>
+<div id="reading-csv-files" class="section level3" number="1.6.1">
+<h3>
+<span class="header-section-number">1.6.1</span> Reading CSV Files<a class="anchor" aria-label="anchor" href="#reading-csv-files"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read CSV</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"data/proteins.csv"</span><span class="op">)</span></span>
 <span></span>
@@ -855,11 +983,11 @@
 <span><span class="co"># Read tab-delimited</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.delim</a></span><span class="op">(</span><span class="st">"data/proteins.txt"</span>, sep <span class="op">=</span> <span class="st">"\t"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="basic-data-exploration" class="section level3" number="1.5.2">
+<div id="basic-data-exploration" class="section level3" number="1.6.2">
 <h3>
-<span class="header-section-number">1.5.2</span> Basic Data Exploration<a class="anchor" aria-label="anchor" href="#basic-data-exploration"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.6.2</span> Basic Data Exploration<a class="anchor" aria-label="anchor" href="#basic-data-exploration"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create example data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">protein_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
@@ -911,13 +1039,13 @@
 <span><span class="co">#&gt;        50        50</span></span></code></pre></div>
 </div>
 </div>
-<div id="module-5-data-wrangling-with-tidyverse" class="section level2" number="1.6">
+<div id="module-6-data-wrangling-with-tidyverse" class="section level2" number="1.7">
 <h2>
-<span class="header-section-number">1.6</span> Module 5: Data Wrangling with tidyverse<a class="anchor" aria-label="anchor" href="#module-5-data-wrangling-with-tidyverse"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7</span> Module 6: Data Wrangling with tidyverse<a class="anchor" aria-label="anchor" href="#module-6-data-wrangling-with-tidyverse"><i class="fas fa-link"></i></a>
 </h2>
-<div id="introduction-to-tidyverse" class="section level3" number="1.6.1">
+<div id="introduction-to-tidyverse" class="section level3" number="1.7.1">
 <h3>
-<span class="header-section-number">1.6.1</span> Introduction to tidyverse<a class="anchor" aria-label="anchor" href="#introduction-to-tidyverse"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.1</span> Introduction to tidyverse<a class="anchor" aria-label="anchor" href="#introduction-to-tidyverse"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>What is tidyverse?</strong></p>
 <ul>
@@ -932,22 +1060,22 @@
 <li>Faster learning curve</li>
 <li>Industry standard</li>
 </ul>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
-<div id="the-pipe-operator" class="section level3" number="1.6.2">
+<div id="the-pipe-operator" class="section level3" number="1.7.2">
 <h3>
-<span class="header-section-number">1.6.2</span> The Pipe Operator %&gt;%<a class="anchor" aria-label="anchor" href="#the-pipe-operator"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.2</span> The Pipe Operator %&gt;%<a class="anchor" aria-label="anchor" href="#the-pipe-operator"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Traditional approach:</strong></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">result</span></span>
 <span><span class="co">#&gt; [1] 0.2079181</span></span></code></pre></div>
 <p><strong>With pipe operator:</strong></p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
@@ -957,9 +1085,9 @@
 <p><strong>Read as:</strong> “Take x, THEN take square root, THEN take log10, THEN calculate mean”</p>
 <hr>
 </div>
-<div id="dplyr-grammar-of-data-manipulation" class="section level3" number="1.6.3">
+<div id="dplyr-grammar-of-data-manipulation" class="section level3" number="1.7.3">
 <h3>
-<span class="header-section-number">1.6.3</span> dplyr: Grammar of Data Manipulation<a class="anchor" aria-label="anchor" href="#dplyr-grammar-of-data-manipulation"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.3</span> dplyr: Grammar of Data Manipulation<a class="anchor" aria-label="anchor" href="#dplyr-grammar-of-data-manipulation"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Key Functions:</strong></p>
 <ul>
@@ -978,11 +1106,11 @@
 </ul>
 <hr>
 </div>
-<div id="your-actual-proteomics-data-structure" class="section level3" number="1.6.4">
+<div id="your-actual-proteomics-data-structure" class="section level3" number="1.7.4">
 <h3>
-<span class="header-section-number">1.6.4</span> Your Actual Proteomics Data Structure<a class="anchor" aria-label="anchor" href="#your-actual-proteomics-data-structure"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.4</span> Your Actual Proteomics Data Structure<a class="anchor" aria-label="anchor" href="#your-actual-proteomics-data-structure"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simulate your data structure</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">proteomics_data</span> <span class="op">&lt;-</span> <span class="fu">readxl</span><span class="fu">::</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_excel</a></span><span class="op">(</span></span>
@@ -1005,19 +1133,17 @@
 <span><span class="co">#&gt; # ℹ 6 more variables: `Confidence score` &lt;dbl&gt;, Mass &lt;dbl&gt;,</span></span>
 <span><span class="co">#&gt; #   Description &lt;chr&gt;, `2126001_029_F5` &lt;dbl&gt;,</span></span>
 <span><span class="co">#&gt; #   `2126001_359_F9` &lt;dbl&gt;, `2126001_401_F1` &lt;dbl&gt;</span></span></code></pre></div>
-<p>Good practice:
-Convert all column names to lowercase and replace spaces with underscores <code>_</code>,
-to keep the naming of colmuns cleaner and more consistent.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<p>Good practice: Convert all column names to lowercase and replace spaces with underscores <code>_</code>, to keep the naming of colmuns cleaner and more consistent.</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#colnames(proteomics_data) &lt;- tolower(colnames(proteomics_data))</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">proteomics_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">" "</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">proteomics_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
-<div id="select-choose-columns" class="section level3" number="1.6.5">
+<div id="select-choose-columns" class="section level3" number="1.7.5">
 <h3>
-<span class="header-section-number">1.6.5</span> select(): Choose Columns<a class="anchor" aria-label="anchor" href="#select-choose-columns"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.5</span> select(): Choose Columns<a class="anchor" aria-label="anchor" href="#select-choose-columns"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select specific columns</span></span>
 <span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">accession</span>, <span class="va">gene</span>, <span class="va">mass</span>, <span class="va">`2126001_029_f5`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -1053,11 +1179,11 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <span><span class="co">#&gt; 3 A0A0G2JSP8       897562438.</span></span></code></pre></div>
 <hr>
 </div>
-<div id="filter-choose-rows" class="section level3" number="1.6.6">
+<div id="filter-choose-rows" class="section level3" number="1.7.6">
 <h3>
-<span class="header-section-number">1.6.6</span> filter(): Choose Rows<a class="anchor" aria-label="anchor" href="#filter-choose-rows"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.6</span> filter(): Choose Rows<a class="anchor" aria-label="anchor" href="#filter-choose-rows"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Filter high mass proteins</span></span>
 <span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">mass</span> <span class="op">&gt;</span> <span class="fl">100000</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -1112,11 +1238,11 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <span><span class="co">#&gt; # ℹ 19 more rows</span></span></code></pre></div>
 <hr>
 </div>
-<div id="mutate-create-new-columns" class="section level3" number="1.6.7">
+<div id="mutate-create-new-columns" class="section level3" number="1.7.7">
 <h3>
-<span class="header-section-number">1.6.7</span> mutate(): Create New Columns<a class="anchor" aria-label="anchor" href="#mutate-create-new-columns"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.7</span> mutate(): Create New Columns<a class="anchor" aria-label="anchor" href="#mutate-create-new-columns"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate log10 transformed values</span></span>
 <span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
@@ -1132,11 +1258,11 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <span><span class="co">#&gt; 3 A0A0G2JSP8  43019.       4.63       897562438.</span></span></code></pre></div>
 <hr>
 </div>
-<div id="arrange-sort-data" class="section level3" number="1.6.8">
+<div id="arrange-sort-data" class="section level3" number="1.7.8">
 <h3>
-<span class="header-section-number">1.6.8</span> arrange(): Sort Data<a class="anchor" aria-label="anchor" href="#arrange-sort-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.8</span> arrange(): Sort Data<a class="anchor" aria-label="anchor" href="#arrange-sort-data"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sort by mass (ascending)</span></span>
 <span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">mass</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -1174,11 +1300,11 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <span><span class="co">#&gt; 3 G3V6E1              173 219575.</span></span></code></pre></div>
 <hr>
 </div>
-<div id="summarize-calculate-statistics" class="section level3" number="1.6.9">
+<div id="summarize-calculate-statistics" class="section level3" number="1.7.9">
 <h3>
-<span class="header-section-number">1.6.9</span> summarize(): Calculate Statistics<a class="anchor" aria-label="anchor" href="#summarize-calculate-statistics"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.9</span> summarize(): Calculate Statistics<a class="anchor" aria-label="anchor" href="#summarize-calculate-statistics"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate summary statistics</span></span>
 <span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span></span>
@@ -1206,11 +1332,11 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <span><span class="co">#&gt; 1 3059149. 3367563. 1102.</span></span></code></pre></div>
 <hr>
 </div>
-<div id="group_by-grouped-operations" class="section level3" number="1.6.10">
+<div id="group_by-grouped-operations" class="section level3" number="1.7.10">
 <h3>
-<span class="header-section-number">1.6.10</span> group_by(): Grouped Operations<a class="anchor" aria-label="anchor" href="#group_by-grouped-operations"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.10</span> group_by(): Grouped Operations<a class="anchor" aria-label="anchor" href="#group_by-grouped-operations"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create groups based on mass</span></span>
 <span><span class="va">proteomics_data_grouped</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
@@ -1237,11 +1363,11 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <span><span class="co">#&gt; 3 Medium               252         13.6            1176.</span></span></code></pre></div>
 <hr>
 </div>
-<div id="combining-operations-pipeline" class="section level3" number="1.6.11">
+<div id="combining-operations-pipeline" class="section level3" number="1.7.11">
 <h3>
-<span class="header-section-number">1.6.11</span> Combining Operations: Pipeline<a class="anchor" aria-label="anchor" href="#combining-operations-pipeline"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.11</span> Combining Operations: Pipeline<a class="anchor" aria-label="anchor" href="#combining-operations-pipeline"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Complete analysis pipeline</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="co"># Filter high confidence proteins</span></span>
@@ -1267,9 +1393,9 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <span><span class="co">#&gt; 6 P05065     ALDOA    3.94e4           11642.            NaN</span></span></code></pre></div>
 <hr>
 </div>
-<div id="tidyr-reshaping-data" class="section level3" number="1.6.12">
+<div id="tidyr-reshaping-data" class="section level3" number="1.7.12">
 <h3>
-<span class="header-section-number">1.6.12</span> tidyr: Reshaping Data<a class="anchor" aria-label="anchor" href="#tidyr-reshaping-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.12</span> tidyr: Reshaping Data<a class="anchor" aria-label="anchor" href="#tidyr-reshaping-data"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Key Functions:</strong></p>
 <ul>
@@ -1285,9 +1411,9 @@ to keep the naming of colmuns cleaner and more consistent.</p>
 <p><strong>Why reshape?</strong> Different analyses and visualizations require different formats</p>
 <hr>
 </div>
-<div id="wide-vs-long-format" class="section level3" number="1.6.13">
+<div id="wide-vs-long-format" class="section level3" number="1.7.13">
 <h3>
-<span class="header-section-number">1.6.13</span> Wide vs Long Format<a class="anchor" aria-label="anchor" href="#wide-vs-long-format"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.13</span> Wide vs Long Format<a class="anchor" aria-label="anchor" href="#wide-vs-long-format"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Wide format (your current data):</strong></p>
 <pre><code>accession  `2126001_029_f5`  `2126001_359_f9`  sample_3
@@ -1301,11 +1427,11 @@ F1LMU0     sample_3   3577492
 G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <hr>
 </div>
-<div id="pivot_longer-wide-to-long" class="section level3" number="1.6.14">
+<div id="pivot_longer-wide-to-long" class="section level3" number="1.7.14">
 <h3>
-<span class="header-section-number">1.6.14</span> pivot_longer(): Wide to Long<a class="anchor" aria-label="anchor" href="#pivot_longer-wide-to-long"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.14</span> pivot_longer(): Wide to Long<a class="anchor" aria-label="anchor" href="#pivot_longer-wide-to-long"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert to long format</span></span>
 <span><span class="va">proteomics_long</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span></span>
@@ -1332,9 +1458,9 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <span><span class="co">#&gt; #   description &lt;chr&gt;, Sample &lt;chr&gt;, Intensity &lt;dbl&gt;</span></span></code></pre></div>
 <hr>
 </div>
-<div id="why-long-format" class="section level3" number="1.6.15">
+<div id="why-long-format" class="section level3" number="1.7.15">
 <h3>
-<span class="header-section-number">1.6.15</span> Why Long Format?<a class="anchor" aria-label="anchor" href="#why-long-format"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.15</span> Why Long Format?<a class="anchor" aria-label="anchor" href="#why-long-format"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Advantages for analysis:</strong></p>
 <ul>
@@ -1343,7 +1469,7 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <li>Facilitates statistical modeling</li>
 <li>Standard format for many tools</li>
 </ul>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate statistics by sample</span></span>
 <span><span class="va">proteomics_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Sample</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -1364,11 +1490,11 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <span><span class="co">#&gt; 6 2126001_270_f7        2088286.           95672.        824</span></span></code></pre></div>
 <hr>
 </div>
-<div id="pivot_wider-long-to-wide" class="section level3" number="1.6.16">
+<div id="pivot_wider-long-to-wide" class="section level3" number="1.7.16">
 <h3>
-<span class="header-section-number">1.6.16</span> pivot_wider(): Long to Wide<a class="anchor" aria-label="anchor" href="#pivot_wider-long-to-wide"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.16</span> pivot_wider(): Long to Wide<a class="anchor" aria-label="anchor" href="#pivot_wider-long-to-wide"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert back to wide format</span></span>
 <span><span class="va">proteomics_wide</span> <span class="op">&lt;-</span> <span class="va">proteomics_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span></span>
@@ -1391,11 +1517,11 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <span><span class="co">#&gt; #   `2126001_359_f9` &lt;dbl&gt;, `2126001_401_f1` &lt;dbl&gt;</span></span></code></pre></div>
 <hr>
 </div>
-<div id="working-with-strings" class="section level3" number="1.6.17">
+<div id="working-with-strings" class="section level3" number="1.7.17">
 <h3>
-<span class="header-section-number">1.6.17</span> Working with Strings<a class="anchor" aria-label="anchor" href="#working-with-strings"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.17</span> Working with Strings<a class="anchor" aria-label="anchor" href="#working-with-strings"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract gene names</span></span>
 <span><span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
@@ -1416,11 +1542,11 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <span><span class="co">#&gt; 3 A0A0G2JSP8 Creatine kinase            TRUE      Creatine</span></span></code></pre></div>
 <hr>
 </div>
-<div id="handling-missing-values" class="section level3" number="1.6.18">
+<div id="handling-missing-values" class="section level3" number="1.7.18">
 <h3>
-<span class="header-section-number">1.6.18</span> Handling Missing Values<a class="anchor" aria-label="anchor" href="#handling-missing-values"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.18</span> Handling Missing Values<a class="anchor" aria-label="anchor" href="#handling-missing-values"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create data with missing values</span></span>
 <span><span class="va">data_with_na</span> <span class="op">&lt;-</span> <span class="va">proteomics_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
@@ -1465,12 +1591,12 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <span><span class="co">#&gt; #   `2126001_198_f12` &lt;dbl&gt;, `2126001_312_f8` &lt;dbl&gt;, …</span></span></code></pre></div>
 <hr>
 </div>
-<div id="hands-on-exercise" class="section level3" number="1.6.19">
+<div id="hands-on-exercise" class="section level3" number="1.7.19">
 <h3>
-<span class="header-section-number">1.6.19</span> Hands-On Exercise<a class="anchor" aria-label="anchor" href="#hands-on-exercise"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.7.19</span> Hands-On Exercise<a class="anchor" aria-label="anchor" href="#hands-on-exercise"><i class="fas fa-link"></i></a>
 </h3>
 <p><strong>Task:</strong> Transform and analyze your proteomics data</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1. Load your data</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu">read_excel</span><span class="op">(</span><span class="st">"your_data.xlsx"</span><span class="op">)</span></span>
 <span></span>
@@ -1493,30 +1619,30 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <span>            cv <span class="op">=</span> <span class="op">(</span><span class="va">sd_int</span> <span class="op">/</span> <span class="va">mean_int</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div id="day-1-summary" class="section level2" number="1.7">
+<div id="day-1-summary" class="section level2" number="1.8">
 <h2>
-<span class="header-section-number">1.7</span> Day 1 Summary<a class="anchor" aria-label="anchor" href="#day-1-summary"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.8</span> Day 1 Summary<a class="anchor" aria-label="anchor" href="#day-1-summary"><i class="fas fa-link"></i></a>
 </h2>
 <p>Today you learned:</p>
-<ul>
-<li>✓ How to set up R and RStudio</li>
-<li>✓ Basic R operators and syntax</li>
-<li>✓ Data structures: vectors, data frames, lists, factors</li>
-<li>✓ Indexing and subsetting data</li>
-<li>✓ Control flow: if/else, loops</li>
-<li>✓ Writing custom functions</li>
-<li>✓ Importing and exploring data</li>
+<ul class="task-list">
+<li><label><input type="checkbox" checked>How to set up R and RStudio</label></li>
+<li><label><input type="checkbox" checked>Basic R operators and syntax</label></li>
+<li><label><input type="checkbox" checked>Data structures: vectors, data frames, lists, factors</label></li>
+<li><label><input type="checkbox" checked>Indexing and subsetting data</label></li>
+<li><label><input type="checkbox" checked>Control flow: if/else, loops</label></li>
+<li><label><input type="checkbox" checked>Writing custom functions</label></li>
+<li><label><input type="checkbox" checked>Importing and exploring data</label></li>
 </ul>
-<div id="homework" class="section level3" number="1.7.1">
+<div id="homework" class="section level3" number="1.8.1">
 <h3>
-<span class="header-section-number">1.7.1</span> Homework<a class="anchor" aria-label="anchor" href="#homework"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.8.1</span> Homework<a class="anchor" aria-label="anchor" href="#homework"><i class="fas fa-link"></i></a>
 </h3>
 <ol style="list-style-type: decimal">
 <li>Install all required packages for Day 2</li>
 <li>Practice writing functions for data manipulation</li>
 <li>Explore the built-in datasets in R (use <code><a href="https://rdrr.io/r/utils/data.html">data()</a></code> to see available datasets)</li>
 </ol>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install packages for Day 2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"pheatmap"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -1526,9 +1652,9 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"limma"</span>, <span class="st">"vsn"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div id="additional-resources" class="section level2" number="1.8">
+<div id="additional-resources" class="section level2" number="1.9">
 <h2>
-<span class="header-section-number">1.8</span> Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources"><i class="fas fa-link"></i></a>
+<span class="header-section-number">1.9</span> Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources"><i class="fas fa-link"></i></a>
 </h2>
 <ul>
 <li>
@@ -1581,38 +1707,49 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#module-4-importing-and-exploring-data"><span class="header-section-number">1.5</span> Module 4: Importing and Exploring Data</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#reading-csv-files"><span class="header-section-number">1.5.1</span> Reading CSV Files</a></li>
-<li><a class="nav-link" href="#basic-data-exploration"><span class="header-section-number">1.5.2</span> Basic Data Exploration</a></li>
+<a class="nav-link" href="#day1-mod5"><span class="header-section-number">1.5</span> Module 4: Data Visualization with ggplot2</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#loading-required-packages"><span class="header-section-number">1.5.1</span> Loading Required Packages</a></li>
+<li><a class="nav-link" href="#example-dataset"><span class="header-section-number">1.5.2</span> Example Dataset</a></li>
+<li><a class="nav-link" href="#histogram-distribution-of-protein-abundance"><span class="header-section-number">1.5.3</span> Histogram: Distribution of Protein Abundance</a></li>
+<li><a class="nav-link" href="#boxplot-comparing-conditions"><span class="header-section-number">1.5.4</span> Boxplot: Comparing Conditions</a></li>
+<li><a class="nav-link" href="#scatter-plot-individual-points-with-mean-values"><span class="header-section-number">1.5.5</span> Scatter Plot: Individual Points with Mean Values</a></li>
+<li><a class="nav-link" href="#density-plot-distribution-by-condition"><span class="header-section-number">1.5.6</span> Density Plot: Distribution by Condition</a></li>
+<li><a class="nav-link" href="#summary"><span class="header-section-number">1.5.7</span> Summary</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#module-5-data-wrangling-with-tidyverse"><span class="header-section-number">1.6</span> Module 5: Data Wrangling with tidyverse</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#introduction-to-tidyverse"><span class="header-section-number">1.6.1</span> Introduction to tidyverse</a></li>
-<li><a class="nav-link" href="#the-pipe-operator"><span class="header-section-number">1.6.2</span> The Pipe Operator %&gt;%</a></li>
-<li><a class="nav-link" href="#dplyr-grammar-of-data-manipulation"><span class="header-section-number">1.6.3</span> dplyr: Grammar of Data Manipulation</a></li>
-<li><a class="nav-link" href="#your-actual-proteomics-data-structure"><span class="header-section-number">1.6.4</span> Your Actual Proteomics Data Structure</a></li>
-<li><a class="nav-link" href="#select-choose-columns"><span class="header-section-number">1.6.5</span> select(): Choose Columns</a></li>
-<li><a class="nav-link" href="#filter-choose-rows"><span class="header-section-number">1.6.6</span> filter(): Choose Rows</a></li>
-<li><a class="nav-link" href="#mutate-create-new-columns"><span class="header-section-number">1.6.7</span> mutate(): Create New Columns</a></li>
-<li><a class="nav-link" href="#arrange-sort-data"><span class="header-section-number">1.6.8</span> arrange(): Sort Data</a></li>
-<li><a class="nav-link" href="#summarize-calculate-statistics"><span class="header-section-number">1.6.9</span> summarize(): Calculate Statistics</a></li>
-<li><a class="nav-link" href="#group_by-grouped-operations"><span class="header-section-number">1.6.10</span> group_by(): Grouped Operations</a></li>
-<li><a class="nav-link" href="#combining-operations-pipeline"><span class="header-section-number">1.6.11</span> Combining Operations: Pipeline</a></li>
-<li><a class="nav-link" href="#tidyr-reshaping-data"><span class="header-section-number">1.6.12</span> tidyr: Reshaping Data</a></li>
-<li><a class="nav-link" href="#wide-vs-long-format"><span class="header-section-number">1.6.13</span> Wide vs Long Format</a></li>
-<li><a class="nav-link" href="#pivot_longer-wide-to-long"><span class="header-section-number">1.6.14</span> pivot_longer(): Wide to Long</a></li>
-<li><a class="nav-link" href="#why-long-format"><span class="header-section-number">1.6.15</span> Why Long Format?</a></li>
-<li><a class="nav-link" href="#pivot_wider-long-to-wide"><span class="header-section-number">1.6.16</span> pivot_wider(): Long to Wide</a></li>
-<li><a class="nav-link" href="#working-with-strings"><span class="header-section-number">1.6.17</span> Working with Strings</a></li>
-<li><a class="nav-link" href="#handling-missing-values"><span class="header-section-number">1.6.18</span> Handling Missing Values</a></li>
-<li><a class="nav-link" href="#hands-on-exercise"><span class="header-section-number">1.6.19</span> Hands-On Exercise</a></li>
+<a class="nav-link" href="#module-5-importing-and-exploring-data"><span class="header-section-number">1.6</span> Module 5: Importing and Exploring Data</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#reading-csv-files"><span class="header-section-number">1.6.1</span> Reading CSV Files</a></li>
+<li><a class="nav-link" href="#basic-data-exploration"><span class="header-section-number">1.6.2</span> Basic Data Exploration</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#day-1-summary"><span class="header-section-number">1.7</span> Day 1 Summary</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#homework"><span class="header-section-number">1.7.1</span> Homework</a></li></ul>
+<a class="nav-link" href="#module-6-data-wrangling-with-tidyverse"><span class="header-section-number">1.7</span> Module 6: Data Wrangling with tidyverse</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#introduction-to-tidyverse"><span class="header-section-number">1.7.1</span> Introduction to tidyverse</a></li>
+<li><a class="nav-link" href="#the-pipe-operator"><span class="header-section-number">1.7.2</span> The Pipe Operator %&gt;%</a></li>
+<li><a class="nav-link" href="#dplyr-grammar-of-data-manipulation"><span class="header-section-number">1.7.3</span> dplyr: Grammar of Data Manipulation</a></li>
+<li><a class="nav-link" href="#your-actual-proteomics-data-structure"><span class="header-section-number">1.7.4</span> Your Actual Proteomics Data Structure</a></li>
+<li><a class="nav-link" href="#select-choose-columns"><span class="header-section-number">1.7.5</span> select(): Choose Columns</a></li>
+<li><a class="nav-link" href="#filter-choose-rows"><span class="header-section-number">1.7.6</span> filter(): Choose Rows</a></li>
+<li><a class="nav-link" href="#mutate-create-new-columns"><span class="header-section-number">1.7.7</span> mutate(): Create New Columns</a></li>
+<li><a class="nav-link" href="#arrange-sort-data"><span class="header-section-number">1.7.8</span> arrange(): Sort Data</a></li>
+<li><a class="nav-link" href="#summarize-calculate-statistics"><span class="header-section-number">1.7.9</span> summarize(): Calculate Statistics</a></li>
+<li><a class="nav-link" href="#group_by-grouped-operations"><span class="header-section-number">1.7.10</span> group_by(): Grouped Operations</a></li>
+<li><a class="nav-link" href="#combining-operations-pipeline"><span class="header-section-number">1.7.11</span> Combining Operations: Pipeline</a></li>
+<li><a class="nav-link" href="#tidyr-reshaping-data"><span class="header-section-number">1.7.12</span> tidyr: Reshaping Data</a></li>
+<li><a class="nav-link" href="#wide-vs-long-format"><span class="header-section-number">1.7.13</span> Wide vs Long Format</a></li>
+<li><a class="nav-link" href="#pivot_longer-wide-to-long"><span class="header-section-number">1.7.14</span> pivot_longer(): Wide to Long</a></li>
+<li><a class="nav-link" href="#why-long-format"><span class="header-section-number">1.7.15</span> Why Long Format?</a></li>
+<li><a class="nav-link" href="#pivot_wider-long-to-wide"><span class="header-section-number">1.7.16</span> pivot_wider(): Long to Wide</a></li>
+<li><a class="nav-link" href="#working-with-strings"><span class="header-section-number">1.7.17</span> Working with Strings</a></li>
+<li><a class="nav-link" href="#handling-missing-values"><span class="header-section-number">1.7.18</span> Handling Missing Values</a></li>
+<li><a class="nav-link" href="#hands-on-exercise"><span class="header-section-number">1.7.19</span> Hands-On Exercise</a></li>
+</ul>
 </li>
-<li><a class="nav-link" href="#additional-resources"><span class="header-section-number">1.8</span> Additional Resources</a></li>
+<li>
+<a class="nav-link" href="#day-1-summary"><span class="header-section-number">1.8</span> Day 1 Summary</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#homework"><span class="header-section-number">1.8.1</span> Homework</a></li></ul>
+</li>
+<li><a class="nav-link" href="#additional-resources"><span class="header-section-number">1.9</span> Additional Resources</a></li>
 </ul>
 
       <div class="book-extra">
@@ -1630,7 +1767,7 @@ G3V8V3     `2126001_029_f5`   1851936</code></pre>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>r4proteomics</strong>: 5-Day Training Course" was written by Miguel CASANOVA, PhD &amp; Dany MUKESHA. It was last built on 2025-10-23.</p>
+    <p>"<strong>r4proteomics</strong>: 5-Day Training Course" was written by Miguel CASANOVA, PhD &amp; Dany MUKESHA. It was last built on 2025-10-24.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
