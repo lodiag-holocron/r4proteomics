@@ -44,32 +44,36 @@ RStudio has four main panes:
 
 ### Scripts vs Console
 
-The **Console** is for: - Quick calculations - Testing commands - Interactive exploration
+The **Console** is for: 
+
+- Quick calculations 
+- Testing commands 
+- Interactive exploration
 
 **Scripts** (.R or .Rmd files) are for: - Saving your work - Creating reproducible analyses - Organizing complex workflows
 
 ###  Install Required R Packages
 
-    Open an R session in the terminal or RStudio:
+Open an R session in the terminal or RStudio:
 
-    ``` r
-    # Install CRAN packages
-    install.packages(c(
-      "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
-      "reshape2", "gridExtra", "tidyverse", "lme4",
-      "ggforce", "scatterpie", "png"  # Optional
-    ))
+```r
+# Install CRAN packages
+install.packages(c(
+  "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
+  "reshape2", "gridExtra", "tidyverse", "lme4",
+  "ggforce", "scatterpie", "png"  # Optional
+))
 
-    # Install Bioconductor packages
-    if (!requireNamespace("BiocManager", quietly = TRUE))
-      install.packages("BiocManager")
+# Install Bioconductor packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
 
-    BiocManager::install(c(
-      "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4",
-      "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
-      "genefilter", "GOSemSim", "DOSE", "enrichplot"
-    ), update = TRUE, ask = FALSE)
-    ```
+BiocManager::install(c(
+  "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4",
+  "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
+  "genefilter", "GOSemSim", "DOSE", "enrichplot"
+), update = TRUE, ask = FALSE)
+```
     
 ### Basic Operators
 
@@ -263,7 +267,7 @@ summary(patient_data)
 - Data frames are easily subset by index number using the square brackets notation `[]`, or by column name using the dollar sign `$`.
 - The arguments inside the square brackets are the `[row_number, column_number]`. If any of these is omitted, R assumes that all values are to be used.
 
-```{r dataframes}
+```{r dataframes_access}
 # Access columns
 patient_data$age
 patient_data[, "name"]
@@ -438,7 +442,7 @@ print(paste("Grade:", grade))
 
 The `ifelse` function combines element-wise operations (vectorized) and filtering with a condition that is evaluated. The major advantage of the ifelse over the standard if-then-else statement is that it is vectorized. The syntax is: `ifelse (condition-to-test, value-for-true, value-for-false)`.
 
-```{r conditionals}
+```{r conditionals_ifelse}
 # Vectorized ifelse
 values <- c(1, 5, 10, 15, 20)
 categories <- ifelse(values > 10, "High", "Low")
@@ -775,7 +779,7 @@ proteins_csv_base <- read.csv("data/proteins.csv")              # comma
 proteins_tsv_base <- read.delim("data/proteins.tsv", sep = "\t")# tab
 ```
 
-```{r}
+```{r import-data_xlsx, eval=FALSE}
 # Excel (readxl does not require Java)
 library(readxl)
 
@@ -785,7 +789,7 @@ proteins_xlsx <- read_excel("data/proteins.xlsx")
 
 ### Saving data
 
-```{r}
+```{r write_file, eval=FALSE}
 # CSV / TSV
 write_csv(proteins_csv, "results/proteins_clean.csv")
 write_tsv(proteins_csv, "results/proteins_clean.tsv")
