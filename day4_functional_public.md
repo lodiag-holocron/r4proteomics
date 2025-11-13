@@ -31,35 +31,32 @@ df_long <- data.frame(
   intensity = rnorm(30)
 )
 m <- lmer(intensity ~ time + (1 + time | sample), data = df_long)
-#> boundary (singular) fit: see help('isSingular')
 summary(m)
 #> Linear mixed model fit by REML ['lmerMod']
 #> Formula: intensity ~ time + (1 + time | sample)
 #>    Data: df_long
 #> 
-#> REML criterion at convergence: 81.8
+#> REML criterion at convergence: 79.8
 #> 
 #> Scaled residuals: 
-#>      Min       1Q   Median       3Q      Max 
-#> -2.64295 -0.64895  0.00616  0.66820  2.36007 
+#>     Min      1Q  Median      3Q     Max 
+#> -1.5656 -0.6041 -0.1654  0.6690  1.4380 
 #> 
 #> Random effects:
 #>  Groups   Name        Variance Std.Dev. Corr
-#>  sample   (Intercept) 0.0000   0.0000       
-#>           time        0.0000   0.0000    NaN
-#>  Residual             0.8655   0.9303       
+#>  sample   (Intercept) 0.05525  0.2351       
+#>           time        0.20617  0.4541   0.50
+#>  Residual             0.50901  0.7134       
 #> Number of obs: 30, groups:  sample, 10
 #> 
 #> Fixed effects:
 #>             Estimate Std. Error t value
-#> (Intercept)  0.28721    0.26855   1.069
-#> time        -0.09864    0.20802  -0.474
+#> (Intercept)  0.01852    0.21896   0.085
+#> time         0.12192    0.21463   0.568
 #> 
 #> Correlation of Fixed Effects:
 #>      (Intr)
-#> time -0.775
-#> optimizer (nloptwrap) convergence code: 0 (OK)
-#> boundary (singular) fit: see help('isSingular')
+#> time -0.428
 ```
 
 ### Exercise
