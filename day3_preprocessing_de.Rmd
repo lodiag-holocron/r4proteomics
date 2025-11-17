@@ -33,72 +33,110 @@ Normalization removes systematic technical variation to:
 ### Loading Example Data
 
 ```{r load-data-day3}
-# Create example proteomic dataset with technical variation
-set.seed(123)
+# Load the data components
+protein_matrix <- read.csv("data/protein_matrix.csv", row.names = 1, 
+                           check.names = FALSE) # Proteins × Samples
+sample_metadata <- read.csv("data/sample_metadata.csv")
+protein_annotations <- read.csv("data/protein_annotations.csv")
+```
 
-n_proteins <- 500
-n_samples <- 16
+### Initial Data Exploration
 
-# Sample metadata
-sample_metadata <- data.frame(
-  sample_id = paste0("S", 1:n_samples),
-  condition = rep(c("Control", "Treatment"), each = 8),
-  batch = rep(c("Batch1", "Batch2"), times = 8),
-  replicate = rep(1:8, times = 2),
-  stringsAsFactors = FALSE
+```{r initial_data_exploration-day3}
+cat("=== DATASET STRUCTURE ===\n")
+cat("Protein matrix dimensions:", dim(protein_matrix), "\n")
+cat("Sample metadata:\n")
+print(sample_metadata)
+
+cat("\nProtein annotations (first 5):\n")
+print(head(protein_annotations, 5))
+
+cat("\nExperimental design:\n")
+design_table <- table(sample_metadata$condition, sample_metadata$batch)
+print(design_table)
+
+cat("\nData summary:\n")
+summary_stats <- data.frame(
+  Statistic = c("Total proteins", "Total samples", "Missing values", "Missing percentage"),
+  Value = c(
+    nrow(protein_matrix),
+    ncol(protein_matrix),
+    sum(is.na(protein_matrix)),
+    paste0(round(mean(is.na(protein_matrix)) * 100, 1), "%")
+  )
 )
+print(summary_stats)
 
-# Generate base protein abundances
-protein_matrix_raw <- matrix(
-  rnorm(n_proteins * n_samples, mean = 20, sd = 3),
-  nrow = n_proteins,
-  ncol = n_samples
-)
-
-rownames(protein_matrix_raw) <- paste0("P", sprintf("%05d", 1:n_proteins))
-colnames(protein_matrix_raw) <- sample_metadata$sample_id
-
-# Add biological effect (differential proteins)
-de_proteins <- 1:50
-protein_matrix_raw[de_proteins, sample_metadata$condition == "Treatment"] <- 
-  protein_matrix_raw[de_proteins, sample_metadata$condition == "Treatment"] + 
-  rnorm(50 * 8, mean = 2, sd = 0.5)
-
-# Add batch effect
-batch1_samples <- sample_metadata$batch == "Batch1"
-protein_matrix_raw[, batch1_samples] <- protein_matrix_raw[, batch1_samples] + 1.5
-
-# Add some missing values
-missing_idx <- sample(1:length(protein_matrix_raw), size = 500)
-protein_matrix_raw[missing_idx] <- NA
-
-cat("Raw data dimensions:", dim(protein_matrix_raw), "\n")
-cat("Missing values:", sum(is.na(protein_matrix_raw)), "\n")
+par(mfrow = c(1, 2))
+boxplot(protein_matrix, main = "Raw Data - Before Preprocessing", 
+        las = 2, cex.axis = 0.7, ylab = "Log2 Abundance")
+plot(density(protein_matrix[!is.na(protein_matrix)], na.rm = TRUE), 
+     main = "Distribution of Raw Values")
 ```
 
 ### Handling Missing Values
 
-```{r missing-values}
+```{r missing-values, warning=FALSE}
 # Strategy 1: Remove proteins with too many missing values
 threshold <- 0.3  # Remove if >30% missing
-missing_per_protein <- rowSums(is.na(protein_matrix_raw)) / ncol(protein_matrix_raw)
+missing_per_protein <- rowSums(is.na(protein_matrix)) / ncol(protein_matrix)
 filtered_proteins <- missing_per_protein <= threshold
 
-protein_matrix_filtered <- protein_matrix_raw[filtered_proteins, ]
+protein_matrix_filtered <- protein_matrix[filtered_proteins, ]
 
 cat("Proteins after filtering:", nrow(protein_matrix_filtered), "\n")
 
-# Strategy 2: Imputation (simple mean imputation)
-protein_matrix_imputed <- protein_matrix_filtered
-
-for (i in 1:nrow(protein_matrix_imputed)) {
-  missing_idx <- is.na(protein_matrix_imputed[i, ])
-  if (any(missing_idx)) {
-    protein_matrix_imputed[i, missing_idx] <- mean(protein_matrix_imputed[i, ], na.rm = TRUE)
+# Strategy 2: Imputation (simple mean imputation) with a function
+handle_missing_values <- function(data_matrix, missing_threshold = 0.2, 
+                                  impute_method = "min") {
+  
+  cat("Initial proteins:", nrow(data_matrix), "\n")
+  cat("Initial missing values:", sum(is.na(data_matrix)), "\n")
+  
+  # Strategy 1: Remove proteins with too many missing values
+  missing_per_protein <- rowSums(is.na(data_matrix)) / ncol(data_matrix)
+  filtered_proteins <- missing_per_protein <= missing_threshold
+  
+  data_filtered <- data_matrix[filtered_proteins, ]
+  cat("Proteins after filtering (missing <=", 
+      missing_threshold*100, "%):", nrow(data_filtered), "\n")
+  
+  # Strategy 2: Improved imputation
+  data_imputed <- data_filtered
+  
+  for (i in 1:nrow(data_imputed)) {
+    row_vals <- data_imputed[i, ]
+    
+    if (any(is.na(row_vals))) {
+      if (impute_method == "min") {
+        # Impute with minimum value per protein (common in proteomics)
+        impute_val <- min(row_vals, na.rm = TRUE) - 0.5  # Slightly below minimum
+      } else if (impute_method == "mean") {
+        # Mean imputation
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      } else if (impute_method == "knn") {
+        # Simple k-NN approximation (using row mean as proxy)
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      }
+      
+      data_imputed[i, is.na(row_vals)] <- impute_val
+    }
   }
+  
+  cat("Missing values after imputation:", sum(is.na(data_imputed)), "\n")
+  
+  return(data_imputed)
 }
 
-cat("Missing values after imputation:", sum(is.na(protein_matrix_imputed)), "\n")
+# Apply missing value handling
+protein_matrix_imputed <- handle_missing_values(protein_matrix, 
+                                                missing_threshold = 0.3, 
+                                                impute_method = "min")
+
+# Verify imputation worked
+cat("\nAfter imputation:\n")
+cat("Dimensions:", dim(protein_matrix_imputed), "\n")
+cat("Missing values:", sum(is.na(protein_matrix_imputed)), "\n")
 ```
 
 ### Normalization Methods
@@ -142,7 +180,8 @@ boxplot(protein_matrix_quantile, main = "After Quantile Normalization",
 
 #### 3. VSN (Variance Stabilizing Normalization)
 
-```{r vsn-normalization}
+```{r vsn-normalization, warning=FALSE}
+protein_matrix_imputed <- as.matrix(protein_matrix_imputed)
 # VSN normalization
 vsn_fit <- vsn::vsn2(protein_matrix_imputed)
 protein_matrix_vsn <- vsn::predict(vsn_fit, protein_matrix_imputed)
@@ -247,7 +286,7 @@ print(p_batch)
 
 ### ComBat Batch Correction
 
-```{r combat}
+```{r combat, fig.width=10, fig.height=4, message=FALSE, warning=FALSE}
 # Prepare for ComBat
 batch_vector <- sample_metadata$batch
 condition_matrix <- model.matrix(~condition, data = sample_metadata)
@@ -296,7 +335,7 @@ protein_matrix_pareto <- t(scale(t(protein_matrix_combat))) / sqrt(apply(protein
 rownames(sample_metadata) <- sample_metadata$sample_id
 
 # Visualize effect of scaling
-pheatmap(protein_matrix_combat[1:50, ],
+pheatmap(protein_matrix_combat[1:1000, ],
          scale = "row",
          main = "Heatmap with Row Scaling",
          show_rownames = FALSE,
@@ -312,7 +351,7 @@ Create a complete preprocessing function that:
 3. Applies normalization
 4. Corrects for batch effects
 
-```{r exercise-3-2-solution, class.source="fold-hide"}
+```{r exercise-3-2-solution, class.source="fold-hide", warning=FALSE}
 # Solution
 preprocess_proteomics <- function(raw_data, metadata, 
                                    missing_threshold = 0.3,
@@ -323,20 +362,33 @@ preprocess_proteomics <- function(raw_data, metadata,
   cat("Filtered to", nrow(filtered_data), "proteins\n")
   
   # Step 2: Impute
-  imputed_data <- filtered_data
-  for (i in 1:nrow(imputed_data)) {
-    missing_idx <- is.na(imputed_data[i, ])
-    if (any(missing_idx)) {
-      imputed_data[i, missing_idx] <- mean(imputed_data[i, ], na.rm = TRUE)
+  impute_method = "min"
+  data_imputed <- filtered_data
+  for (i in 1:nrow(data_imputed)) {
+    row_vals <- data_imputed[i, ]
+    
+    if (any(is.na(row_vals))) {
+      if (impute_method == "min") {
+        # Impute with minimum value per protein (common in proteomics)
+        impute_val <- min(row_vals, na.rm = TRUE) - 0.5  # Slightly below minimum
+      } else if (impute_method == "mean") {
+        # Mean imputation
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      } else if (impute_method == "knn") {
+        # Simple k-NN approximation (using row mean as proxy)
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      }
+      
+      data_imputed[i, is.na(row_vals)] <- impute_val
     }
   }
   cat("Imputed", sum(is.na(filtered_data)), "missing values\n")
   
   # Step 3: Normalize
   if (norm_method == "quantile") {
-    normalized_data <- limma::normalizeBetweenArrays(imputed_data, method = "quantile")
+    normalized_data <- limma::normalizeBetweenArrays(data_imputed, method = "quantile")
   } else if (norm_method == "median") {
-    sample_medians <- apply(imputed_data, 2, median)
+    sample_medians <- apply(data_imputed, 2, median)
     global_median <- median(sample_medians)
     normalized_data <- sweep(imputed_data, 2, sample_medians - global_median)
   }
@@ -361,7 +413,7 @@ preprocess_proteomics <- function(raw_data, metadata,
 }
 
 # Apply pipeline
-processed_data <- preprocess_proteomics(protein_matrix_raw, sample_metadata)
+processed_data <- preprocess_proteomics(protein_matrix, sample_metadata)
 ```
 
 ## Module 3: Differential Expression Analysis {#day3-mod3}
@@ -461,18 +513,90 @@ ggplot(volcano_data, aes(x = AveExpr, y = logFC, color = significance)) +
 # Select significant proteins
 sig_proteins <- rownames(results[results$adj.P.Val < 0.05, ])
 
+annotation_col <- as.data.frame(sample_metadata[, c("condition")])
+colnames(annotation_col) <- "Condition"
+rownames(annotation_col) <- sample_metadata$sample_id
+
 # Plot heatmap if there are significant proteins
 if (length(sig_proteins) > 1) {
   pheatmap(processed_data[sig_proteins, ],
            scale = "row",
            clustering_distance_rows = "correlation",
            clustering_distance_cols = "euclidean",
-           annotation_col = sample_metadata[, c("condition")],
+           annotation_col = annotation_col, 
            show_rownames = FALSE,
            show_colnames = TRUE,
-           fontsize_col = 10,
+           fontsize_col = 10, 
            main = "Heatmap of Significantly Differentially Expressed Proteins")
 } else {
   cat("Not enough significant proteins to generate a heatmap.\n")
 }
+
 ```
+
+### Save Results for Day 4
+
+```{r save-results, eval=FALSE}
+# Create results directory
+if (!dir.exists("results")) {
+    dir.create("results")
+}
+
+# Save processed data and results
+saveRDS(protein_matrix_processed, "results/day3_processed_data.rds")
+saveRDS(de_results_annotated, "results/day3_de_results.rds")
+
+# Also save a summary table
+de_summary <- de_results_annotated %>%
+    filter(adj.P.Val < 0.05) %>%
+    select(protein_id, gene_symbol, logFC, P.Value, adj.P.Val, protein_name)
+
+write.csv(de_summary, "results/day3_significant_proteins.csv", row.names = FALSE)
+
+cat("\nResults saved for Day 4:\n")
+cat("- Processed data: results/day3_processed_data.rds\n")
+cat("- DE results: results/day3_de_results.rds\n")
+cat("- Significant proteins: results/day3_significant_proteins.csv\n")
+```
+
+## Day 3 Summary
+
+Today you learned:
+
+- ✓ How to handle missing values in proteomic data
+- ✓ Different normalization methods and their effects
+- ✓ Batch effect detection and correction using ComBat
+- ✓ Differential expression analysis with limma
+- ✓ Visualization of DE results (volcano plots, MA plots, heatmaps)
+
+### Key Takeaways
+
+1. **Normalization** is crucial for making samples comparable
+2. **Batch correction** can remove technical artifacts
+3. **limma** provides robust differential expression analysis
+4. **Visualization** helps interpret complex DE results
+
+### Homework
+
+1. Try different normalization methods and compare results
+2. Experiment with different FDR and fold change thresholds
+3. Create custom visualizations for your specific research questions
+
+```{r homework-day3, eval=FALSE}
+# Prepare for Day 4
+install.packages(c("clusterProfiler", "enrichplot", "org.Hs.eg.db"))
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install(c("clusterProfiler", "enrichplot", "org.Hs.eg.db"))
+```
+
+## Additional Resources
+
+- [limma User's Guide](https://www.bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf)
+- [ComBat paper](https://academic.oup.com/biostatistics/article/8/1/118/252073)
+- [Proteomics normalization review](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4930168/)
+
+
+
