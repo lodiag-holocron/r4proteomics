@@ -47,58 +47,41 @@ Proteomics workflow:
 
 Typical structure: **Proteins × Samples**
 
+Each row corresponds to a quantified protein (or protein group), 
+and each column corresponds to a biological or technical sample. 
+Additional annotation tables typically accompany the intensity matrix 
+to describe samples (metadata) and proteins.
+
 ```{r proteomics-structure}
-# Example proteomic data structure
-set.seed(42)
+## The simulated dataset used throughout this course can be downloaded from:
+## https://github.com/lodiag-holocron/r4proteomics/data
+## After downloading, save the files in your working directory or adjust the path below.
 
-n_proteins <- 50
-n_samples <- 12
+# Load the data components
+protein_matrix <- read.csv("data/protein_matrix.csv", row.names = 1, 
+                           check.names = FALSE) # Proteins × Samples
+sample_metadata <- read.csv("data/sample_metadata.csv")
+protein_annotations <- read.csv("data/protein_annotations.csv")
 
-# Create sample metadata
-sample_metadata <- data.frame(
-  sample_id = paste0("S", 1:n_samples),
-  condition = rep(c("Control", "Treatment"), each = 6),
-  batch = rep(c("Batch1", "Batch2"), times = 6),
-  timepoint = rep(c("T0", "T1", "T2"), each = 4)
-)
-
-# Create protein matrix
-protein_ids <- paste0("P", sprintf("%05d", 1:n_proteins))
-
-# Simulate protein abundances with biological variation
-protein_matrix <- matrix(
-  rnorm(n_proteins * n_samples, mean = 20, sd = 2),
-  nrow = n_proteins,
-  ncol = n_samples,
-  dimnames = list(protein_ids, sample_metadata$sample_id)
-)
-
-# Add treatment effect for some proteins
-treatment_proteins <- 1:10
-protein_matrix[treatment_proteins, 7:12] <- 
-  protein_matrix[treatment_proteins, 7:12] + rnorm(10 * 6, mean = 2, sd = 0.5)
-
-# Add some missing values (realistic scenario)
-missing_indices <- sample(1:length(protein_matrix), size = 50)
-protein_matrix[missing_indices] <- NA
-
-# Display structure
 cat("Matrix dimensions:", dim(protein_matrix), "\n")
 cat("Number of proteins:", nrow(protein_matrix), "\n")
 cat("Number of samples:", ncol(protein_matrix), "\n")
 cat("Number of missing values:", sum(is.na(protein_matrix)), "\n")
 
-# Show first few rows and columns
 head(protein_matrix[, 1:6])
 ```
 
 ### Understanding Your Data
 
+Before performing any downstream analysis, it is essential to explore
+both the sample metadata and the distribution of protein intensities 
+across samples. This provides insights into sample composition, 
+missing value patterns, and potential sources of technical or 
+biological variation.
+
 ```{r data-overview}
-# Sample metadata
 print(sample_metadata)
 
-# Data summary
 summary_stats <- data.frame(
   Sample = colnames(protein_matrix),
   Mean = apply(protein_matrix, 2, mean, na.rm = TRUE),
@@ -107,6 +90,7 @@ summary_stats <- data.frame(
   N_Missing = apply(protein_matrix, 2, function(x) sum(is.na(x)))
 )
 
+cat("\nSummary statistics for protein intensities (per sample):\n")
 print(summary_stats)
 ```
 
@@ -136,7 +120,11 @@ cat("3. Sample with most missing:", worst_sample,
 
 ### Missing Data Analysis
 
-Missing data is common in proteomics. Understanding the pattern is crucial.
+Missing data is common in proteomics. Understanding the pattern is crucial. 
+
+Understanding how much data is missing and where it occurs is 
+an essential first step in quality control, as missingness can reflect 
+low-abundance proteins, stochastic sampling, or technical artifacts.
 
 ```{r missing-data}
 # Calculate missingness
@@ -169,6 +157,10 @@ hist(missing_per_protein,
 ```
 
 ### Detecting Outliers and Extreme Values
+
+Visual inspection of abundance distributions helps identify outlier 
+samples, intensity shifts, and potential batch effects. Boxplots and 
+density plots provide complementary views of the overall data structure.
 
 ```{r outliers}
 # Box plots for each sample
@@ -204,6 +196,12 @@ ggplot(protein_long, aes(x = abundance, color = sample_id)) +
 ### Batch Effects Detection
 
 Batch effects are systematic non-biological variations.
+They can be introduced during sample preparation, instrument runs, 
+or other technical steps. 
+
+Principal Component Analysis (PCA) is a powerful tool to detect 
+such effects by projecting high-dimensional data into lower-dimensional 
+space and highlighting clustering patterns.
 
 ```{r batch-effects}
 # PCA colored by batch
@@ -242,6 +240,14 @@ ggplot(pca_df, aes(x = PC1, y = PC2, color = condition, shape = batch)) +
 ```
 
 ### Sample Correlation Analysis
+
+Correlation analysis provides a global overview of sample similarity 
+based on protein abundance profiles.
+
+High correlation typically indicates consistent quantification 
+across samples, while lower correlations may highlight outliers, 
+batch effects, or technical artifacts. Heatmaps combined with metadata 
+annotations offer an intuitive way to inspect these relationships.
 
 ```{r correlation}
 # Calculate sample correlations
@@ -294,6 +300,12 @@ cat("Check PCA plot above for batch effect visualization\n")
 
 ### Distribution of Intensities
 
+Examining the distribution of protein abundances helps identify global
+trends, skewness, or technical artifacts in the dataset.
+
+Both histograms and violin plots provide complementary perspectives on
+the overall intensity patterns.
+
 ```{r intensity-distribution}
 # Histogram of all values
 ggplot(protein_long, aes(x = abundance)) +
@@ -314,7 +326,13 @@ ggplot(protein_long, aes(x = condition, y = abundance, fill = condition)) +
 
 ### Hierarchical Clustering
 
-```{r clustering}
+Hierarchical clustering groups samples or proteins based on similarity
+in abundance profiles.
+
+This approach helps identify natural clusters, outliers, or 
+batch-related patterns in the data.
+
+```{r clustering, warning=FALSE}
 # Remove proteins with too many missing values
 complete_proteins <- rowSums(is.na(protein_matrix)) < ncol(protein_matrix) * 0.3
 filtered_matrix <- protein_matrix[complete_proteins, ]
@@ -343,6 +361,13 @@ pheatmap(filtered_matrix,
 
 ### Sample Similarity Analysis
 
+Assessing sample similarity helps detect outliers, batch effects, 
+or unexpected clustering among samples.
+
+Euclidean distances and multidimensional scaling (MDS) provide 
+additional overview of global relationships between samples.
+
+
 ```{r similarity}
 # Calculate Euclidean distances between samples
 sample_dist <- dist(t(filtered_matrix))
@@ -353,7 +378,7 @@ pheatmap(sample_dist_matrix,
          annotation_col = annotation_col,
          annotation_row = annotation_col,
          main = "Sample-Sample Distance Matrix",
-         color = colorRampPalette(c("red", "white"))(50))
+         color = colorRampPalette(c("red", "white"))(10))
 
 # MDS plot (alternative to PCA)
 mds_result <- cmdscale(sample_dist, k = 2)
@@ -373,6 +398,12 @@ ggplot(mds_df, aes(x = MDS1, y = MDS2, color = condition, shape = batch)) +
 ```
 
 ### Coefficient of Variation Analysis
+
+The coefficient of variation (CV) quantifies relative variability 
+in protein abundances across samples.
+
+High CV values may indicate technical variability or highly dynamic
+proteins, while low CV suggests stable proteins.
 
 ```{r cv-analysis}
 # Calculate CV for each protein
@@ -444,7 +475,7 @@ ggplot(top10_data, aes(x = sample_id, y = abundance, color = condition, group = 
   labs(title = "Top 10 Most Variable Proteins", x = "Sample", y = "Abundance")
 
 # 3. Clustering by condition
-cat("\n3. Checking sample clustering by condition:\n")
+cat("Checking sample clustering by condition:\n")
 cat("Review the PCA and hierarchical clustering plots above.\n")
 cat("Samples should cluster primarily by condition if biological signal is strong.\n")
 ```
