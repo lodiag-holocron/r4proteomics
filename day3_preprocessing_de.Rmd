@@ -355,7 +355,8 @@ Create a complete preprocessing function that:
 # Solution
 preprocess_proteomics <- function(raw_data, metadata, 
                                    missing_threshold = 0.3,
-                                   norm_method = "quantile") {
+                                   norm_method = "quantile",
+                                  batch_correction = TRUE) {
   # Step 1: Filter
   missing_per_protein <- rowSums(is.na(raw_data)) / ncol(raw_data)
   filtered_data <- raw_data[missing_per_protein <= missing_threshold, ]
@@ -395,7 +396,7 @@ preprocess_proteomics <- function(raw_data, metadata,
   cat("Applied", norm_method, "normalization\n")
   
   # Step 4: Batch correction
-  if ("batch" %in% colnames(metadata)) {
+  if (batch_correction && "batch" %in% colnames(metadata)) {
     condition_matrix <- model.matrix(~condition, data = metadata)
     corrected_data <- sva::ComBat(
       dat = normalized_data,
@@ -450,28 +451,31 @@ fit2 <- contrasts.fit(fit, contrast_matrix)
 fit2 <- eBayes(fit2)
 
 # Extract results
-results <- topTable(fit2, coef = "TreatmentVsControl", number = Inf)
+de_results <- topTable(fit2, coef = "TreatmentVsControl", number = Inf)
 
-# Add protein IDs
-results$protein_id <- rownames(results)
+# Add protein IDs and annotations
+de_results$protein_id <- rownames(de_results)
+de_results_annotated <- de_results %>%
+  left_join(protein_annotations, by = "protein_id")
 
 # View top results
-head(results, 10)
+cat("\nTop 10 differentially expressed proteins:\n")
+print(de_results_annotated[1:10, c("protein_id", "gene_symbol", "logFC", "P.Value", "adj.P.Val")])
 
 # Summary
 cat("\nDifferential Expression Summary:\n")
-cat("Significant proteins (FDR < 0.05):", sum(results$adj.P.Val < 0.05), "\n")
+cat("Significant proteins (FDR < 0.05):", sum(de_results$adj.P.Val < 0.05), "\n")
 cat("Upregulated (FC > 1.5, FDR < 0.05):", 
-    sum(results$adj.P.Val < 0.05 & results$logFC > log2(1.5)), "\n")
+    sum(de_results$adj.P.Val < 0.05 & de_results$logFC > log2(1.5)), "\n")
 cat("Downregulated (FC < -1.5, FDR < 0.05):", 
-    sum(results$adj.P.Val < 0.05 & results$logFC < -log2(1.5)), "\n")
+    sum(de_results$adj.P.Val < 0.05 & de_results$logFC < -log2(1.5)), "\n")
 ```
 
 ### Volcano Plot
 
 ```{r volcano}
 # Prepare data for volcano plot
-volcano_data <- results
+volcano_data <- de_results
 volcano_data$significance <- "NS"
 volcano_data$significance[volcano_data$adj.P.Val < 0.05 & volcano_data$logFC > log2(1.5)] <- "Up"
 volcano_data$significance[volcano_data$adj.P.Val < 0.05 & volcano_data$logFC < -log2(1.5)] <- "Down"
@@ -493,7 +497,7 @@ ggplot(volcano_data, aes(x = logFC, y = -log10(adj.P.Val), color = significance)
 
 ```{r ma-plot}
 # MA plot
-volcano_data$AveExpr <- results$AveExpr
+volcano_data$AveExpr <- de_results$AveExpr
 
 ggplot(volcano_data, aes(x = AveExpr, y = logFC, color = significance)) +
   geom_point(alpha = 0.6, size = 2) +
@@ -511,7 +515,7 @@ ggplot(volcano_data, aes(x = AveExpr, y = logFC, color = significance)) +
 
 ```{r heatmap-de}
 # Select significant proteins
-sig_proteins <- rownames(results[results$adj.P.Val < 0.05, ])
+sig_proteins <- rownames(de_results[de_results$adj.P.Val < 0.05, ])
 
 annotation_col <- as.data.frame(sample_metadata[, c("condition")])
 colnames(annotation_col) <- "Condition"
@@ -536,20 +540,20 @@ if (length(sig_proteins) > 1) {
 
 ### Save Results for Day 4
 
-```{r save-results, eval=FALSE}
+```{r save-results}
 # Create results directory
 if (!dir.exists("results")) {
     dir.create("results")
 }
 
 # Save processed data and results
-saveRDS(protein_matrix_processed, "results/day3_processed_data.rds")
+saveRDS(processed_data, "results/day3_processed_data.rds")
 saveRDS(de_results_annotated, "results/day3_de_results.rds")
 
 # Also save a summary table
 de_summary <- de_results_annotated %>%
     filter(adj.P.Val < 0.05) %>%
-    select(protein_id, gene_symbol, logFC, P.Value, adj.P.Val, protein_name)
+    dplyr::select(protein_id, gene_symbol, logFC, P.Value, adj.P.Val, protein_name)
 
 write.csv(de_summary, "results/day3_significant_proteins.csv", row.names = FALSE)
 
