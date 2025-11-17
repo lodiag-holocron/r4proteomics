@@ -132,23 +132,23 @@ to describe samples (metadata) and proteins.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Number of samples:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Number of samples: 24</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Number of missing values:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of missing values: 6129</span></span>
+<span><span class="co">#&gt; Number of missing values: 6172</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             S01      S02      S03      S04      S05</span></span>
-<span><span class="co">#&gt; P00001 19.35480 18.96313 19.06881 18.40190 19.07950</span></span>
-<span><span class="co">#&gt; P00002       NA 20.12900 19.50040 20.46297 19.27021</span></span>
-<span><span class="co">#&gt; P00003 20.52426 20.73074 20.38798       NA 20.87123</span></span>
-<span><span class="co">#&gt; P00004 19.22324 20.08649 19.42952 20.19402 19.65949</span></span>
-<span><span class="co">#&gt; P00005 19.07521 18.09634 19.13851 19.48897 19.53155</span></span>
-<span><span class="co">#&gt; P00006 19.35648 18.63925 18.56821 18.90192 19.05903</span></span>
+<span><span class="co">#&gt; P00001       NA       NA 20.54926 20.15388 19.46331</span></span>
+<span><span class="co">#&gt; P00002 18.04034 19.32129 19.01423 19.03961 19.71593</span></span>
+<span><span class="co">#&gt; P00003       NA 19.64438 19.94354 19.22024 19.82211</span></span>
+<span><span class="co">#&gt; P00004 20.11957 20.21188 19.73237 19.60153 20.27386</span></span>
+<span><span class="co">#&gt; P00005 19.20290 18.26272 18.99547 18.49812 19.08661</span></span>
+<span><span class="co">#&gt; P00006 20.05169 20.22521 20.07375 19.96105 19.62537</span></span>
 <span><span class="co">#&gt;             S06</span></span>
-<span><span class="co">#&gt; P00001 18.86255</span></span>
-<span><span class="co">#&gt; P00002 20.42601</span></span>
-<span><span class="co">#&gt; P00003 20.43996</span></span>
-<span><span class="co">#&gt; P00004 20.42104</span></span>
-<span><span class="co">#&gt; P00005 19.26485</span></span>
-<span><span class="co">#&gt; P00006 17.85950</span></span></code></pre></div>
+<span><span class="co">#&gt; P00001 20.01467</span></span>
+<span><span class="co">#&gt; P00002 19.80441</span></span>
+<span><span class="co">#&gt; P00003 19.73753</span></span>
+<span><span class="co">#&gt; P00004 20.41470</span></span>
+<span><span class="co">#&gt; P00005 19.41153</span></span>
+<span><span class="co">#&gt; P00006       NA</span></span></code></pre></div>
 </div>
 <div id="understanding-your-data" class="section level3" number="2.2.3">
 <h3>
@@ -200,30 +200,30 @@ biological variation.</p>
 <span><span class="co">#&gt; Summary statistics for protein intensities (per sample):</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">summary_stats</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Sample     Mean   Median        SD N_Missing</span></span>
-<span><span class="co">#&gt; S01    S01 19.44315 19.50776 0.6422235       246</span></span>
-<span><span class="co">#&gt; S02    S02 19.45776 19.54125 0.6763063       279</span></span>
-<span><span class="co">#&gt; S03    S03 19.46639 19.52765 0.6669170       248</span></span>
-<span><span class="co">#&gt; S04    S04 19.44903 19.53626 0.6724402       264</span></span>
-<span><span class="co">#&gt; S05    S05 19.58690 19.65949 0.6711332       247</span></span>
-<span><span class="co">#&gt; S06    S06 19.59335 19.68316 0.6730298       269</span></span>
-<span><span class="co">#&gt; S07    S07 19.58116 19.66875 0.6726562       245</span></span>
-<span><span class="co">#&gt; S08    S08 19.60911 19.69826 0.6710727       239</span></span>
-<span><span class="co">#&gt; S09    S09 20.04367 20.14614 0.6764492       239</span></span>
-<span><span class="co">#&gt; S10    S10 20.02065 20.08802 0.6780620       243</span></span>
-<span><span class="co">#&gt; S11    S11 20.06717 20.13104 0.6586759       253</span></span>
-<span><span class="co">#&gt; S12    S12 20.05050 20.15002 0.6916134       262</span></span>
-<span><span class="co">#&gt; S13    S13 19.92555 19.96241 0.8610616       252</span></span>
-<span><span class="co">#&gt; S14    S14 19.92434 19.95156 0.8699636       259</span></span>
-<span><span class="co">#&gt; S15    S15 19.92678 19.94447 0.8564935       261</span></span>
-<span><span class="co">#&gt; S16    S16 19.92355 19.93563 0.8547909       261</span></span>
-<span><span class="co">#&gt; S17    S17 20.43031 20.43232 0.8736235       271</span></span>
-<span><span class="co">#&gt; S18    S18 20.43452 20.47541 0.8512421       270</span></span>
-<span><span class="co">#&gt; S19    S19 20.43624 20.47908 0.8566041       249</span></span>
-<span><span class="co">#&gt; S20    S20 20.44267 20.46627 0.8982385       245</span></span>
-<span><span class="co">#&gt; S21    S21 20.56463 20.59117 0.8634333       273</span></span>
-<span><span class="co">#&gt; S22    S22 20.56406 20.58383 0.8675018       250</span></span>
-<span><span class="co">#&gt; S23    S23 20.54699 20.55144 0.8678363       251</span></span>
-<span><span class="co">#&gt; S24    S24 20.55525 20.56910 0.8498352       253</span></span></code></pre></div>
+<span><span class="co">#&gt; S01    S01 19.45024 19.52458 0.6910156       245</span></span>
+<span><span class="co">#&gt; S02    S02 19.42210 19.51806 0.7004309       280</span></span>
+<span><span class="co">#&gt; S03    S03 19.44595 19.52871 0.6826176       267</span></span>
+<span><span class="co">#&gt; S04    S04 19.44953 19.54374 0.7031984       254</span></span>
+<span><span class="co">#&gt; S05    S05 19.58108 19.66061 0.6943372       249</span></span>
+<span><span class="co">#&gt; S06    S06 19.56474 19.66204 0.7007699       272</span></span>
+<span><span class="co">#&gt; S07    S07 19.59101 19.69424 0.7096669       240</span></span>
+<span><span class="co">#&gt; S08    S08 19.58221 19.65921 0.7000334       247</span></span>
+<span><span class="co">#&gt; S09    S09 20.04697 20.13751 0.7050850       240</span></span>
+<span><span class="co">#&gt; S10    S10 20.01929 20.10603 0.6917965       249</span></span>
+<span><span class="co">#&gt; S11    S11 20.02985 20.09687 0.6903848       267</span></span>
+<span><span class="co">#&gt; S12    S12 20.05337 20.16478 0.7215431       287</span></span>
+<span><span class="co">#&gt; S13    S13 19.91305 19.94668 0.8739921       248</span></span>
+<span><span class="co">#&gt; S14    S14 19.91966 19.94157 0.8753145       256</span></span>
+<span><span class="co">#&gt; S15    S15 19.91708 19.94009 0.8788483       277</span></span>
+<span><span class="co">#&gt; S16    S16 19.91192 19.93032 0.8695756       252</span></span>
+<span><span class="co">#&gt; S17    S17 20.41227 20.44692 0.8541579       259</span></span>
+<span><span class="co">#&gt; S18    S18 20.43735 20.45007 0.8693867       271</span></span>
+<span><span class="co">#&gt; S19    S19 20.44325 20.46966 0.8569583       249</span></span>
+<span><span class="co">#&gt; S20    S20 20.40676 20.43308 0.9190726       250</span></span>
+<span><span class="co">#&gt; S21    S21 20.55711 20.57703 0.8879665       262</span></span>
+<span><span class="co">#&gt; S22    S22 20.56632 20.58368 0.8840108       243</span></span>
+<span><span class="co">#&gt; S23    S23 20.53248 20.55557 0.8816572       264</span></span>
+<span><span class="co">#&gt; S24    S24 20.55187 20.57214 0.8763290       244</span></span></code></pre></div>
 </div>
 <div id="exercise-2.1-explore-your-data" class="section level3" number="2.2.4">
 <h3>
@@ -243,13 +243,13 @@ biological variation.</p>
 <span><span class="va">missing_per_protein</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"2. Average missing per protein:"</span>, </span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">missing_per_protein</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 2. Average missing per protein: 4.09</span></span>
+<span><span class="co">#&gt; 2. Average missing per protein: 4.11</span></span>
 <span></span>
 <span><span class="va">missing_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">worst_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">missing_per_sample</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"3. Sample with most missing:"</span>, <span class="va">worst_sample</span>, </span>
 <span>    <span class="st">"with"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">missing_per_sample</span><span class="op">)</span>, <span class="st">"missing values\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 3. Sample with most missing: S02 with 279 missing values</span></span></code></pre></div>
+<span><span class="co">#&gt; 3. Sample with most missing: S12 with 287 missing values</span></span></code></pre></div>
 </div>
 </div>
 <div id="day2-mod2" class="section level2" number="2.3">
@@ -426,7 +426,7 @@ annotations offer an intuitive way to inspect these relationships.</p>
 <span><span class="va">high_missing</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">missing_pct</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Proteins with &gt;50% missing:"</span>, <span class="va">high_missing</span>, </span>
 <span>    <span class="st">"("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">high_missing</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Proteins with &gt;50% missing: 76 ( 5.1 %)</span></span>
+<span><span class="co">#&gt; Proteins with &gt;50% missing: 75 ( 5 %)</span></span>
 <span></span>
 <span><span class="co"># 2. Outlier samples based on median</span></span>
 <span><span class="va">sample_medians</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="va">median</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -594,8 +594,8 @@ proteins, while low CV suggests stable proteins.</p>
 <span><span class="co">#&gt; # A tibble: 2 × 4</span></span>
 <span><span class="co">#&gt;   condition mean_cv median_cv sd_cv</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Control      2.36      2.29 0.637</span></span>
-<span><span class="co">#&gt; 2 Treatment    2.33      2.27 0.622</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 Control      2.37      2.30 0.685</span></span>
+<span><span class="co">#&gt; 2 Treatment    2.33      2.25 0.633</span></span></code></pre></div>
 </div>
 <div id="exercise-2.3-complete-eda" class="section level3" number="2.4.5">
 <h3>
@@ -617,7 +617,7 @@ proteins, while low CV suggests stable proteins.</p>
 <span><span class="co">#&gt; Dataset dimensions: 1500 proteins x 24 samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Total missing values:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>    <span class="st">"("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Total missing values: 6129 ( 17 %)</span></span>
+<span><span class="co">#&gt; Total missing values: 6172 ( 17.1 %)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Samples:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">$</span><span class="va">sample_id</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Samples: S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Conditions:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
@@ -631,8 +631,8 @@ proteins, while low CV suggests stable proteins.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Top 10 most variable proteins:\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Top 10 most variable proteins:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">top10_variable</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "P01454" "P00319" "P01120" "P00494" "P00737" "P01465"</span></span>
-<span><span class="co">#&gt;  [7] "P00951" "P00367" "P00990" "P00948"</span></span>
+<span><span class="co">#&gt;  [1] "P00460" "P00168" "P00438" "P00285" "P00236" "P00372"</span></span>
+<span><span class="co">#&gt;  [7] "P00125" "P00960" "P00513" "P00856"</span></span>
 <span></span>
 <span><span class="co"># Plot top variable proteins</span></span>
 <span><span class="va">top10_data</span> <span class="op">&lt;-</span> <span class="va">protein_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -701,68 +701,68 @@ proteins, while low CV suggests stable proteins.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Total Samples:"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">n_samples</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Total Samples: 24</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Missing Data:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">qc_report</span><span class="op">$</span><span class="va">missing_pct</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"%\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Missing Data: 17.03 %</span></span>
+<span><span class="co">#&gt; Missing Data: 17.14 %</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Protein Completeness:\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Protein Completeness:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"  Complete (no missing):"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">protein_stats</span><span class="op">$</span><span class="va">N_Complete</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Complete (no missing): 125</span></span>
+<span><span class="co">#&gt;   Complete (no missing): 120</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"  Partial missing:"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">protein_stats</span><span class="op">$</span><span class="va">N_Partial</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Partial missing: 1299</span></span>
+<span><span class="co">#&gt;   Partial missing: 1305</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"  Mostly missing (&gt;50%):"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">protein_stats</span><span class="op">$</span><span class="va">N_Mostly_Missing</span>, <span class="st">"\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Mostly missing (&gt;50%): 76</span></span>
+<span><span class="co">#&gt;   Mostly missing (&gt;50%): 75</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">qc_report</span><span class="op">$</span><span class="va">sample_stats</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Sample N_Quantified Median_Abundance Mean_Abundance</span></span>
-<span><span class="co">#&gt; S01    S01         1254         19.50776       19.44315</span></span>
-<span><span class="co">#&gt; S02    S02         1221         19.54125       19.45776</span></span>
-<span><span class="co">#&gt; S03    S03         1252         19.52765       19.46639</span></span>
-<span><span class="co">#&gt; S04    S04         1236         19.53626       19.44903</span></span>
-<span><span class="co">#&gt; S05    S05         1253         19.65949       19.58690</span></span>
-<span><span class="co">#&gt; S06    S06         1231         19.68316       19.59335</span></span>
-<span><span class="co">#&gt; S07    S07         1255         19.66875       19.58116</span></span>
-<span><span class="co">#&gt; S08    S08         1261         19.69826       19.60911</span></span>
-<span><span class="co">#&gt; S09    S09         1261         20.14614       20.04367</span></span>
-<span><span class="co">#&gt; S10    S10         1257         20.08802       20.02065</span></span>
-<span><span class="co">#&gt; S11    S11         1247         20.13104       20.06717</span></span>
-<span><span class="co">#&gt; S12    S12         1238         20.15002       20.05050</span></span>
-<span><span class="co">#&gt; S13    S13         1248         19.96241       19.92555</span></span>
-<span><span class="co">#&gt; S14    S14         1241         19.95156       19.92434</span></span>
-<span><span class="co">#&gt; S15    S15         1239         19.94447       19.92678</span></span>
-<span><span class="co">#&gt; S16    S16         1239         19.93563       19.92355</span></span>
-<span><span class="co">#&gt; S17    S17         1229         20.43232       20.43031</span></span>
-<span><span class="co">#&gt; S18    S18         1230         20.47541       20.43452</span></span>
-<span><span class="co">#&gt; S19    S19         1251         20.47908       20.43624</span></span>
-<span><span class="co">#&gt; S20    S20         1255         20.46627       20.44267</span></span>
-<span><span class="co">#&gt; S21    S21         1227         20.59117       20.56463</span></span>
-<span><span class="co">#&gt; S22    S22         1250         20.58383       20.56406</span></span>
-<span><span class="co">#&gt; S23    S23         1249         20.55144       20.54699</span></span>
-<span><span class="co">#&gt; S24    S24         1247         20.56910       20.55525</span></span>
+<span><span class="co">#&gt; S01    S01         1255         19.52458       19.45024</span></span>
+<span><span class="co">#&gt; S02    S02         1220         19.51806       19.42210</span></span>
+<span><span class="co">#&gt; S03    S03         1233         19.52871       19.44595</span></span>
+<span><span class="co">#&gt; S04    S04         1246         19.54374       19.44953</span></span>
+<span><span class="co">#&gt; S05    S05         1251         19.66061       19.58108</span></span>
+<span><span class="co">#&gt; S06    S06         1228         19.66204       19.56474</span></span>
+<span><span class="co">#&gt; S07    S07         1260         19.69424       19.59101</span></span>
+<span><span class="co">#&gt; S08    S08         1253         19.65921       19.58221</span></span>
+<span><span class="co">#&gt; S09    S09         1260         20.13751       20.04697</span></span>
+<span><span class="co">#&gt; S10    S10         1251         20.10603       20.01929</span></span>
+<span><span class="co">#&gt; S11    S11         1233         20.09687       20.02985</span></span>
+<span><span class="co">#&gt; S12    S12         1213         20.16478       20.05337</span></span>
+<span><span class="co">#&gt; S13    S13         1252         19.94668       19.91305</span></span>
+<span><span class="co">#&gt; S14    S14         1244         19.94157       19.91966</span></span>
+<span><span class="co">#&gt; S15    S15         1223         19.94009       19.91708</span></span>
+<span><span class="co">#&gt; S16    S16         1248         19.93032       19.91192</span></span>
+<span><span class="co">#&gt; S17    S17         1241         20.44692       20.41227</span></span>
+<span><span class="co">#&gt; S18    S18         1229         20.45007       20.43735</span></span>
+<span><span class="co">#&gt; S19    S19         1251         20.46966       20.44325</span></span>
+<span><span class="co">#&gt; S20    S20         1250         20.43308       20.40676</span></span>
+<span><span class="co">#&gt; S21    S21         1238         20.57703       20.55711</span></span>
+<span><span class="co">#&gt; S22    S22         1257         20.58368       20.56632</span></span>
+<span><span class="co">#&gt; S23    S23         1236         20.55557       20.53248</span></span>
+<span><span class="co">#&gt; S24    S24         1256         20.57214       20.55187</span></span>
 <span><span class="co">#&gt;     SD_Abundance</span></span>
-<span><span class="co">#&gt; S01    0.6422235</span></span>
-<span><span class="co">#&gt; S02    0.6763063</span></span>
-<span><span class="co">#&gt; S03    0.6669170</span></span>
-<span><span class="co">#&gt; S04    0.6724402</span></span>
-<span><span class="co">#&gt; S05    0.6711332</span></span>
-<span><span class="co">#&gt; S06    0.6730298</span></span>
-<span><span class="co">#&gt; S07    0.6726562</span></span>
-<span><span class="co">#&gt; S08    0.6710727</span></span>
-<span><span class="co">#&gt; S09    0.6764492</span></span>
-<span><span class="co">#&gt; S10    0.6780620</span></span>
-<span><span class="co">#&gt; S11    0.6586759</span></span>
-<span><span class="co">#&gt; S12    0.6916134</span></span>
-<span><span class="co">#&gt; S13    0.8610616</span></span>
-<span><span class="co">#&gt; S14    0.8699636</span></span>
-<span><span class="co">#&gt; S15    0.8564935</span></span>
-<span><span class="co">#&gt; S16    0.8547909</span></span>
-<span><span class="co">#&gt; S17    0.8736235</span></span>
-<span><span class="co">#&gt; S18    0.8512421</span></span>
-<span><span class="co">#&gt; S19    0.8566041</span></span>
-<span><span class="co">#&gt; S20    0.8982385</span></span>
-<span><span class="co">#&gt; S21    0.8634333</span></span>
-<span><span class="co">#&gt; S22    0.8675018</span></span>
-<span><span class="co">#&gt; S23    0.8678363</span></span>
-<span><span class="co">#&gt; S24    0.8498352</span></span></code></pre></div>
+<span><span class="co">#&gt; S01    0.6910156</span></span>
+<span><span class="co">#&gt; S02    0.7004309</span></span>
+<span><span class="co">#&gt; S03    0.6826176</span></span>
+<span><span class="co">#&gt; S04    0.7031984</span></span>
+<span><span class="co">#&gt; S05    0.6943372</span></span>
+<span><span class="co">#&gt; S06    0.7007699</span></span>
+<span><span class="co">#&gt; S07    0.7096669</span></span>
+<span><span class="co">#&gt; S08    0.7000334</span></span>
+<span><span class="co">#&gt; S09    0.7050850</span></span>
+<span><span class="co">#&gt; S10    0.6917965</span></span>
+<span><span class="co">#&gt; S11    0.6903848</span></span>
+<span><span class="co">#&gt; S12    0.7215431</span></span>
+<span><span class="co">#&gt; S13    0.8739921</span></span>
+<span><span class="co">#&gt; S14    0.8753145</span></span>
+<span><span class="co">#&gt; S15    0.8788483</span></span>
+<span><span class="co">#&gt; S16    0.8695756</span></span>
+<span><span class="co">#&gt; S17    0.8541579</span></span>
+<span><span class="co">#&gt; S18    0.8693867</span></span>
+<span><span class="co">#&gt; S19    0.8569583</span></span>
+<span><span class="co">#&gt; S20    0.9190726</span></span>
+<span><span class="co">#&gt; S21    0.8879665</span></span>
+<span><span class="co">#&gt; S22    0.8840108</span></span>
+<span><span class="co">#&gt; S23    0.8816572</span></span>
+<span><span class="co">#&gt; S24    0.8763290</span></span></code></pre></div>
 </div>
 <div id="day-2-summary" class="section level2" number="2.6">
 <h2>

@@ -93,6 +93,7 @@ learning-objectives-2
 day3-mod1
 why-normalize
 loading-example-data
+initial-data-exploration
 handling-missing-values-1
 normalization-methods
 median-normalization
@@ -111,6 +112,11 @@ basic-differential-expression
 volcano-plot
 ma-plot
 heatmap-of-de-proteins
+save-results-for-day-4
+day-3-summary
+key-takeaways-1
+homework-2
+additional-resources-2
 day4
 objectives
 module-1-functional-enrichment-gsea

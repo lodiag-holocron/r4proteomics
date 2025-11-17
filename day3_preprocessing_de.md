@@ -26,50 +26,104 @@ Normalization removes systematic technical variation to:
 
 
 ``` r
-# Create example proteomic dataset with technical variation
-set.seed(123)
-
-n_proteins <- 500
-n_samples <- 16
-
-# Sample metadata
-sample_metadata <- data.frame(
-  sample_id = paste0("S", 1:n_samples),
-  condition = rep(c("Control", "Treatment"), each = 8),
-  batch = rep(c("Batch1", "Batch2"), times = 8),
-  replicate = rep(1:8, times = 2),
-  stringsAsFactors = FALSE
-)
-
-# Generate base protein abundances
-protein_matrix_raw <- matrix(
-  rnorm(n_proteins * n_samples, mean = 20, sd = 3),
-  nrow = n_proteins,
-  ncol = n_samples
-)
-
-rownames(protein_matrix_raw) <- paste0("P", sprintf("%05d", 1:n_proteins))
-colnames(protein_matrix_raw) <- sample_metadata$sample_id
-
-# Add biological effect (differential proteins)
-de_proteins <- 1:50
-protein_matrix_raw[de_proteins, sample_metadata$condition == "Treatment"] <- 
-  protein_matrix_raw[de_proteins, sample_metadata$condition == "Treatment"] + 
-  rnorm(50 * 8, mean = 2, sd = 0.5)
-
-# Add batch effect
-batch1_samples <- sample_metadata$batch == "Batch1"
-protein_matrix_raw[, batch1_samples] <- protein_matrix_raw[, batch1_samples] + 1.5
-
-# Add some missing values
-missing_idx <- sample(1:length(protein_matrix_raw), size = 500)
-protein_matrix_raw[missing_idx] <- NA
-
-cat("Raw data dimensions:", dim(protein_matrix_raw), "\n")
-#> Raw data dimensions: 500 16
-cat("Missing values:", sum(is.na(protein_matrix_raw)), "\n")
-#> Missing values: 500
+# Load the data components
+protein_matrix <- read.csv("data/protein_matrix.csv", row.names = 1, 
+                           check.names = FALSE) # Proteins × Samples
+sample_metadata <- read.csv("data/sample_metadata.csv")
+protein_annotations <- read.csv("data/protein_annotations.csv")
 ```
+
+### Initial Data Exploration
+
+
+``` r
+cat("=== DATASET STRUCTURE ===\n")
+#> === DATASET STRUCTURE ===
+cat("Protein matrix dimensions:", dim(protein_matrix), "\n")
+#> Protein matrix dimensions: 1500 24
+cat("Sample metadata:\n")
+#> Sample metadata:
+print(sample_metadata)
+#>    sample_id condition  batch timepoint patient_id sex age
+#> 1        S01   Control Batch1     Week0          1   M  46
+#> 2        S02   Control Batch1     Week0          2   M  43
+#> 3        S03   Control Batch1     Week0          3   M  64
+#> 4        S04   Control Batch1     Week0          4   M  44
+#> 5        S05   Control Batch1     Week4          5   F  53
+#> 6        S06   Control Batch1     Week4          6   F  59
+#> 7        S07   Control Batch1     Week4          7   F  65
+#> 8        S08   Control Batch1     Week4          8   F  57
+#> 9        S09   Control Batch2     Week8          9   M  54
+#> 10       S10   Control Batch2     Week8         10   F  42
+#> 11       S11   Control Batch2     Week8         11   M  48
+#> 12       S12   Control Batch2     Week8         12   F  64
+#> 13       S13 Treatment Batch2     Week0          1   M  46
+#> 14       S14 Treatment Batch2     Week0          2   M  43
+#> 15       S15 Treatment Batch2     Week0          3   M  64
+#> 16       S16 Treatment Batch2     Week0          4   M  44
+#> 17       S17 Treatment Batch3     Week4          5   F  53
+#> 18       S18 Treatment Batch3     Week4          6   F  59
+#> 19       S19 Treatment Batch3     Week4          7   F  65
+#> 20       S20 Treatment Batch3     Week4          8   F  57
+#> 21       S21 Treatment Batch3     Week8          9   M  54
+#> 22       S22 Treatment Batch3     Week8         10   F  42
+#> 23       S23 Treatment Batch3     Week8         11   M  48
+#> 24       S24 Treatment Batch3     Week8         12   F  64
+
+cat("\nProtein annotations (first 5):\n")
+#> 
+#> Protein annotations (first 5):
+print(head(protein_annotations, 5))
+#>   protein_id gene_symbol protein_name molecular_weight
+#> 1     P00001      CTNNB1 Protein_1953           120953
+#> 2     P00002        AKT1 Protein_1945           205283
+#> 3     P00003      PIK3CA Protein_2735            18375
+#> 4     P00004         RET Protein_4380            65719
+#> 5     P00005      PIK3CA Protein_4658           222652
+#>   peptide_count confidence_score
+#> 1            22             50.3
+#> 2            11             77.6
+#> 3             3             66.8
+#> 4            12             59.7
+#> 5             2             93.1
+
+cat("\nExperimental design:\n")
+#> 
+#> Experimental design:
+design_table <- table(sample_metadata$condition, sample_metadata$batch)
+print(design_table)
+#>            
+#>             Batch1 Batch2 Batch3
+#>   Control        8      4      0
+#>   Treatment      0      4      8
+
+cat("\nData summary:\n")
+#> 
+#> Data summary:
+summary_stats <- data.frame(
+  Statistic = c("Total proteins", "Total samples", "Missing values", "Missing percentage"),
+  Value = c(
+    nrow(protein_matrix),
+    ncol(protein_matrix),
+    sum(is.na(protein_matrix)),
+    paste0(round(mean(is.na(protein_matrix)) * 100, 1), "%")
+  )
+)
+print(summary_stats)
+#>            Statistic Value
+#> 1     Total proteins  1500
+#> 2      Total samples    24
+#> 3     Missing values  6172
+#> 4 Missing percentage 17.1%
+
+par(mfrow = c(1, 2))
+boxplot(protein_matrix, main = "Raw Data - Before Preprocessing", 
+        las = 2, cex.axis = 0.7, ylab = "Log2 Abundance")
+plot(density(protein_matrix[!is.na(protein_matrix)], na.rm = TRUE), 
+     main = "Distribution of Raw Values")
+```
+
+<img src="day3_preprocessing_de_files/figure-html/initial_data_exploration-day3-1.png" width="672" />
 
 ### Handling Missing Values
 
@@ -77,26 +131,73 @@ cat("Missing values:", sum(is.na(protein_matrix_raw)), "\n")
 ``` r
 # Strategy 1: Remove proteins with too many missing values
 threshold <- 0.3  # Remove if >30% missing
-missing_per_protein <- rowSums(is.na(protein_matrix_raw)) / ncol(protein_matrix_raw)
+missing_per_protein <- rowSums(is.na(protein_matrix)) / ncol(protein_matrix)
 filtered_proteins <- missing_per_protein <= threshold
 
-protein_matrix_filtered <- protein_matrix_raw[filtered_proteins, ]
+protein_matrix_filtered <- protein_matrix[filtered_proteins, ]
 
 cat("Proteins after filtering:", nrow(protein_matrix_filtered), "\n")
-#> Proteins after filtering: 499
+#> Proteins after filtering: 1383
 
-# Strategy 2: Imputation (simple mean imputation)
-protein_matrix_imputed <- protein_matrix_filtered
-
-for (i in 1:nrow(protein_matrix_imputed)) {
-  missing_idx <- is.na(protein_matrix_imputed[i, ])
-  if (any(missing_idx)) {
-    protein_matrix_imputed[i, missing_idx] <- mean(protein_matrix_imputed[i, ], na.rm = TRUE)
+# Strategy 2: Imputation (simple mean imputation) with a function
+handle_missing_values <- function(data_matrix, missing_threshold = 0.2, 
+                                  impute_method = "min") {
+  
+  cat("Initial proteins:", nrow(data_matrix), "\n")
+  cat("Initial missing values:", sum(is.na(data_matrix)), "\n")
+  
+  # Strategy 1: Remove proteins with too many missing values
+  missing_per_protein <- rowSums(is.na(data_matrix)) / ncol(data_matrix)
+  filtered_proteins <- missing_per_protein <= missing_threshold
+  
+  data_filtered <- data_matrix[filtered_proteins, ]
+  cat("Proteins after filtering (missing <=", 
+      missing_threshold*100, "%):", nrow(data_filtered), "\n")
+  
+  # Strategy 2: Improved imputation
+  data_imputed <- data_filtered
+  
+  for (i in 1:nrow(data_imputed)) {
+    row_vals <- data_imputed[i, ]
+    
+    if (any(is.na(row_vals))) {
+      if (impute_method == "min") {
+        # Impute with minimum value per protein (common in proteomics)
+        impute_val <- min(row_vals, na.rm = TRUE) - 0.5  # Slightly below minimum
+      } else if (impute_method == "mean") {
+        # Mean imputation
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      } else if (impute_method == "knn") {
+        # Simple k-NN approximation (using row mean as proxy)
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      }
+      
+      data_imputed[i, is.na(row_vals)] <- impute_val
+    }
   }
+  
+  cat("Missing values after imputation:", sum(is.na(data_imputed)), "\n")
+  
+  return(data_imputed)
 }
 
-cat("Missing values after imputation:", sum(is.na(protein_matrix_imputed)), "\n")
+# Apply missing value handling
+protein_matrix_imputed <- handle_missing_values(protein_matrix, 
+                                                missing_threshold = 0.3, 
+                                                impute_method = "min")
+#> Initial proteins: 1500 
+#> Initial missing values: 6172 
+#> Proteins after filtering (missing <= 30 %): 1383 
 #> Missing values after imputation: 0
+
+# Verify imputation worked
+cat("\nAfter imputation:\n")
+#> 
+#> After imputation:
+cat("Dimensions:", dim(protein_matrix_imputed), "\n")
+#> Dimensions: 1383 24
+cat("Missing values:", sum(is.na(protein_matrix_imputed)), "\n")
+#> Missing values: 0
 ```
 
 ### Normalization Methods
@@ -148,6 +249,7 @@ boxplot(protein_matrix_quantile, main = "After Quantile Normalization",
 
 
 ``` r
+protein_matrix_imputed <- as.matrix(protein_matrix_imputed)
 # VSN normalization
 vsn_fit <- vsn::vsn2(protein_matrix_imputed)
 protein_matrix_vsn <- vsn::predict(vsn_fit, protein_matrix_imputed)
@@ -219,13 +321,13 @@ calculate_mean_cv <- function(data) {
 }
 
 cat("Mean CV - Raw:", round(calculate_mean_cv(protein_matrix_imputed), 2), "%\n")
-#> Mean CV - Raw: 14.1 %
+#> Mean CV - Raw: 3.93 %
 cat("Mean CV - Median:", round(calculate_mean_cv(protein_matrix_median), 2), "%\n")
-#> Mean CV - Median: 13.64 %
+#> Mean CV - Median: 3.5 %
 cat("Mean CV - Quantile:", round(calculate_mean_cv(protein_matrix_quantile), 2), "%\n")
-#> Mean CV - Quantile: 13.67 %
+#> Mean CV - Quantile: 3.45 %
 cat("Mean CV - VSN:", round(calculate_mean_cv(protein_matrix_vsn), 2), "%\n")
-#> Mean CV - VSN: 0.01 %
+#> Mean CV - VSN: 1.14 %
 
 # Sample correlations
 cor_raw <- mean(cor(protein_matrix_imputed)[upper.tri(cor(protein_matrix_imputed))])
@@ -234,11 +336,11 @@ cor_quantile <- mean(cor(protein_matrix_quantile)[upper.tri(cor(protein_matrix_q
 
 cat("\nMean sample correlation - Raw:", round(cor_raw, 3), "\n")
 #> 
-#> Mean sample correlation - Raw: 0.024
+#> Mean sample correlation - Raw: 0.36
 cat("Mean sample correlation - Median:", round(cor_median, 3), "\n")
-#> Mean sample correlation - Median: 0.024
+#> Mean sample correlation - Median: 0.36
 cat("Mean sample correlation - Quantile:", round(cor_quantile, 3), "\n")
-#> Mean sample correlation - Quantile: 0.024
+#> Mean sample correlation - Quantile: 0.359
 ```
 
 ## Module 2: Batch Effect Correction {#day3-mod2}
@@ -288,6 +390,7 @@ protein_matrix_combat <- sva::ComBat(
   par.prior = TRUE,
   prior.plots = FALSE
 )
+#> Found 1 genes with uniform expression within a single batch (all zeros); these will not be adjusted for batch.
 
 # Compare before and after
 pca_combat <- prcomp(t(protein_matrix_combat), scale. = TRUE)
@@ -312,7 +415,7 @@ library(gridExtra)
 grid.arrange(p_batch, p_combat, ncol = 2)
 ```
 
-<img src="day3_preprocessing_de_files/figure-html/combat-1.png" width="672" />
+<img src="day3_preprocessing_de_files/figure-html/combat-1.png" width="960" />
 
 ### Scaling Methods
 
@@ -327,7 +430,7 @@ protein_matrix_pareto <- t(scale(t(protein_matrix_combat))) / sqrt(apply(protein
 rownames(sample_metadata) <- sample_metadata$sample_id
 
 # Visualize effect of scaling
-pheatmap(protein_matrix_combat[1:50, ],
+pheatmap(protein_matrix_combat[1:1000, ],
          scale = "row",
          main = "Heatmap with Row Scaling",
          show_rownames = FALSE,
@@ -350,34 +453,48 @@ Create a complete preprocessing function that:
 # Solution
 preprocess_proteomics <- function(raw_data, metadata, 
                                    missing_threshold = 0.3,
-                                   norm_method = "quantile") {
+                                   norm_method = "quantile",
+                                  batch_correction = TRUE) {
   # Step 1: Filter
   missing_per_protein <- rowSums(is.na(raw_data)) / ncol(raw_data)
   filtered_data <- raw_data[missing_per_protein <= missing_threshold, ]
   cat("Filtered to", nrow(filtered_data), "proteins\n")
   
   # Step 2: Impute
-  imputed_data <- filtered_data
-  for (i in 1:nrow(imputed_data)) {
-    missing_idx <- is.na(imputed_data[i, ])
-    if (any(missing_idx)) {
-      imputed_data[i, missing_idx] <- mean(imputed_data[i, ], na.rm = TRUE)
+  impute_method = "min"
+  data_imputed <- filtered_data
+  for (i in 1:nrow(data_imputed)) {
+    row_vals <- data_imputed[i, ]
+    
+    if (any(is.na(row_vals))) {
+      if (impute_method == "min") {
+        # Impute with minimum value per protein (common in proteomics)
+        impute_val <- min(row_vals, na.rm = TRUE) - 0.5  # Slightly below minimum
+      } else if (impute_method == "mean") {
+        # Mean imputation
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      } else if (impute_method == "knn") {
+        # Simple k-NN approximation (using row mean as proxy)
+        impute_val <- mean(row_vals, na.rm = TRUE)
+      }
+      
+      data_imputed[i, is.na(row_vals)] <- impute_val
     }
   }
   cat("Imputed", sum(is.na(filtered_data)), "missing values\n")
   
   # Step 3: Normalize
   if (norm_method == "quantile") {
-    normalized_data <- limma::normalizeBetweenArrays(imputed_data, method = "quantile")
+    normalized_data <- limma::normalizeBetweenArrays(data_imputed, method = "quantile")
   } else if (norm_method == "median") {
-    sample_medians <- apply(imputed_data, 2, median)
+    sample_medians <- apply(data_imputed, 2, median)
     global_median <- median(sample_medians)
     normalized_data <- sweep(imputed_data, 2, sample_medians - global_median)
   }
   cat("Applied", norm_method, "normalization\n")
   
   # Step 4: Batch correction
-  if ("batch" %in% colnames(metadata)) {
+  if (batch_correction && "batch" %in% colnames(metadata)) {
     condition_matrix <- model.matrix(~condition, data = metadata)
     corrected_data <- sva::ComBat(
       dat = normalized_data,
@@ -395,10 +512,11 @@ preprocess_proteomics <- function(raw_data, metadata,
 }
 
 # Apply pipeline
-processed_data <- preprocess_proteomics(protein_matrix_raw, sample_metadata)
-#> Filtered to 499 proteins
-#> Imputed 495 missing values
+processed_data <- preprocess_proteomics(protein_matrix, sample_metadata)
+#> Filtered to 1383 proteins
+#> Imputed 4014 missing values
 #> Applied quantile normalization
+#> Found 1 genes with uniform expression within a single batch (all zeros); these will not be adjusted for batch.
 #> Applied ComBat batch correction
 ```
 
@@ -437,48 +555,53 @@ fit2 <- contrasts.fit(fit, contrast_matrix)
 fit2 <- eBayes(fit2)
 
 # Extract results
-results <- topTable(fit2, coef = "TreatmentVsControl", number = Inf)
+de_results <- topTable(fit2, coef = "TreatmentVsControl", number = Inf)
 
-# Add protein IDs
-results$protein_id <- rownames(results)
+# Add protein IDs and annotations
+de_results$protein_id <- rownames(de_results)
+de_results_annotated <- de_results %>%
+  left_join(protein_annotations, by = "protein_id")
 
 # View top results
-head(results, 10)
-#>            logFC  AveExpr         t      P.Value  adj.P.Val
-#> P00043  5.029106 21.80541  3.895339 0.0001918769 0.06177827
-#> P00026  5.054234 21.53741  3.730775 0.0003393640 0.06177827
-#> P00439  5.116733 19.94913  3.704324 0.0003714124 0.06177827
-#> P00041  4.754682 21.88690  3.521085 0.0006863510 0.07551792
-#> P00050  4.458502 20.12443  3.472990 0.0008037582 0.07551792
-#> P00448 -4.602952 20.09167 -3.435547 0.0009080311 0.07551792
-#> P00204 -4.367604 20.06731 -3.373940 0.0011077982 0.07897018
-#> P00037  4.021590 22.72349  3.151759 0.0022255595 0.13881927
-#> P00326 -4.055987 20.17611 -3.083566 0.0027397386 0.15190329
-#> P00025  3.882010 20.47140  2.992742 0.0035966903 0.17947484
-#>                  B protein_id
-#> P00043  0.51632573     P00043
-#> P00026  0.04550759     P00026
-#> P00439 -0.02887366     P00439
-#> P00041 -0.53393668     P00041
-#> P00050 -0.66346841     P00050
-#> P00448 -0.76341971     P00448
-#> P00204 -0.92614479     P00204
-#> P00037 -1.49463286     P00037
-#> P00326 -1.66317428     P00326
-#> P00025 -1.88317691     P00025
+cat("\nTop 10 differentially expressed proteins:\n")
+#> 
+#> Top 10 differentially expressed proteins:
+print(de_results_annotated[1:10, c("protein_id", "gene_symbol", "logFC", "P.Value", "adj.P.Val")])
+#>    protein_id gene_symbol     logFC      P.Value
+#> 1      P01172         MYC -3.259075 3.102431e-18
+#> 2      P00804       MAPK1 -2.617582 8.924126e-17
+#> 3      P00857        AKT1 -3.173146 7.084863e-15
+#> 4      P00825         APC -1.749628 1.493181e-12
+#> 5      P00438         KIT  2.229704 3.682046e-12
+#> 6      P01138         FAS -1.700512 5.270544e-12
+#> 7      P00043        EGFR -2.335420 3.513380e-11
+#> 8      P01176        MTOR -2.235232 3.607181e-11
+#> 9      P00421       CCND1  2.496499 1.739572e-10
+#> 10     P01322        KRAS  1.387225 2.164925e-10
+#>       adj.P.Val
+#> 1  4.290661e-15
+#> 2  6.171033e-14
+#> 3  3.266122e-12
+#> 4  5.162673e-10
+#> 5  1.018454e-09
+#> 6  1.214860e-09
+#> 7  6.235913e-09
+#> 8  6.235913e-09
+#> 9  2.673143e-08
+#> 10 2.994091e-08
 
 # Summary
 cat("\nDifferential Expression Summary:\n")
 #> 
 #> Differential Expression Summary:
-cat("Significant proteins (FDR < 0.05):", sum(results$adj.P.Val < 0.05), "\n")
-#> Significant proteins (FDR < 0.05): 0
+cat("Significant proteins (FDR < 0.05):", sum(de_results$adj.P.Val < 0.05), "\n")
+#> Significant proteins (FDR < 0.05): 227
 cat("Upregulated (FC > 1.5, FDR < 0.05):", 
-    sum(results$adj.P.Val < 0.05 & results$logFC > log2(1.5)), "\n")
-#> Upregulated (FC > 1.5, FDR < 0.05): 0
+    sum(de_results$adj.P.Val < 0.05 & de_results$logFC > log2(1.5)), "\n")
+#> Upregulated (FC > 1.5, FDR < 0.05): 107
 cat("Downregulated (FC < -1.5, FDR < 0.05):", 
-    sum(results$adj.P.Val < 0.05 & results$logFC < -log2(1.5)), "\n")
-#> Downregulated (FC < -1.5, FDR < 0.05): 0
+    sum(de_results$adj.P.Val < 0.05 & de_results$logFC < -log2(1.5)), "\n")
+#> Downregulated (FC < -1.5, FDR < 0.05): 109
 ```
 
 ### Volcano Plot
@@ -486,7 +609,7 @@ cat("Downregulated (FC < -1.5, FDR < 0.05):",
 
 ``` r
 # Prepare data for volcano plot
-volcano_data <- results
+volcano_data <- de_results
 volcano_data$significance <- "NS"
 volcano_data$significance[volcano_data$adj.P.Val < 0.05 & volcano_data$logFC > log2(1.5)] <- "Up"
 volcano_data$significance[volcano_data$adj.P.Val < 0.05 & volcano_data$logFC < -log2(1.5)] <- "Down"
@@ -511,7 +634,7 @@ ggplot(volcano_data, aes(x = logFC, y = -log10(adj.P.Val), color = significance)
 
 ``` r
 # MA plot
-volcano_data$AveExpr <- results$AveExpr
+volcano_data$AveExpr <- de_results$AveExpr
 
 ggplot(volcano_data, aes(x = AveExpr, y = logFC, color = significance)) +
   geom_point(alpha = 0.6, size = 2) +
@@ -532,7 +655,11 @@ ggplot(volcano_data, aes(x = AveExpr, y = logFC, color = significance)) +
 
 ``` r
 # Select significant proteins
-sig_proteins <- rownames(results[results$adj.P.Val < 0.05, ])
+sig_proteins <- rownames(de_results[de_results$adj.P.Val < 0.05, ])
+
+annotation_col <- as.data.frame(sample_metadata[, c("condition")])
+colnames(annotation_col) <- "Condition"
+rownames(annotation_col) <- sample_metadata$sample_id
 
 # Plot heatmap if there are significant proteins
 if (length(sig_proteins) > 1) {
@@ -540,13 +667,88 @@ if (length(sig_proteins) > 1) {
            scale = "row",
            clustering_distance_rows = "correlation",
            clustering_distance_cols = "euclidean",
-           annotation_col = sample_metadata[, c("condition")],
+           annotation_col = annotation_col, 
            show_rownames = FALSE,
            show_colnames = TRUE,
-           fontsize_col = 10,
+           fontsize_col = 10, 
            main = "Heatmap of Significantly Differentially Expressed Proteins")
 } else {
   cat("Not enough significant proteins to generate a heatmap.\n")
 }
-#> Not enough significant proteins to generate a heatmap.
 ```
+
+<img src="day3_preprocessing_de_files/figure-html/heatmap-de-1.png" width="672" />
+
+### Save Results for Day 4
+
+
+``` r
+# Create results directory
+if (!dir.exists("results")) {
+    dir.create("results")
+}
+
+# Save processed data and results
+saveRDS(processed_data, "results/day3_processed_data.rds")
+saveRDS(de_results_annotated, "results/day3_de_results.rds")
+
+# Also save a summary table
+de_summary <- de_results_annotated %>%
+    filter(adj.P.Val < 0.05) %>%
+    dplyr::select(protein_id, gene_symbol, logFC, P.Value, adj.P.Val, protein_name)
+
+write.csv(de_summary, "results/day3_significant_proteins.csv", row.names = FALSE)
+
+cat("\nResults saved for Day 4:\n")
+#> 
+#> Results saved for Day 4:
+cat("- Processed data: results/day3_processed_data.rds\n")
+#> - Processed data: results/day3_processed_data.rds
+cat("- DE results: results/day3_de_results.rds\n")
+#> - DE results: results/day3_de_results.rds
+cat("- Significant proteins: results/day3_significant_proteins.csv\n")
+#> - Significant proteins: results/day3_significant_proteins.csv
+```
+
+## Day 3 Summary
+
+Today you learned:
+
+- ✓ How to handle missing values in proteomic data
+- ✓ Different normalization methods and their effects
+- ✓ Batch effect detection and correction using ComBat
+- ✓ Differential expression analysis with limma
+- ✓ Visualization of DE results (volcano plots, MA plots, heatmaps)
+
+### Key Takeaways
+
+1. **Normalization** is crucial for making samples comparable
+2. **Batch correction** can remove technical artifacts
+3. **limma** provides robust differential expression analysis
+4. **Visualization** helps interpret complex DE results
+
+### Homework
+
+1. Try different normalization methods and compare results
+2. Experiment with different FDR and fold change thresholds
+3. Create custom visualizations for your specific research questions
+
+
+``` r
+# Prepare for Day 4
+install.packages(c("clusterProfiler", "enrichplot", "org.Hs.eg.db"))
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install(c("clusterProfiler", "enrichplot", "org.Hs.eg.db"))
+```
+
+## Additional Resources
+
+- [limma User's Guide](https://www.bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf)
+- [ComBat paper](https://academic.oup.com/biostatistics/article/8/1/118/252073)
+- [Proteomics normalization review](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4930168/)
+
+
+

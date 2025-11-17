@@ -55,23 +55,23 @@ cat("Number of proteins:", nrow(protein_matrix), "\n")
 cat("Number of samples:", ncol(protein_matrix), "\n")
 #> Number of samples: 24
 cat("Number of missing values:", sum(is.na(protein_matrix)), "\n")
-#> Number of missing values: 6129
+#> Number of missing values: 6172
 
 head(protein_matrix[, 1:6])
 #>             S01      S02      S03      S04      S05
-#> P00001 19.35480 18.96313 19.06881 18.40190 19.07950
-#> P00002       NA 20.12900 19.50040 20.46297 19.27021
-#> P00003 20.52426 20.73074 20.38798       NA 20.87123
-#> P00004 19.22324 20.08649 19.42952 20.19402 19.65949
-#> P00005 19.07521 18.09634 19.13851 19.48897 19.53155
-#> P00006 19.35648 18.63925 18.56821 18.90192 19.05903
+#> P00001       NA       NA 20.54926 20.15388 19.46331
+#> P00002 18.04034 19.32129 19.01423 19.03961 19.71593
+#> P00003       NA 19.64438 19.94354 19.22024 19.82211
+#> P00004 20.11957 20.21188 19.73237 19.60153 20.27386
+#> P00005 19.20290 18.26272 18.99547 18.49812 19.08661
+#> P00006 20.05169 20.22521 20.07375 19.96105 19.62537
 #>             S06
-#> P00001 18.86255
-#> P00002 20.42601
-#> P00003 20.43996
-#> P00004 20.42104
-#> P00005 19.26485
-#> P00006 17.85950
+#> P00001 20.01467
+#> P00002 19.80441
+#> P00003 19.73753
+#> P00004 20.41470
+#> P00005 19.41153
+#> P00006       NA
 ```
 
 ### Understanding Your Data
@@ -124,30 +124,30 @@ cat("\nSummary statistics for protein intensities (per sample):\n")
 #> Summary statistics for protein intensities (per sample):
 print(summary_stats)
 #>     Sample     Mean   Median        SD N_Missing
-#> S01    S01 19.44315 19.50776 0.6422235       246
-#> S02    S02 19.45776 19.54125 0.6763063       279
-#> S03    S03 19.46639 19.52765 0.6669170       248
-#> S04    S04 19.44903 19.53626 0.6724402       264
-#> S05    S05 19.58690 19.65949 0.6711332       247
-#> S06    S06 19.59335 19.68316 0.6730298       269
-#> S07    S07 19.58116 19.66875 0.6726562       245
-#> S08    S08 19.60911 19.69826 0.6710727       239
-#> S09    S09 20.04367 20.14614 0.6764492       239
-#> S10    S10 20.02065 20.08802 0.6780620       243
-#> S11    S11 20.06717 20.13104 0.6586759       253
-#> S12    S12 20.05050 20.15002 0.6916134       262
-#> S13    S13 19.92555 19.96241 0.8610616       252
-#> S14    S14 19.92434 19.95156 0.8699636       259
-#> S15    S15 19.92678 19.94447 0.8564935       261
-#> S16    S16 19.92355 19.93563 0.8547909       261
-#> S17    S17 20.43031 20.43232 0.8736235       271
-#> S18    S18 20.43452 20.47541 0.8512421       270
-#> S19    S19 20.43624 20.47908 0.8566041       249
-#> S20    S20 20.44267 20.46627 0.8982385       245
-#> S21    S21 20.56463 20.59117 0.8634333       273
-#> S22    S22 20.56406 20.58383 0.8675018       250
-#> S23    S23 20.54699 20.55144 0.8678363       251
-#> S24    S24 20.55525 20.56910 0.8498352       253
+#> S01    S01 19.45024 19.52458 0.6910156       245
+#> S02    S02 19.42210 19.51806 0.7004309       280
+#> S03    S03 19.44595 19.52871 0.6826176       267
+#> S04    S04 19.44953 19.54374 0.7031984       254
+#> S05    S05 19.58108 19.66061 0.6943372       249
+#> S06    S06 19.56474 19.66204 0.7007699       272
+#> S07    S07 19.59101 19.69424 0.7096669       240
+#> S08    S08 19.58221 19.65921 0.7000334       247
+#> S09    S09 20.04697 20.13751 0.7050850       240
+#> S10    S10 20.01929 20.10603 0.6917965       249
+#> S11    S11 20.02985 20.09687 0.6903848       267
+#> S12    S12 20.05337 20.16478 0.7215431       287
+#> S13    S13 19.91305 19.94668 0.8739921       248
+#> S14    S14 19.91966 19.94157 0.8753145       256
+#> S15    S15 19.91708 19.94009 0.8788483       277
+#> S16    S16 19.91192 19.93032 0.8695756       252
+#> S17    S17 20.41227 20.44692 0.8541579       259
+#> S18    S18 20.43735 20.45007 0.8693867       271
+#> S19    S19 20.44325 20.46966 0.8569583       249
+#> S20    S20 20.40676 20.43308 0.9190726       250
+#> S21    S21 20.55711 20.57703 0.8879665       262
+#> S22    S22 20.56632 20.58368 0.8840108       243
+#> S23    S23 20.53248 20.55557 0.8816572       264
+#> S24    S24 20.55187 20.57214 0.8763290       244
 ```
 
 ### Exercise 2.1: Explore Your Data
@@ -167,13 +167,13 @@ cat("1. Total proteins:", nrow(protein_matrix), "\n")
 missing_per_protein <- apply(protein_matrix, 1, function(x) sum(is.na(x)))
 cat("2. Average missing per protein:", 
     round(mean(missing_per_protein), 2), "\n")
-#> 2. Average missing per protein: 4.09
+#> 2. Average missing per protein: 4.11
 
 missing_per_sample <- apply(protein_matrix, 2, function(x) sum(is.na(x)))
 worst_sample <- names(which.max(missing_per_sample))
 cat("3. Sample with most missing:", worst_sample, 
     "with", max(missing_per_sample), "missing values\n")
-#> 3. Sample with most missing: S02 with 279 missing values
+#> 3. Sample with most missing: S12 with 287 missing values
 ```
 
 ## Module 2: Initial Quality Control {#day2-mod2}
@@ -367,7 +367,7 @@ missing_pct <- apply(protein_matrix, 1, function(x) sum(is.na(x)) / length(x))
 high_missing <- sum(missing_pct > 0.5)
 cat("Proteins with >50% missing:", high_missing, 
     "(", round(high_missing / nrow(protein_matrix) * 100, 1), "%)\n")
-#> Proteins with >50% missing: 76 ( 5.1 %)
+#> Proteins with >50% missing: 75 ( 5 %)
 
 # 2. Outlier samples based on median
 sample_medians <- apply(protein_matrix, 2, median, na.rm = TRUE)
@@ -553,8 +553,8 @@ print(cv_summary)
 #> # A tibble: 2 × 4
 #>   condition mean_cv median_cv sd_cv
 #>   <chr>       <dbl>     <dbl> <dbl>
-#> 1 Control      2.36      2.29 0.637
-#> 2 Treatment    2.33      2.27 0.622
+#> 1 Control      2.37      2.30 0.685
+#> 2 Treatment    2.33      2.25 0.633
 ```
 
 ### Exercise 2.3: Complete EDA
@@ -576,7 +576,7 @@ cat("Dataset dimensions:", nrow(protein_matrix), "proteins x",
 #> Dataset dimensions: 1500 proteins x 24 samples
 cat("Total missing values:", sum(is.na(protein_matrix)), 
     "(", round(mean(is.na(protein_matrix)) * 100, 1), "%)\n")
-#> Total missing values: 6129 ( 17 %)
+#> Total missing values: 6172 ( 17.1 %)
 cat("Samples:", paste(sample_metadata$sample_id, collapse = ", "), "\n")
 #> Samples: S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24
 cat("Conditions:", paste(unique(sample_metadata$condition), collapse = ", "), "\n")
@@ -590,8 +590,8 @@ top10_variable <- names(sort(protein_variance, decreasing = TRUE)[1:10])
 cat("Top 10 most variable proteins:\n")
 #> Top 10 most variable proteins:
 print(top10_variable)
-#>  [1] "P01454" "P00319" "P01120" "P00494" "P00737" "P01465"
-#>  [7] "P00951" "P00367" "P00990" "P00948"
+#>  [1] "P00460" "P00168" "P00438" "P00285" "P00236" "P00372"
+#>  [7] "P00125" "P00960" "P00513" "P00856"
 
 # Plot top variable proteins
 top10_data <- protein_long %>%
@@ -662,68 +662,68 @@ cat("Total Proteins:", qc_report$n_proteins, "\n")
 cat("Total Samples:", qc_report$n_samples, "\n")
 #> Total Samples: 24
 cat("Missing Data:", round(qc_report$missing_pct, 2), "%\n\n")
-#> Missing Data: 17.03 %
+#> Missing Data: 17.14 %
 
 cat("Protein Completeness:\n")
 #> Protein Completeness:
 cat("  Complete (no missing):", qc_report$protein_stats$N_Complete, "\n")
-#>   Complete (no missing): 125
+#>   Complete (no missing): 120
 cat("  Partial missing:", qc_report$protein_stats$N_Partial, "\n")
-#>   Partial missing: 1299
+#>   Partial missing: 1305
 cat("  Mostly missing (>50%):", qc_report$protein_stats$N_Mostly_Missing, "\n\n")
-#>   Mostly missing (>50%): 76
+#>   Mostly missing (>50%): 75
 
 print(qc_report$sample_stats)
 #>     Sample N_Quantified Median_Abundance Mean_Abundance
-#> S01    S01         1254         19.50776       19.44315
-#> S02    S02         1221         19.54125       19.45776
-#> S03    S03         1252         19.52765       19.46639
-#> S04    S04         1236         19.53626       19.44903
-#> S05    S05         1253         19.65949       19.58690
-#> S06    S06         1231         19.68316       19.59335
-#> S07    S07         1255         19.66875       19.58116
-#> S08    S08         1261         19.69826       19.60911
-#> S09    S09         1261         20.14614       20.04367
-#> S10    S10         1257         20.08802       20.02065
-#> S11    S11         1247         20.13104       20.06717
-#> S12    S12         1238         20.15002       20.05050
-#> S13    S13         1248         19.96241       19.92555
-#> S14    S14         1241         19.95156       19.92434
-#> S15    S15         1239         19.94447       19.92678
-#> S16    S16         1239         19.93563       19.92355
-#> S17    S17         1229         20.43232       20.43031
-#> S18    S18         1230         20.47541       20.43452
-#> S19    S19         1251         20.47908       20.43624
-#> S20    S20         1255         20.46627       20.44267
-#> S21    S21         1227         20.59117       20.56463
-#> S22    S22         1250         20.58383       20.56406
-#> S23    S23         1249         20.55144       20.54699
-#> S24    S24         1247         20.56910       20.55525
+#> S01    S01         1255         19.52458       19.45024
+#> S02    S02         1220         19.51806       19.42210
+#> S03    S03         1233         19.52871       19.44595
+#> S04    S04         1246         19.54374       19.44953
+#> S05    S05         1251         19.66061       19.58108
+#> S06    S06         1228         19.66204       19.56474
+#> S07    S07         1260         19.69424       19.59101
+#> S08    S08         1253         19.65921       19.58221
+#> S09    S09         1260         20.13751       20.04697
+#> S10    S10         1251         20.10603       20.01929
+#> S11    S11         1233         20.09687       20.02985
+#> S12    S12         1213         20.16478       20.05337
+#> S13    S13         1252         19.94668       19.91305
+#> S14    S14         1244         19.94157       19.91966
+#> S15    S15         1223         19.94009       19.91708
+#> S16    S16         1248         19.93032       19.91192
+#> S17    S17         1241         20.44692       20.41227
+#> S18    S18         1229         20.45007       20.43735
+#> S19    S19         1251         20.46966       20.44325
+#> S20    S20         1250         20.43308       20.40676
+#> S21    S21         1238         20.57703       20.55711
+#> S22    S22         1257         20.58368       20.56632
+#> S23    S23         1236         20.55557       20.53248
+#> S24    S24         1256         20.57214       20.55187
 #>     SD_Abundance
-#> S01    0.6422235
-#> S02    0.6763063
-#> S03    0.6669170
-#> S04    0.6724402
-#> S05    0.6711332
-#> S06    0.6730298
-#> S07    0.6726562
-#> S08    0.6710727
-#> S09    0.6764492
-#> S10    0.6780620
-#> S11    0.6586759
-#> S12    0.6916134
-#> S13    0.8610616
-#> S14    0.8699636
-#> S15    0.8564935
-#> S16    0.8547909
-#> S17    0.8736235
-#> S18    0.8512421
-#> S19    0.8566041
-#> S20    0.8982385
-#> S21    0.8634333
-#> S22    0.8675018
-#> S23    0.8678363
-#> S24    0.8498352
+#> S01    0.6910156
+#> S02    0.7004309
+#> S03    0.6826176
+#> S04    0.7031984
+#> S05    0.6943372
+#> S06    0.7007699
+#> S07    0.7096669
+#> S08    0.7000334
+#> S09    0.7050850
+#> S10    0.6917965
+#> S11    0.6903848
+#> S12    0.7215431
+#> S13    0.8739921
+#> S14    0.8753145
+#> S15    0.8788483
+#> S16    0.8695756
+#> S17    0.8541579
+#> S18    0.8693867
+#> S19    0.8569583
+#> S20    0.9190726
+#> S21    0.8879665
+#> S22    0.8840108
+#> S23    0.8816572
+#> S24    0.8763290
 ```
 
 ## Day 2 Summary
