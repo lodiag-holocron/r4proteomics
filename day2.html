@@ -110,90 +110,83 @@
 <span class="header-section-number">2.2.2</span> Structure of Proteomic Data Matrices<a class="anchor" aria-label="anchor" href="#structure-of-proteomic-data-matrices"><i class="fas fa-link"></i></a>
 </h3>
 <p>Typical structure: <strong>Proteins × Samples</strong></p>
+<p>Each row corresponds to a quantified protein (or protein group),
+and each column corresponds to a biological or technical sample.
+Additional annotation tables typically accompany the intensity matrix
+to describe samples (metadata) and proteins.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example proteomic data structure</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co">## The simulated dataset used throughout this course can be downloaded from:</span></span>
+<span><span class="co">## https://github.com/lodiag-holocron/r4proteomics/data</span></span>
+<span><span class="co">## After downloading, save the files in your working directory or adjust the path below.</span></span>
 <span></span>
-<span><span class="va">n_proteins</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
-<span><span class="va">n_samples</span> <span class="op">&lt;-</span> <span class="fl">12</span></span>
+<span><span class="co"># Load the data components</span></span>
+<span><span class="va">protein_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"data/protein_matrix.csv"</span>, row.names <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>                           check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Proteins × Samples</span></span>
+<span><span class="va">sample_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"data/sample_metadata.csv"</span><span class="op">)</span></span>
+<span><span class="va">protein_annotations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"data/protein_annotations.csv"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Create sample metadata</span></span>
-<span><span class="va">sample_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
-<span>  sample_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"S"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_samples</span><span class="op">)</span>,</span>
-<span>  condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Control"</span>, <span class="st">"Treatment"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>,</span>
-<span>  batch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Batch1"</span>, <span class="st">"Batch2"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>,</span>
-<span>  timepoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"T0"</span>, <span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Create protein matrix</span></span>
-<span><span class="va">protein_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%05d"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_proteins</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Simulate protein abundances with biological variation</span></span>
-<span><span class="va">protein_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n_proteins</span> <span class="op">*</span> <span class="va">n_samples</span>, mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
-<span>  nrow <span class="op">=</span> <span class="va">n_proteins</span>,</span>
-<span>  ncol <span class="op">=</span> <span class="va">n_samples</span>,</span>
-<span>  dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">protein_ids</span>, <span class="va">sample_metadata</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Add treatment effect for some proteins</span></span>
-<span><span class="va">treatment_proteins</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
-<span><span class="va">protein_matrix</span><span class="op">[</span><span class="va">treatment_proteins</span>, <span class="fl">7</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="va">protein_matrix</span><span class="op">[</span><span class="va">treatment_proteins</span>, <span class="fl">7</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10</span> <span class="op">*</span> <span class="fl">6</span>, mean <span class="op">=</span> <span class="fl">2</span>, sd <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Add some missing values (realistic scenario)</span></span>
-<span><span class="va">missing_indices</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
-<span><span class="va">protein_matrix</span><span class="op">[</span><span class="va">missing_indices</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span></span>
-<span><span class="co"># Display structure</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Matrix dimensions:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Matrix dimensions: 50 12</span></span>
+<span><span class="co">#&gt; Matrix dimensions: 1500 24</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Number of proteins:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of proteins: 50</span></span>
+<span><span class="co">#&gt; Number of proteins: 1500</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Number of samples:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of samples: 12</span></span>
+<span><span class="co">#&gt; Number of samples: 24</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Number of missing values:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Number of missing values: 50</span></span>
+<span><span class="co">#&gt; Number of missing values: 6129</span></span>
 <span></span>
-<span><span class="co"># Show first few rows and columns</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;              S1       S2       S3       S4       S5</span></span>
-<span><span class="co">#&gt; P00001 22.74192       NA       NA       NA 15.99814</span></span>
-<span><span class="co">#&gt; P00002 18.87060 18.43232 22.08950 16.89691 20.66755</span></span>
-<span><span class="co">#&gt; P00003 20.72626 23.15146 17.99358 22.33434 22.34265</span></span>
-<span><span class="co">#&gt; P00004 21.26573 21.28580 23.69696 19.45271 24.11908</span></span>
-<span><span class="co">#&gt; P00005 20.80854 20.17952 18.66645 19.06431 17.24628</span></span>
-<span><span class="co">#&gt; P00006       NA 20.55310 20.21103 17.52350 17.69829</span></span>
-<span><span class="co">#&gt;              S6</span></span>
-<span><span class="co">#&gt; P00001 17.80769</span></span>
-<span><span class="co">#&gt; P00002 20.09810</span></span>
-<span><span class="co">#&gt; P00003 17.60301</span></span>
-<span><span class="co">#&gt; P00004 20.38004</span></span>
-<span><span class="co">#&gt; P00005       NA</span></span>
-<span><span class="co">#&gt; P00006 17.93225</span></span></code></pre></div>
+<span><span class="co">#&gt;             S01      S02      S03      S04      S05</span></span>
+<span><span class="co">#&gt; P00001 19.35480 18.96313 19.06881 18.40190 19.07950</span></span>
+<span><span class="co">#&gt; P00002       NA 20.12900 19.50040 20.46297 19.27021</span></span>
+<span><span class="co">#&gt; P00003 20.52426 20.73074 20.38798       NA 20.87123</span></span>
+<span><span class="co">#&gt; P00004 19.22324 20.08649 19.42952 20.19402 19.65949</span></span>
+<span><span class="co">#&gt; P00005 19.07521 18.09634 19.13851 19.48897 19.53155</span></span>
+<span><span class="co">#&gt; P00006 19.35648 18.63925 18.56821 18.90192 19.05903</span></span>
+<span><span class="co">#&gt;             S06</span></span>
+<span><span class="co">#&gt; P00001 18.86255</span></span>
+<span><span class="co">#&gt; P00002 20.42601</span></span>
+<span><span class="co">#&gt; P00003 20.43996</span></span>
+<span><span class="co">#&gt; P00004 20.42104</span></span>
+<span><span class="co">#&gt; P00005 19.26485</span></span>
+<span><span class="co">#&gt; P00006 17.85950</span></span></code></pre></div>
 </div>
 <div id="understanding-your-data" class="section level3" number="2.2.3">
 <h3>
 <span class="header-section-number">2.2.3</span> Understanding Your Data<a class="anchor" aria-label="anchor" href="#understanding-your-data"><i class="fas fa-link"></i></a>
 </h3>
+<p>Before performing any downstream analysis, it is essential to explore
+both the sample metadata and the distribution of protein intensities
+across samples. This provides insights into sample composition,
+missing value patterns, and potential sources of technical or
+biological variation.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Sample metadata</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    sample_id condition  batch timepoint</span></span>
-<span><span class="co">#&gt; 1         S1   Control Batch1        T0</span></span>
-<span><span class="co">#&gt; 2         S2   Control Batch2        T0</span></span>
-<span><span class="co">#&gt; 3         S3   Control Batch1        T0</span></span>
-<span><span class="co">#&gt; 4         S4   Control Batch2        T0</span></span>
-<span><span class="co">#&gt; 5         S5   Control Batch1        T1</span></span>
-<span><span class="co">#&gt; 6         S6   Control Batch2        T1</span></span>
-<span><span class="co">#&gt; 7         S7 Treatment Batch1        T1</span></span>
-<span><span class="co">#&gt; 8         S8 Treatment Batch2        T1</span></span>
-<span><span class="co">#&gt; 9         S9 Treatment Batch1        T2</span></span>
-<span><span class="co">#&gt; 10       S10 Treatment Batch2        T2</span></span>
-<span><span class="co">#&gt; 11       S11 Treatment Batch1        T2</span></span>
-<span><span class="co">#&gt; 12       S12 Treatment Batch2        T2</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">)</span></span>
+<span><span class="co">#&gt;    sample_id condition  batch timepoint patient_id sex age</span></span>
+<span><span class="co">#&gt; 1        S01   Control Batch1     Week0          1   M  46</span></span>
+<span><span class="co">#&gt; 2        S02   Control Batch1     Week0          2   M  43</span></span>
+<span><span class="co">#&gt; 3        S03   Control Batch1     Week0          3   M  64</span></span>
+<span><span class="co">#&gt; 4        S04   Control Batch1     Week0          4   M  44</span></span>
+<span><span class="co">#&gt; 5        S05   Control Batch1     Week4          5   F  53</span></span>
+<span><span class="co">#&gt; 6        S06   Control Batch1     Week4          6   F  59</span></span>
+<span><span class="co">#&gt; 7        S07   Control Batch1     Week4          7   F  65</span></span>
+<span><span class="co">#&gt; 8        S08   Control Batch1     Week4          8   F  57</span></span>
+<span><span class="co">#&gt; 9        S09   Control Batch2     Week8          9   M  54</span></span>
+<span><span class="co">#&gt; 10       S10   Control Batch2     Week8         10   F  42</span></span>
+<span><span class="co">#&gt; 11       S11   Control Batch2     Week8         11   M  48</span></span>
+<span><span class="co">#&gt; 12       S12   Control Batch2     Week8         12   F  64</span></span>
+<span><span class="co">#&gt; 13       S13 Treatment Batch2     Week0          1   M  46</span></span>
+<span><span class="co">#&gt; 14       S14 Treatment Batch2     Week0          2   M  43</span></span>
+<span><span class="co">#&gt; 15       S15 Treatment Batch2     Week0          3   M  64</span></span>
+<span><span class="co">#&gt; 16       S16 Treatment Batch2     Week0          4   M  44</span></span>
+<span><span class="co">#&gt; 17       S17 Treatment Batch3     Week4          5   F  53</span></span>
+<span><span class="co">#&gt; 18       S18 Treatment Batch3     Week4          6   F  59</span></span>
+<span><span class="co">#&gt; 19       S19 Treatment Batch3     Week4          7   F  65</span></span>
+<span><span class="co">#&gt; 20       S20 Treatment Batch3     Week4          8   F  57</span></span>
+<span><span class="co">#&gt; 21       S21 Treatment Batch3     Week8          9   M  54</span></span>
+<span><span class="co">#&gt; 22       S22 Treatment Batch3     Week8         10   F  42</span></span>
+<span><span class="co">#&gt; 23       S23 Treatment Batch3     Week8         11   M  48</span></span>
+<span><span class="co">#&gt; 24       S24 Treatment Batch3     Week8         12   F  64</span></span>
 <span></span>
-<span><span class="co"># Data summary</span></span>
 <span><span class="va">summary_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
 <span>  Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>,</span>
 <span>  Mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="va">mean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
@@ -202,20 +195,35 @@
 <span>  N_Missing <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"\nSummary statistics for protein intensities (per sample):\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Summary statistics for protein intensities (per sample):</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">summary_stats</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     Sample     Mean   Median       SD N_Missing</span></span>
-<span><span class="co">#&gt; S1      S1 19.90361 19.77202 2.343037         2</span></span>
-<span><span class="co">#&gt; S2      S2 20.17817 20.51584 1.909604         7</span></span>
-<span><span class="co">#&gt; S3      S3 19.57170 19.17226 1.828050         3</span></span>
-<span><span class="co">#&gt; S4      S4 19.95178 20.21372 1.864843         6</span></span>
-<span><span class="co">#&gt; S5      S5 20.18763 19.83178 1.987539         5</span></span>
-<span><span class="co">#&gt; S6      S6 19.97424 20.09561 2.029430         2</span></span>
-<span><span class="co">#&gt; S7      S7 20.22084 19.99952 1.864873         5</span></span>
-<span><span class="co">#&gt; S8      S8 20.69754 20.46976 2.042691         4</span></span>
-<span><span class="co">#&gt; S9      S9 20.32477 20.30522 2.090413         5</span></span>
-<span><span class="co">#&gt; S10    S10 20.00961 19.98189 2.344816         5</span></span>
-<span><span class="co">#&gt; S11    S11 20.65275 20.44848 2.322889         1</span></span>
-<span><span class="co">#&gt; S12    S12 20.09191 19.97434 2.109793         5</span></span></code></pre></div>
+<span><span class="co">#&gt;     Sample     Mean   Median        SD N_Missing</span></span>
+<span><span class="co">#&gt; S01    S01 19.44315 19.50776 0.6422235       246</span></span>
+<span><span class="co">#&gt; S02    S02 19.45776 19.54125 0.6763063       279</span></span>
+<span><span class="co">#&gt; S03    S03 19.46639 19.52765 0.6669170       248</span></span>
+<span><span class="co">#&gt; S04    S04 19.44903 19.53626 0.6724402       264</span></span>
+<span><span class="co">#&gt; S05    S05 19.58690 19.65949 0.6711332       247</span></span>
+<span><span class="co">#&gt; S06    S06 19.59335 19.68316 0.6730298       269</span></span>
+<span><span class="co">#&gt; S07    S07 19.58116 19.66875 0.6726562       245</span></span>
+<span><span class="co">#&gt; S08    S08 19.60911 19.69826 0.6710727       239</span></span>
+<span><span class="co">#&gt; S09    S09 20.04367 20.14614 0.6764492       239</span></span>
+<span><span class="co">#&gt; S10    S10 20.02065 20.08802 0.6780620       243</span></span>
+<span><span class="co">#&gt; S11    S11 20.06717 20.13104 0.6586759       253</span></span>
+<span><span class="co">#&gt; S12    S12 20.05050 20.15002 0.6916134       262</span></span>
+<span><span class="co">#&gt; S13    S13 19.92555 19.96241 0.8610616       252</span></span>
+<span><span class="co">#&gt; S14    S14 19.92434 19.95156 0.8699636       259</span></span>
+<span><span class="co">#&gt; S15    S15 19.92678 19.94447 0.8564935       261</span></span>
+<span><span class="co">#&gt; S16    S16 19.92355 19.93563 0.8547909       261</span></span>
+<span><span class="co">#&gt; S17    S17 20.43031 20.43232 0.8736235       271</span></span>
+<span><span class="co">#&gt; S18    S18 20.43452 20.47541 0.8512421       270</span></span>
+<span><span class="co">#&gt; S19    S19 20.43624 20.47908 0.8566041       249</span></span>
+<span><span class="co">#&gt; S20    S20 20.44267 20.46627 0.8982385       245</span></span>
+<span><span class="co">#&gt; S21    S21 20.56463 20.59117 0.8634333       273</span></span>
+<span><span class="co">#&gt; S22    S22 20.56406 20.58383 0.8675018       250</span></span>
+<span><span class="co">#&gt; S23    S23 20.54699 20.55144 0.8678363       251</span></span>
+<span><span class="co">#&gt; S24    S24 20.55525 20.56910 0.8498352       253</span></span></code></pre></div>
 </div>
 <div id="exercise-2.1-explore-your-data" class="section level3" number="2.2.4">
 <h3>
@@ -230,18 +238,18 @@
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"1. Total proteins:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 1. Total proteins: 50</span></span>
+<span><span class="co">#&gt; 1. Total proteins: 1500</span></span>
 <span></span>
 <span><span class="va">missing_per_protein</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"2. Average missing per protein:"</span>, </span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">missing_per_protein</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 2. Average missing per protein: 1</span></span>
+<span><span class="co">#&gt; 2. Average missing per protein: 4.09</span></span>
 <span></span>
 <span><span class="va">missing_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">worst_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html">which.max</a></span><span class="op">(</span><span class="va">missing_per_sample</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"3. Sample with most missing:"</span>, <span class="va">worst_sample</span>, </span>
 <span>    <span class="st">"with"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">missing_per_sample</span><span class="op">)</span>, <span class="st">"missing values\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 3. Sample with most missing: S2 with 7 missing values</span></span></code></pre></div>
+<span><span class="co">#&gt; 3. Sample with most missing: S02 with 279 missing values</span></span></code></pre></div>
 </div>
 </div>
 <div id="day2-mod2" class="section level2" number="2.3">
@@ -253,6 +261,9 @@
 <span class="header-section-number">2.3.1</span> Missing Data Analysis<a class="anchor" aria-label="anchor" href="#missing-data-analysis"><i class="fas fa-link"></i></a>
 </h3>
 <p>Missing data is common in proteomics. Understanding the pattern is crucial.</p>
+<p>Understanding how much data is missing and where it occurs is
+an essential first step in quality control, as missingness can reflect
+low-abundance proteins, stochastic sampling, or technical artifacts.</p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate missingness</span></span>
 <span><span class="va">missing_per_protein</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -289,6 +300,9 @@
 <h3>
 <span class="header-section-number">2.3.2</span> Detecting Outliers and Extreme Values<a class="anchor" aria-label="anchor" href="#detecting-outliers-and-extreme-values"><i class="fas fa-link"></i></a>
 </h3>
+<p>Visual inspection of abundance distributions helps identify outlier
+samples, intensity shifts, and potential batch effects. Boxplots and
+density plots provide complementary views of the overall data structure.</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Box plots for each sample</span></span>
 <span><span class="va">protein_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span></span>
@@ -326,7 +340,12 @@
 <h3>
 <span class="header-section-number">2.3.3</span> Batch Effects Detection<a class="anchor" aria-label="anchor" href="#batch-effects-detection"><i class="fas fa-link"></i></a>
 </h3>
-<p>Batch effects are systematic non-biological variations.</p>
+<p>Batch effects are systematic non-biological variations.
+They can be introduced during sample preparation, instrument runs,
+or other technical steps.</p>
+<p>Principal Component Analysis (PCA) is a powerful tool to detect
+such effects by projecting high-dimensional data into lower-dimensional
+space and highlighting clustering patterns.</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># PCA colored by batch</span></span>
 <span><span class="va">pca_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span></span>
@@ -369,6 +388,12 @@
 <h3>
 <span class="header-section-number">2.3.4</span> Sample Correlation Analysis<a class="anchor" aria-label="anchor" href="#sample-correlation-analysis"><i class="fas fa-link"></i></a>
 </h3>
+<p>Correlation analysis provides a global overview of sample similarity
+based on protein abundance profiles.</p>
+<p>High correlation typically indicates consistent quantification
+across samples, while lower correlations may highlight outliers,
+batch effects, or technical artifacts. Heatmaps combined with metadata
+annotations offer an intuitive way to inspect these relationships.</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate sample correlations</span></span>
 <span><span class="va">cor_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">protein_matrix</span>, use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span></span>
@@ -401,7 +426,7 @@
 <span><span class="va">high_missing</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">missing_pct</span> <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Proteins with &gt;50% missing:"</span>, <span class="va">high_missing</span>, </span>
 <span>    <span class="st">"("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">high_missing</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Proteins with &gt;50% missing: 0 ( 0 %)</span></span>
+<span><span class="co">#&gt; Proteins with &gt;50% missing: 76 ( 5.1 %)</span></span>
 <span></span>
 <span><span class="co"># 2. Outlier samples based on median</span></span>
 <span><span class="va">sample_medians</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="va">median</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -429,6 +454,10 @@
 <h3>
 <span class="header-section-number">2.4.1</span> Distribution of Intensities<a class="anchor" aria-label="anchor" href="#distribution-of-intensities"><i class="fas fa-link"></i></a>
 </h3>
+<p>Examining the distribution of protein abundances helps identify global
+trends, skewness, or technical artifacts in the dataset.</p>
+<p>Both histograms and violin plots provide complementary perspectives on
+the overall intensity patterns.</p>
 <div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Histogram of all values</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -453,6 +482,10 @@
 <h3>
 <span class="header-section-number">2.4.2</span> Hierarchical Clustering<a class="anchor" aria-label="anchor" href="#hierarchical-clustering"><i class="fas fa-link"></i></a>
 </h3>
+<p>Hierarchical clustering groups samples or proteins based on similarity
+in abundance profiles.</p>
+<p>This approach helps identify natural clusters, outliers, or
+batch-related patterns in the data.</p>
 <div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove proteins with too many missing values</span></span>
 <span><span class="va">complete_proteins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.3</span></span>
@@ -484,6 +517,10 @@
 <h3>
 <span class="header-section-number">2.4.3</span> Sample Similarity Analysis<a class="anchor" aria-label="anchor" href="#sample-similarity-analysis"><i class="fas fa-link"></i></a>
 </h3>
+<p>Assessing sample similarity helps detect outliers, batch effects,
+or unexpected clustering among samples.</p>
+<p>Euclidean distances and multidimensional scaling (MDS) provide
+additional overview of global relationships between samples.</p>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate Euclidean distances between samples</span></span>
 <span><span class="va">sample_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">filtered_matrix</span><span class="op">)</span><span class="op">)</span></span>
@@ -494,7 +531,7 @@
 <span>         annotation_col <span class="op">=</span> <span class="va">annotation_col</span>,</span>
 <span>         annotation_row <span class="op">=</span> <span class="va">annotation_col</span>,</span>
 <span>         main <span class="op">=</span> <span class="st">"Sample-Sample Distance Matrix"</span>,</span>
-<span>         color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"white"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>         color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"white"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/similarity-1.png" width="672"></div>
 <div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -519,6 +556,10 @@
 <h3>
 <span class="header-section-number">2.4.4</span> Coefficient of Variation Analysis<a class="anchor" aria-label="anchor" href="#coefficient-of-variation-analysis"><i class="fas fa-link"></i></a>
 </h3>
+<p>The coefficient of variation (CV) quantifies relative variability
+in protein abundances across samples.</p>
+<p>High CV values may indicate technical variability or highly dynamic
+proteins, while low CV suggests stable proteins.</p>
 <div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate CV for each protein</span></span>
 <span><span class="va">calculate_cv</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -553,8 +594,8 @@
 <span><span class="co">#&gt; # A tibble: 2 × 4</span></span>
 <span><span class="co">#&gt;   condition mean_cv median_cv sd_cv</span></span>
 <span><span class="co">#&gt;   &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt; 1 Control      9.63      8.85  3.33</span></span>
-<span><span class="co">#&gt; 2 Treatment    8.93      8.64  3.37</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 Control      2.36      2.29 0.637</span></span>
+<span><span class="co">#&gt; 2 Treatment    2.33      2.27 0.622</span></span></code></pre></div>
 </div>
 <div id="exercise-2.3-complete-eda" class="section level3" number="2.4.5">
 <h3>
@@ -573,16 +614,16 @@
 <span><span class="co">#&gt; === DATA QUALITY REPORT ===</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Dataset dimensions:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"proteins x"</span>, </span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"samples\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Dataset dimensions: 50 proteins x 12 samples</span></span>
+<span><span class="co">#&gt; Dataset dimensions: 1500 proteins x 24 samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Total missing values:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>    <span class="st">"("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Total missing values: 50 ( 8.3 %)</span></span>
+<span><span class="co">#&gt; Total missing values: 6129 ( 17 %)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Samples:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">$</span><span class="va">sample_id</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Samples: S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12</span></span>
+<span><span class="co">#&gt; Samples: S01, S02, S03, S04, S05, S06, S07, S08, S09, S10, S11, S12, S13, S14, S15, S16, S17, S18, S19, S20, S21, S22, S23, S24</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Conditions:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">$</span><span class="va">condition</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Conditions: Control, Treatment</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Batches:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">$</span><span class="va">batch</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span>, <span class="st">"\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Batches: Batch1, Batch2</span></span>
+<span><span class="co">#&gt; Batches: Batch1, Batch2, Batch3</span></span>
 <span></span>
 <span><span class="co"># 2. Top 10 most variable proteins</span></span>
 <span><span class="va">protein_variance</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">filtered_matrix</span>, <span class="fl">1</span>, <span class="va">var</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -590,8 +631,8 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Top 10 most variable proteins:\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Top 10 most variable proteins:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">top10_variable</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "P00009" "P00018" "P00001" "P00019" "P00024" "P00044"</span></span>
-<span><span class="co">#&gt;  [7] "P00016" "P00025" "P00017" "P00031"</span></span>
+<span><span class="co">#&gt;  [1] "P01454" "P00319" "P01120" "P00494" "P00737" "P01465"</span></span>
+<span><span class="co">#&gt;  [7] "P00951" "P00367" "P00990" "P00948"</span></span>
 <span></span>
 <span><span class="co"># Plot top variable proteins</span></span>
 <span><span class="va">top10_data</span> <span class="op">&lt;-</span> <span class="va">protein_long</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -608,9 +649,8 @@
 <div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># 3. Clustering by condition</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"\n3. Checking sample clustering by condition:\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; 3. Checking sample clustering by condition:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Checking sample clustering by condition:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Checking sample clustering by condition:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Review the PCA and hierarchical clustering plots above.\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Review the PCA and hierarchical clustering plots above.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Samples should cluster primarily by condition if biological signal is strong.\n"</span><span class="op">)</span></span>
@@ -657,48 +697,72 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"=== QUALITY CONTROL SUMMARY ===\n\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; === QUALITY CONTROL SUMMARY ===</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Total Proteins:"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">n_proteins</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Total Proteins: 50</span></span>
+<span><span class="co">#&gt; Total Proteins: 1500</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Total Samples:"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">n_samples</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Total Samples: 12</span></span>
+<span><span class="co">#&gt; Total Samples: 24</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Missing Data:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">qc_report</span><span class="op">$</span><span class="va">missing_pct</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"%\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Missing Data: 8.33 %</span></span>
+<span><span class="co">#&gt; Missing Data: 17.03 %</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Protein Completeness:\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Protein Completeness:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"  Complete (no missing):"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">protein_stats</span><span class="op">$</span><span class="va">N_Complete</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Complete (no missing): 12</span></span>
+<span><span class="co">#&gt;   Complete (no missing): 125</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"  Partial missing:"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">protein_stats</span><span class="op">$</span><span class="va">N_Partial</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Partial missing: 38</span></span>
+<span><span class="co">#&gt;   Partial missing: 1299</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"  Mostly missing (&gt;50%):"</span>, <span class="va">qc_report</span><span class="op">$</span><span class="va">protein_stats</span><span class="op">$</span><span class="va">N_Mostly_Missing</span>, <span class="st">"\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Mostly missing (&gt;50%): 0</span></span>
+<span><span class="co">#&gt;   Mostly missing (&gt;50%): 76</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">qc_report</span><span class="op">$</span><span class="va">sample_stats</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     Sample N_Quantified Median_Abundance Mean_Abundance</span></span>
-<span><span class="co">#&gt; S1      S1           48         19.77202       19.90361</span></span>
-<span><span class="co">#&gt; S2      S2           43         20.51584       20.17817</span></span>
-<span><span class="co">#&gt; S3      S3           47         19.17226       19.57170</span></span>
-<span><span class="co">#&gt; S4      S4           44         20.21372       19.95178</span></span>
-<span><span class="co">#&gt; S5      S5           45         19.83178       20.18763</span></span>
-<span><span class="co">#&gt; S6      S6           48         20.09561       19.97424</span></span>
-<span><span class="co">#&gt; S7      S7           45         19.99952       20.22084</span></span>
-<span><span class="co">#&gt; S8      S8           46         20.46976       20.69754</span></span>
-<span><span class="co">#&gt; S9      S9           45         20.30522       20.32477</span></span>
-<span><span class="co">#&gt; S10    S10           45         19.98189       20.00961</span></span>
-<span><span class="co">#&gt; S11    S11           49         20.44848       20.65275</span></span>
-<span><span class="co">#&gt; S12    S12           45         19.97434       20.09191</span></span>
+<span><span class="co">#&gt; S01    S01         1254         19.50776       19.44315</span></span>
+<span><span class="co">#&gt; S02    S02         1221         19.54125       19.45776</span></span>
+<span><span class="co">#&gt; S03    S03         1252         19.52765       19.46639</span></span>
+<span><span class="co">#&gt; S04    S04         1236         19.53626       19.44903</span></span>
+<span><span class="co">#&gt; S05    S05         1253         19.65949       19.58690</span></span>
+<span><span class="co">#&gt; S06    S06         1231         19.68316       19.59335</span></span>
+<span><span class="co">#&gt; S07    S07         1255         19.66875       19.58116</span></span>
+<span><span class="co">#&gt; S08    S08         1261         19.69826       19.60911</span></span>
+<span><span class="co">#&gt; S09    S09         1261         20.14614       20.04367</span></span>
+<span><span class="co">#&gt; S10    S10         1257         20.08802       20.02065</span></span>
+<span><span class="co">#&gt; S11    S11         1247         20.13104       20.06717</span></span>
+<span><span class="co">#&gt; S12    S12         1238         20.15002       20.05050</span></span>
+<span><span class="co">#&gt; S13    S13         1248         19.96241       19.92555</span></span>
+<span><span class="co">#&gt; S14    S14         1241         19.95156       19.92434</span></span>
+<span><span class="co">#&gt; S15    S15         1239         19.94447       19.92678</span></span>
+<span><span class="co">#&gt; S16    S16         1239         19.93563       19.92355</span></span>
+<span><span class="co">#&gt; S17    S17         1229         20.43232       20.43031</span></span>
+<span><span class="co">#&gt; S18    S18         1230         20.47541       20.43452</span></span>
+<span><span class="co">#&gt; S19    S19         1251         20.47908       20.43624</span></span>
+<span><span class="co">#&gt; S20    S20         1255         20.46627       20.44267</span></span>
+<span><span class="co">#&gt; S21    S21         1227         20.59117       20.56463</span></span>
+<span><span class="co">#&gt; S22    S22         1250         20.58383       20.56406</span></span>
+<span><span class="co">#&gt; S23    S23         1249         20.55144       20.54699</span></span>
+<span><span class="co">#&gt; S24    S24         1247         20.56910       20.55525</span></span>
 <span><span class="co">#&gt;     SD_Abundance</span></span>
-<span><span class="co">#&gt; S1      2.343037</span></span>
-<span><span class="co">#&gt; S2      1.909604</span></span>
-<span><span class="co">#&gt; S3      1.828050</span></span>
-<span><span class="co">#&gt; S4      1.864843</span></span>
-<span><span class="co">#&gt; S5      1.987539</span></span>
-<span><span class="co">#&gt; S6      2.029430</span></span>
-<span><span class="co">#&gt; S7      1.864873</span></span>
-<span><span class="co">#&gt; S8      2.042691</span></span>
-<span><span class="co">#&gt; S9      2.090413</span></span>
-<span><span class="co">#&gt; S10     2.344816</span></span>
-<span><span class="co">#&gt; S11     2.322889</span></span>
-<span><span class="co">#&gt; S12     2.109793</span></span></code></pre></div>
+<span><span class="co">#&gt; S01    0.6422235</span></span>
+<span><span class="co">#&gt; S02    0.6763063</span></span>
+<span><span class="co">#&gt; S03    0.6669170</span></span>
+<span><span class="co">#&gt; S04    0.6724402</span></span>
+<span><span class="co">#&gt; S05    0.6711332</span></span>
+<span><span class="co">#&gt; S06    0.6730298</span></span>
+<span><span class="co">#&gt; S07    0.6726562</span></span>
+<span><span class="co">#&gt; S08    0.6710727</span></span>
+<span><span class="co">#&gt; S09    0.6764492</span></span>
+<span><span class="co">#&gt; S10    0.6780620</span></span>
+<span><span class="co">#&gt; S11    0.6586759</span></span>
+<span><span class="co">#&gt; S12    0.6916134</span></span>
+<span><span class="co">#&gt; S13    0.8610616</span></span>
+<span><span class="co">#&gt; S14    0.8699636</span></span>
+<span><span class="co">#&gt; S15    0.8564935</span></span>
+<span><span class="co">#&gt; S16    0.8547909</span></span>
+<span><span class="co">#&gt; S17    0.8736235</span></span>
+<span><span class="co">#&gt; S18    0.8512421</span></span>
+<span><span class="co">#&gt; S19    0.8566041</span></span>
+<span><span class="co">#&gt; S20    0.8982385</span></span>
+<span><span class="co">#&gt; S21    0.8634333</span></span>
+<span><span class="co">#&gt; S22    0.8675018</span></span>
+<span><span class="co">#&gt; S23    0.8678363</span></span>
+<span><span class="co">#&gt; S24    0.8498352</span></span></code></pre></div>
 </div>
 <div id="day-2-summary" class="section level2" number="2.6">
 <h2>
@@ -841,7 +905,7 @@
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>r4proteomics</strong>: 5-Day Training Course" was written by Miguel CASANOVA, PhD &amp; Dany MUKESHA. It was last built on 2025-11-13.</p>
+    <p>"<strong>r4proteomics</strong>: 5-Day Training Course" was written by Miguel CASANOVA, PhD &amp; Dany MUKESHA. It was last built on 2025-11-17.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
