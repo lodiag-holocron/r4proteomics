@@ -6,7 +6,7 @@ description: |
   quality control checks, visualize data using PCA, boxplots,
   and heatmaps, and conduct exploratory data analysis (EDA)..
 author:
-  - name: Dany Mukesha
+  - name: Genethon
     url: https://www.firalis.com
     affiliation: Firalis
     affiliation_url: https://www.firalis.com
