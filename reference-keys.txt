@@ -1,3 +1,6 @@
+install-r
+install-rstudio
+install-the-required-packages
 day1
 learning-objectives
 day1-mod1

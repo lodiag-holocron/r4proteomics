@@ -98,6 +98,53 @@
 </h2>
 <p>All data files, scripts, and additional resources are available in the course repository.</p>
 </div>
+<div id="useful-online-resources-and-other-bibliography" class="section level2 unnumbered">
+<h2>Useful online resources and other bibliography<a class="anchor" aria-label="anchor" href="#useful-online-resources-and-other-bibliography"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li>
+<p><strong>Websites</strong></p>
+<ul>
+<li>
+<a href="http://www.r-project.org/">R Project</a> (The developers of R)</li>
+<li>
+<a href="http://www.statmethods.net/">Quick-R</a> (Roadmap and R code to quickly use R)</li>
+<li>
+<a href="http://www.cookbook-r.com/">Cookbook for R</a> (R code “recipes”)</li>
+<li>
+<a href="http://bioconductor.org/packages/release/BiocViews.html#___Workflow">Bioconductor workflows</a><br>
+(R code for pipelines of genomic analyses)</li>
+<li>
+<a href="https://rafalab.github.io/dsbook/">Introduction to Data Science</a><br>
+(Free online book from Rafael A. Irizarry, 2020)</li>
+<li><a href="https://www.huber.embl.de/msmb/">Modern Statistics for Modern Biology</a></li>
+<li>
+<a href="http://adv-r.had.co.nz/">Advanced R</a> (If you want to learn R from a programmers perspective)</li>
+</ul>
+</li>
+<li>
+<p><strong>Books</strong></p>
+<ul>
+<li>Introductory Statistics with R (<em>Springer</em>, Dalgaard, 2008)</li>
+<li>A first course in statistical programming with R (<em>CUP</em>, Braun and Murdoch, 2016)</li>
+<li>Computational Genome Analysis: An Introduction<br>
+(<em>Springer</em>, Deonier, Tavaré and Waterman, 2005)</li>
+<li>R programming for Bioinformatics<br>
+(<em>CRC Press</em>, Gentleman, 2008)</li>
+<li>R for Data Science: Import, Tidy, Transform, Visualize, and Model Data<br>
+(<em>O’Reilly</em>, Wickham and Grolemund, 2017) (for advanced users)</li>
+</ul>
+</li>
+<li>
+<p><strong>Cheatsheets</strong></p>
+<ul>
+<li><a href="https://hbctraining.github.io/Intro-to-R-flipped/cheatsheets/base-r.pdf">Base R</a></li>
+<li><a href="https://rstudio.github.io/cheatsheets/data-visualization.pdf">ggplot2</a></li>
+<li><a href="https://rstudio.github.io/cheatsheets/data-transformation.pdf">dplyr</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <div id="how-to-use-this-book" class="section level2 unnumbered">
 <h2>How to Use This Book<a class="anchor" aria-label="anchor" href="#how-to-use-this-book"><i class="fas fa-link"></i></a>
 </h2>
@@ -116,12 +163,35 @@
 <div id="installation-instructions" class="section level2 unnumbered">
 <h2>Installation Instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"><i class="fas fa-link"></i></a>
 </h2>
-<p>Before starting Day 1, please ensure you have installed:</p>
+<p>Before starting Day 1, please follow the steps below.</p>
+<div id="install-r" class="section level3" number="0.0.1">
+<h3>
+<span class="header-section-number">0.0.1</span> 1. Install R<a class="anchor" aria-label="anchor" href="#install-r"><i class="fas fa-link"></i></a>
+</h3>
+<p>Download and install R from:
+<strong><a href="https://cran.r-project.org/">https://cran.r-project.org/</a></strong>
+Choose your operating system and accept the default options.</p>
+</div>
+<div id="install-rstudio" class="section level3" number="0.0.2">
+<h3>
+<span class="header-section-number">0.0.2</span> 2. Install RStudio<a class="anchor" aria-label="anchor" href="#install-rstudio"><i class="fas fa-link"></i></a>
+</h3>
+<p>Download and install RStudio Desktop (free version) from:
+<strong><a href="https://posit.co/download/rstudio-desktop/">https://posit.co/download/rstudio-desktop/</a></strong></p>
+</div>
+<div id="install-the-required-packages" class="section level3" number="0.0.3">
+<h3>
+<span class="header-section-number">0.0.3</span> 3. Install the required packages<a class="anchor" aria-label="anchor" href="#install-the-required-packages"><i class="fas fa-link"></i></a>
+</h3>
+<p>Once RStudio is installed:</p>
+<ol style="list-style-type: decimal">
+<li><p>Open <strong>RStudio</strong>.
+You will see several panels. The panel in the bottom left is the <strong>Console</strong>. It is a place where you can type commands.</p></li>
+<li><p>Click inside the <strong>Console</strong> panel.</p></li>
+<li><p>Copy and paste the text below into the Console and press <strong>Enter</strong>.</p></li>
+</ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install R (version &gt;= 4.3.0) from https://cran.r-project.org/</span></span>
-<span><span class="co"># Install RStudio from https://posit.co/download/rstudio-desktop/</span></span>
-<span></span>
-<span><span class="co"># Install required CRAN packages</span></span>
+<code class="sourceCode R"><span><span class="co"># Install required CRAN packages</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"bookdown"</span>, <span class="st">"rmarkdown"</span>, <span class="st">"knitr"</span>, <span class="st">"pheatmap"</span>, <span class="st">"ggplot2"</span>, <span class="st">"downlit"</span>, <span class="st">"xml2"</span>,</span>
 <span>  <span class="st">"reshape2"</span>, <span class="st">"gridExtra"</span>, <span class="st">"tidyverse"</span>, <span class="st">"lme4"</span>,</span>
@@ -133,10 +203,11 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"limma"</span>, <span class="st">"vsn"</span>, <span class="st">"sva"</span>, <span class="st">"clusterProfiler"</span>, <span class="st">"org.Hs.eg.db"</span>, <span class="st">"lme4"</span>,</span>
+<span>  <span class="st">"limma"</span>, <span class="st">"vsn"</span>, <span class="st">"sva"</span>, <span class="st">"clusterProfiler"</span>, <span class="st">"org.Hs.eg.db"</span>,</span>
 <span>  <span class="st">"KEGGREST"</span>, <span class="st">"AnnotationDbi"</span>, <span class="st">"annotate"</span>, <span class="st">"GO.db"</span>,</span>
 <span>  <span class="st">"genefilter"</span>, <span class="st">"GOSemSim"</span>, <span class="st">"DOSE"</span>, <span class="st">"enrichplot"</span></span>
 <span><span class="op">)</span>, update <span class="op">=</span> <span class="cn">TRUE</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div id="acknowledgments" class="section level2 unnumbered">
 <h2>Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"><i class="fas fa-link"></i></a>
@@ -155,8 +226,15 @@
 <li><a class="nav-link" href="#about-this-course">About This Course</a></li>
 <li><a class="nav-link" href="#prerequisites">Prerequisites</a></li>
 <li><a class="nav-link" href="#course-materials">Course Materials</a></li>
+<li><a class="nav-link" href="#useful-online-resources-and-other-bibliography">Useful online resources and other bibliography</a></li>
 <li><a class="nav-link" href="#how-to-use-this-book">How to Use This Book</a></li>
-<li><a class="nav-link" href="#installation-instructions">Installation Instructions</a></li>
+<li>
+<a class="nav-link" href="#installation-instructions">Installation Instructions</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#install-r"><span class="header-section-number">0.0.1</span> 1. Install R</a></li>
+<li><a class="nav-link" href="#install-rstudio"><span class="header-section-number">0.0.2</span> 2. Install RStudio</a></li>
+<li><a class="nav-link" href="#install-the-required-packages"><span class="header-section-number">0.0.3</span> 3. Install the required packages</a></li>
+</ul>
+</li>
 <li><a class="nav-link" href="#acknowledgments">Acknowledgments</a></li>
 </ul>
 

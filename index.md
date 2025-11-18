@@ -42,6 +42,37 @@ You will learn:
 
 All data files, scripts, and additional resources are available in the course repository.
 
+## Useful online resources and other bibliography {.unnumbered}
+
+- **Websites**
+
+  - [R Project](http://www.r-project.org/) (The developers of R)
+  - [Quick-R](http://www.statmethods.net/) (Roadmap and R code to quickly use R)
+  - [Cookbook for R](http://www.cookbook-r.com/) (R code “recipes”)
+  - [Bioconductor workflows](http://bioconductor.org/packages/release/BiocViews.html#___Workflow)  
+    (R code for pipelines of genomic analyses)
+  - [Introduction to Data Science](https://rafalab.github.io/dsbook/)  
+    (Free online book from Rafael A. Irizarry, 2020)
+  - [Modern Statistics for Modern Biology](https://www.huber.embl.de/msmb/)
+  - [Advanced R](http://adv-r.had.co.nz/) (If you want to learn R from a programmers perspective)
+
+- **Books**
+
+  - Introductory Statistics with R (*Springer*, Dalgaard, 2008)
+  - A first course in statistical programming with R (*CUP*, Braun and Murdoch, 2016)
+  - Computational Genome Analysis: An Introduction  
+    (*Springer*, Deonier, Tavaré and Waterman, 2005)
+  - R programming for Bioinformatics  
+    (*CRC Press*, Gentleman, 2008)
+  - R for Data Science: Import, Tidy, Transform, Visualize, and Model Data  
+    (*O’Reilly*, Wickham and Grolemund, 2017) (for advanced users)
+    
+- **Cheatsheets**
+
+  - [Base R](https://hbctraining.github.io/Intro-to-R-flipped/cheatsheets/base-r.pdf)
+  - [ggplot2](https://rstudio.github.io/cheatsheets/data-visualization.pdf)
+  - [dplyr](https://rstudio.github.io/cheatsheets/data-transformation.pdf)
+    
 ## How to Use This Book {.unnumbered}
 
 Each chapter corresponds to one day of training. Chapters include:
@@ -53,13 +84,32 @@ Each chapter corresponds to one day of training. Chapters include:
 
 ## Installation Instructions {.unnumbered}
 
-Before starting Day 1, please ensure you have installed:
+Before starting Day 1, please follow the steps below.
+
+### 1. Install R
+
+Download and install R from:
+**[https://cran.r-project.org/](https://cran.r-project.org/)**
+Choose your operating system and accept the default options.
+
+### 2. Install RStudio
+
+Download and install RStudio Desktop (free version) from:
+**[https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)**
+
+### 3. Install the required packages
+
+Once RStudio is installed:
+
+1. Open **RStudio**.
+   You will see several panels. The panel in the bottom left is the **Console**. It is a place where you can type commands.
+
+2. Click inside the **Console** panel.
+
+3. Copy and paste the text below into the Console and press **Enter**.
 
 
 ``` r
-# Install R (version >= 4.3.0) from https://cran.r-project.org/
-# Install RStudio from https://posit.co/download/rstudio-desktop/
-
 # Install required CRAN packages
 install.packages(c(
   "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
@@ -72,7 +122,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 
 BiocManager::install(c(
-  "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4",
+  "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db",
   "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
   "genefilter", "GOSemSim", "DOSE", "enrichplot"
 ), update = TRUE, ask = FALSE)
@@ -81,6 +131,5 @@ BiocManager::install(c(
 ## Acknowledgments {.unnumbered}
 
 This course was developed to provide hands-on training in proteomics data analysis.
-
 
 
