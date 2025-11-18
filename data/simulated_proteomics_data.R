@@ -17,9 +17,16 @@ simulate_proteomics_data <- function() {
         stringsAsFactors = FALSE
     )
 
+    gene_symbols <- c(
+        "TP53", "BRCA1", "EGFR", "AKT1", "PIK3CA", "MYC", "PTEN", "AR", "BRAF", "KRAS",
+        "CDKN2A", "MTOR", "RET", "KIT", "ERBB2", "NF1", "RB1", "VHL", "APC", "TSC1",
+        "SMAD4", "NOTCH1", "FAS", "TNF", "IL6", "MAPK1", "CTNNB1", "GSK3B", "JUN", "CCND1"
+    )
+    gene_symbols <- sample(gene_symbols, n_proteins, replace = TRUE)
+
     protein_annotations <- data.frame(
         protein_id = paste0("P", sprintf("%05d", 1:n_proteins)),
-        gene_symbol = paste0("GENE", sprintf("%04d", sample(1:20000, n_proteins))),
+        gene_symbol = gene_symbols,
         protein_name = paste0("Protein_", sample(1:5000, n_proteins, replace = TRUE)),
         molecular_weight = round(runif(n_proteins, min = 10000, max = 300000), 0),
         peptide_count = sample(1:50, n_proteins, replace = TRUE, prob = 1 / (1:50)),
@@ -156,16 +163,16 @@ truth_df <- data.frame(
 write.csv(truth_df, "data/DE_truth.csv", row.names = FALSE)
 
 cat("=== DATASET SUMMARY ===\n")
-cat("Proteins:", nrow(dataset$protein_matrix), "\n")
-cat("Samples:", ncol(dataset$protein_matrix), "\n")
+cat("Proteins:", nrow(course_dataset$protein_matrix), "\n")
+cat("Samples:", ncol(course_dataset$protein_matrix), "\n")
 cat(
-    "Missing values:", sum(is.na(dataset$protein_matrix)),
-    "(", round(mean(is.na(dataset$protein_matrix)) * 100, 1), "%)\n"
+    "Missing values:", sum(is.na(course_dataset$protein_matrix)),
+    "(", round(mean(is.na(course_dataset$protein_matrix)) * 100, 1), "%)\n"
 )
-cat("Differential proteins:", length(dataset$de_protein_indices), "\n")
-cat("Conditions:", paste(unique(dataset$sample_metadata$condition), collapse = ", "), "\n")
-cat("Batches:", paste(unique(dataset$sample_metadata$batch), collapse = ", "), "\n")
-cat("Timepoints:", paste(unique(dataset$sample_metadata$timepoint), collapse = ", "), "\n")
+cat("Differential proteins:", length(course_dataset$de_protein_indices), "\n")
+cat("Conditions:", paste(unique(course_dataset$sample_metadata$condition), collapse = ", "), "\n")
+cat("Batches:", paste(unique(course_dataset$sample_metadata$batch), collapse = ", "), "\n")
+cat("Timepoints:", paste(unique(course_dataset$sample_metadata$timepoint), collapse = ", "), "\n")
 
 cat("\nDataset saved successfully!\n")
 
