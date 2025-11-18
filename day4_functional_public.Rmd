@@ -14,13 +14,16 @@ By the end of Day 4, you will be able to:
 
 ### Introduction to Functional Analysis
 
-Functional analysis helps interpret differential expression results in biological context by identifying enriched pathways, processes, and functions.
+Functional analysis helps interpret differential expression results 
+in biological context by identifying enriched pathways, processes, 
+and functions.
 
-**Key Concepts:** 
-- **Gene Ontology (GO)**: Biological Process, Molecular Function, Cellular Component 
-- **KEGG Pathways**: Curated pathway databases 
-- **Reactome**: Expert-curated pathway database 
-- **GSEA**: Gene Set Enrichment Analysis (rank-based)
+**Key Concepts:**
+
+-   **Gene Ontology (GO)**: Biological Process, Molecular Function, Cellular Component
+-   **KEGG Pathways**: Curated pathway databases
+-   **Reactome**: Expert-curated pathway database
+-   **GSEA**: Gene Set Enrichment Analysis (rank-based)
 
 ```{r setup-day4, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
@@ -209,7 +212,6 @@ if(exists("ego_bp") && !is.null(ego_bp) && nrow(ego_bp) > 0) {
   #print(p3)
 }
 ```
-
 
 ```{r enrichment-visualization_kegg, fig.width=6, fig.height=6}
 if(exists("kk") && !is.null(kk) && nrow(kk) > 0) {
