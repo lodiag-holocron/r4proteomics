@@ -6,16 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Day - 4 Functional Analysis, Longitudinal &amp; Public Data | r4proteomics</title>
 <meta name="author" content="Miguel CASANOVA, PhD &amp; Dany MUKESHA">
-<meta name="description" content="4.1 Objectives Interpret DE results biologically Explore longitudinal trajectories Work with public datasets  4.2 Module 1: Functional Enrichment &amp; GSEA Introduce enrichment (GO, KEGG, Reactome)....">
+<meta name="description" content="4.1 Learning Objectives By the end of Day 4, you will be able to: Perform functional enrichment analysis (GO, KEGG, Reactome) Conduct Gene Set Enrichment Analysis (GSEA) Analyze longitudinal...">
 <meta name="generator" content="bookdown 0.45 with bs4_book()">
 <meta property="og:title" content="Day - 4 Functional Analysis, Longitudinal &amp; Public Data | r4proteomics">
 <meta property="og:type" content="book">
 <meta property="og:url" content="https://github.com/lodiag-holocron/r4proteomics/day4.html">
 <meta property="og:image" content="https://github.com/lodiag-holocron/r4proteomics/r4proteomics.png">
-<meta property="og:description" content="4.1 Objectives Interpret DE results biologically Explore longitudinal trajectories Work with public datasets  4.2 Module 1: Functional Enrichment &amp; GSEA Introduce enrichment (GO, KEGG, Reactome)....">
+<meta property="og:description" content="4.1 Learning Objectives By the end of Day 4, you will be able to: Perform functional enrichment analysis (GO, KEGG, Reactome) Conduct Gene Set Enrichment Analysis (GSEA) Analyze longitudinal...">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Day - 4 Functional Analysis, Longitudinal &amp; Public Data | r4proteomics">
-<meta name="twitter:description" content="4.1 Objectives Interpret DE results biologically Explore longitudinal trajectories Work with public datasets  4.2 Module 1: Functional Enrichment &amp; GSEA Introduce enrichment (GO, KEGG, Reactome)....">
+<meta name="twitter:description" content="4.1 Learning Objectives By the end of Day 4, you will be able to: Perform functional enrichment analysis (GO, KEGG, Reactome) Conduct Gene Set Enrichment Analysis (GSEA) Analyze longitudinal...">
 <meta name="twitter:image" content="https://github.com/lodiag-holocron/r4proteomics/r4proteomics.png">
 <!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
@@ -64,88 +64,767 @@
 <h1>
 <span class="header-section-number">Day - 4</span> Functional Analysis, Longitudinal &amp; Public Data<a class="anchor" aria-label="anchor" href="#day4"><i class="fas fa-link"></i></a>
 </h1>
-<div id="objectives" class="section level2" number="4.1">
+<div id="learning-objectives-3" class="section level2" number="4.1">
 <h2>
-<span class="header-section-number">4.1</span> Objectives<a class="anchor" aria-label="anchor" href="#objectives"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.1</span> Learning Objectives<a class="anchor" aria-label="anchor" href="#learning-objectives-3"><i class="fas fa-link"></i></a>
 </h2>
+<p>By the end of Day 4, you will be able to:</p>
 <ul>
-<li>Interpret DE results biologically<br>
-</li>
-<li>Explore longitudinal trajectories<br>
-</li>
-<li>Work with public datasets</li>
+<li>Perform functional enrichment analysis (GO, KEGG, Reactome)</li>
+<li>Conduct Gene Set Enrichment Analysis (GSEA)</li>
+<li>Analyze longitudinal proteomics data</li>
+<li>Download and integrate public datasets from GEO and PRIDE</li>
+<li>Use online tools for enhanced functional interpretation</li>
 </ul>
 </div>
 <div id="module-1-functional-enrichment-gsea" class="section level2" number="4.2">
 <h2>
 <span class="header-section-number">4.2</span> Module 1: Functional Enrichment &amp; GSEA<a class="anchor" aria-label="anchor" href="#module-1-functional-enrichment-gsea"><i class="fas fa-link"></i></a>
 </h2>
-<p>Introduce enrichment (GO, KEGG, Reactome).<br>
-GSEA principles and visualization.</p>
+<div id="introduction-to-functional-analysis" class="section level3" number="4.2.1">
+<h3>
+<span class="header-section-number">4.2.1</span> Introduction to Functional Analysis<a class="anchor" aria-label="anchor" href="#introduction-to-functional-analysis"><i class="fas fa-link"></i></a>
+</h3>
+<p>Functional analysis helps interpret differential expression results
+in biological context by identifying enriched pathways, processes,
+and functions.</p>
+<p><strong>Key Concepts:</strong></p>
+<ul>
+<li>
+<strong>Gene Ontology (GO)</strong>: Biological Process, Molecular Function, Cellular Component</li>
+<li>
+<strong>KEGG Pathways</strong>: Curated pathway databases</li>
+<li>
+<strong>Reactome</strong>: Expert-curated pathway database</li>
+<li>
+<strong>GSEA</strong>: Gene Set Enrichment Analysis (rank-based)</li>
+</ul>
+</div>
+<div id="preparing-de-results-for-functional-analysis" class="section level3" number="4.2.2">
+<h3>
+<span class="header-section-number">4.2.2</span> Preparing DE Results for Functional Analysis<a class="anchor" aria-label="anchor" href="#preparing-de-results-for-functional-analysis"><i class="fas fa-link"></i></a>
+</h3>
 <div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># example with clusterProfiler</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">clusterProfiler</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
-<span><span class="co"># Suppose `de_genes` is a vector of gene IDs with statistics</span></span>
-<span><span class="va">ego</span> <span class="op">&lt;-</span> <span class="fu">enrichGO</span><span class="op">(</span><span class="va">de_genes</span>, OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span>, keyType <span class="op">=</span> <span class="st">"ENSEMBL"</span>, ont <span class="op">=</span> <span class="st">"BP"</span><span class="op">)</span></span>
-<span><span class="fu">dotplot</span><span class="op">(</span><span class="va">ego</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Prepare significant DE results</span></span>
+<span><span class="va">de_significant</span> <span class="op">&lt;-</span> <span class="va">de_results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">adj.P.Val</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">logFC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">logFC</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Significant DE proteins for functional analysis:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">de_significant</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Significant DE proteins for functional analysis: 216</span></span>
+<span></span>
+<span><span class="co"># Create gene list with statistics for GSEA</span></span>
+<span><span class="va">gene_list</span> <span class="op">&lt;-</span> <span class="va">de_results</span><span class="op">$</span><span class="va">logFC</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gene_list</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">de_results</span><span class="op">$</span><span class="va">gene_symbol</span></span>
+<span><span class="va">gene_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html">sort</a></span><span class="op">(</span><span class="va">gene_list</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Remove duplicates and NA values</span></span>
+<span><span class="va">gene_list</span> <span class="op">&lt;-</span> <span class="va">gene_list</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gene_list</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">gene_list</span> <span class="op">&lt;-</span> <span class="va">gene_list</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">gene_list</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Unique genes for GSEA:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">gene_list</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Unique genes for GSEA: 30</span></span></code></pre></div>
+</div>
+<div id="gene-ontology-go-enrichment-analysis" class="section level3" number="4.2.3">
+<h3>
+<span class="header-section-number">4.2.3</span> Gene Ontology (GO) Enrichment Analysis<a class="anchor" aria-label="anchor" href="#gene-ontology-go-enrichment-analysis"><i class="fas fa-link"></i></a>
+</h3>
 <div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lme4/lme4/">lme4</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: Matrix</span></span>
-<span><span class="va">df_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
-<span>  sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, each <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
-<span>  time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
-<span>  intensity <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">intensity</span> <span class="op">~</span> <span class="va">time</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="va">time</span> <span class="op">|</span> <span class="va">sample</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">df_long</span><span class="op">)</span></span>
-<span><span class="co">#&gt; boundary (singular) fit: see help('isSingular')</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Linear mixed model fit by REML ['lmerMod']</span></span>
-<span><span class="co">#&gt; Formula: intensity ~ time + (1 + time | sample)</span></span>
-<span><span class="co">#&gt;    Data: df_long</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; REML criterion at convergence: 93.6</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Scaled residuals: </span></span>
-<span><span class="co">#&gt;      Min       1Q   Median       3Q      Max </span></span>
-<span><span class="co">#&gt; -1.72762 -0.70393  0.02712  0.64813  1.95455 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Random effects:</span></span>
-<span><span class="co">#&gt;  Groups   Name        Variance Std.Dev. Corr </span></span>
-<span><span class="co">#&gt;  sample   (Intercept) 0.5239   0.7238        </span></span>
-<span><span class="co">#&gt;           time        0.7065   0.8406   -1.00</span></span>
-<span><span class="co">#&gt;  Residual             0.9831   0.9915        </span></span>
-<span><span class="co">#&gt; Number of obs: 30, groups:  sample, 10</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Fixed effects:</span></span>
-<span><span class="co">#&gt;              Estimate Std. Error t value</span></span>
-<span><span class="co">#&gt; (Intercept) -0.064044   0.366487  -0.175</span></span>
-<span><span class="co">#&gt; time         0.009644   0.346134   0.028</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Correlation of Fixed Effects:</span></span>
-<span><span class="co">#&gt;      (Intr)</span></span>
-<span><span class="co">#&gt; time -0.867</span></span>
-<span><span class="co">#&gt; optimizer (nloptwrap) convergence code: 0 (OK)</span></span>
-<span><span class="co">#&gt; boundary (singular) fit: see help('isSingular')</span></span></code></pre></div>
-<div id="exercise" class="section level3" number="4.2.1">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Starting GO enrichment analysis... This may take 1-2 minutes.\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Starting GO enrichment analysis... This may take 1-2 minutes.</span></span>
+<span></span>
+<span><span class="co"># Over-representation analysis for significant genes</span></span>
+<span><span class="va">significant_genes</span> <span class="op">&lt;-</span> <span class="va">de_significant</span><span class="op">$</span><span class="va">gene_symbol</span></span>
+<span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">significant_genes</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># GO Biological Process</span></span>
+<span>  <span class="va">ego_bp</span> <span class="op">&lt;-</span> <span class="fu">enrichGO</span><span class="op">(</span></span>
+<span>    gene <span class="op">=</span> <span class="va">significant_genes</span>,</span>
+<span>    OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span>,</span>
+<span>    keyType <span class="op">=</span> <span class="st">"SYMBOL"</span>,</span>
+<span>    ont <span class="op">=</span> <span class="st">"BP"</span>,</span>
+<span>    pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    qvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    readable <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># GO Molecular Function</span></span>
+<span>  <span class="va">ego_mf</span> <span class="op">&lt;-</span> <span class="fu">enrichGO</span><span class="op">(</span></span>
+<span>    gene <span class="op">=</span> <span class="va">significant_genes</span>,</span>
+<span>    OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span>,</span>
+<span>    keyType <span class="op">=</span> <span class="st">"SYMBOL"</span>, </span>
+<span>    ont <span class="op">=</span> <span class="st">"MF"</span>,</span>
+<span>    pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    qvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    readable <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># GO Cellular Component</span></span>
+<span>  <span class="va">ego_cc</span> <span class="op">&lt;-</span> <span class="fu">enrichGO</span><span class="op">(</span></span>
+<span>    gene <span class="op">=</span> <span class="va">significant_genes</span>,</span>
+<span>    OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span>,</span>
+<span>    keyType <span class="op">=</span> <span class="st">"SYMBOL"</span>,</span>
+<span>    ont <span class="op">=</span> <span class="st">"CC"</span>, </span>
+<span>    pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    qvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    readable <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"GO enrichment results:\n"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - BP:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ego_bp</span><span class="op">)</span>, <span class="st">"terms\n"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - MF:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ego_mf</span><span class="op">)</span>, <span class="st">"terms\n"</span><span class="op">)</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">" - CC:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ego_cc</span><span class="op">)</span>, <span class="st">"terms\n"</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Warning: Too few significant genes for meaningful GO analysis\n"</span><span class="op">)</span></span>
+<span>  <span class="va">ego_bp</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>  <span class="va">ego_mf</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>  <span class="va">ego_cc</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; GO enrichment results:</span></span>
+<span><span class="co">#&gt;  - BP: 1833 terms</span></span>
+<span><span class="co">#&gt;  - MF: 54 terms</span></span>
+<span><span class="co">#&gt;  - CC: 49 terms</span></span></code></pre></div>
+</div>
+<div id="kegg-pathway-enrichment" class="section level3" number="4.2.4">
 <h3>
-<span class="header-section-number">4.2.1</span> Exercise<a class="anchor" aria-label="anchor" href="#exercise"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.2.4</span> KEGG Pathway Enrichment<a class="anchor" aria-label="anchor" href="#kegg-pathway-enrichment"><i class="fas fa-link"></i></a>
 </h3>
-<p>On a longitudinal proteomics dataset, plot trajectories per protein or per cluster, fit simple linear/mixed model.</p>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Starting KEGG enrichment analysis... This may take 2-3 minutes.\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Starting KEGG enrichment analysis... This may take 2-3 minutes.</span></span>
+<span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">significant_genes</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Convert gene symbols to Entrez IDs</span></span>
+<span>  <span class="va">gene_df</span> <span class="op">&lt;-</span> <span class="fu">bitr</span><span class="op">(</span><span class="va">significant_genes</span>, fromType <span class="op">=</span> <span class="st">"SYMBOL"</span>, </span>
+<span>                  toType <span class="op">=</span> <span class="st">"ENTREZID"</span>, OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># KEGG enrichment</span></span>
+<span>  <span class="va">kk</span> <span class="op">&lt;-</span> <span class="fu">enrichKEGG</span><span class="op">(</span></span>
+<span>    gene <span class="op">=</span> <span class="va">gene_df</span><span class="op">$</span><span class="va">ENTREZID</span>,</span>
+<span>    organism <span class="op">=</span> <span class="st">'hsa'</span>,</span>
+<span>    pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    qvalueCutoff <span class="op">=</span> <span class="fl">0.05</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"KEGG enrichment:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span>, <span class="st">"pathways\n"</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># Simplify KEGG results for visualization</span></span>
+<span>    <span class="va">kk_simplified</span> <span class="op">&lt;-</span> <span class="va">kk</span><span class="op">@</span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">p.adjust</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">p.adjust</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="co"># Use a threshold to reduce terms based on fold enrichment, z-score, etc.</span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">FoldEnrichment</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span></span>
+<span>    </span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"No significant KEGG pathways found\n"</span><span class="op">)</span></span>
+<span>    <span class="va">kk</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Too few genes for KEGG analysis\n"</span><span class="op">)</span></span>
+<span>  <span class="va">kk</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; KEGG enrichment: 154 pathways</span></span></code></pre></div>
+</div>
+<div id="visualization-of-enrichment-results" class="section level3" number="4.2.5">
+<h3>
+<span class="header-section-number">4.2.5</span> Visualization of Enrichment Results<a class="anchor" aria-label="anchor" href="#visualization-of-enrichment-results"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create enrichment plots</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"ego_bp"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">ego_bp</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ego_bp</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="co"># Dot plot for GO BP</span></span>
+<span>  <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">dotplot</span><span class="op">(</span><span class="va">ego_bp</span>, showCategory <span class="op">=</span> <span class="fl">15</span>, font.size <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"GO Biological Process Enrichment"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Network plot</span></span>
+<span>  <span class="co"># Calculate pairwise similarity for the GO terms</span></span>
+<span>  <span class="va">ego_bp_sim</span> <span class="op">&lt;-</span> <span class="fu">pairwise_termsim</span><span class="op">(</span><span class="va">ego_bp</span><span class="op">)</span></span>
+<span>  <span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">emapplot</span><span class="op">(</span><span class="va">ego_bp_sim</span>, showCategory <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"GO BP Network"</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Ridge plot for gene distribution</span></span>
+<span>  <span class="co">#p3 &lt;- ridgeplot(ego_bp) + </span></span>
+<span>  <span class="co">#  ggtitle("Gene Distribution in GO Terms")</span></span>
+<span>  </span>
+<span>  <span class="co"># Display plots</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p2</span><span class="op">)</span></span>
+<span>  <span class="co">#print(p3)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p><img src="day4_functional_public_files/figure-html/enrichment-visualization-1.png" width="672"><img src="day4_functional_public_files/figure-html/enrichment-visualization-2.png" width="672"></p>
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"kk"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># KEGG dot plot</span></span>
+<span>  <span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu">dotplot</span><span class="op">(</span><span class="va">kk</span>, showCategory <span class="op">=</span> <span class="fl">15</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"KEGG Pathway Enrichment"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p4</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<div class="inline-figure"><img src="day4_functional_public_files/figure-html/enrichment-visualization_kegg-1.png" width="672"></div>
+</div>
+<div id="gene-set-enrichment-analysis-gsea" class="section level3" number="4.2.6">
+<h3>
+<span class="header-section-number">4.2.6</span> Gene Set Enrichment Analysis (GSEA)<a class="anchor" aria-label="anchor" href="#gene-set-enrichment-analysis-gsea"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Starting GSEA... This may take 3-5 minutes for large gene sets.\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Starting GSEA... This may take 3-5 minutes for large gene sets.</span></span>
+<span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">gene_list</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># GSEA for GO</span></span>
+<span>  <span class="va">gsea_go</span> <span class="op">&lt;-</span> <span class="fu">gseGO</span><span class="op">(</span></span>
+<span>    geneList <span class="op">=</span> <span class="va">gene_list</span>,</span>
+<span>    OrgDb <span class="op">=</span> <span class="va">org.Hs.eg.db</span>,</span>
+<span>    ont <span class="op">=</span> <span class="st">"BP"</span>,</span>
+<span>    minGSSize <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>    maxGSSize <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>    pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">gsea_go</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">gsea_go</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"GSEA GO results:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">gsea_go</span><span class="op">)</span>, <span class="st">"gene sets\n"</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># GSEA plot for top enriched term</span></span>
+<span>    <span class="va">top_term</span> <span class="op">&lt;-</span> <span class="va">gsea_go</span><span class="op">$</span><span class="va">Description</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>    <span class="va">p5</span> <span class="op">&lt;-</span> <span class="fu">gseaplot2</span><span class="op">(</span><span class="va">gsea_go</span>, geneSetID <span class="op">=</span> <span class="fl">1</span>, title <span class="op">=</span> <span class="va">top_term</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p5</span><span class="op">)</span></span>
+<span>    </span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"No significant GSEA results\n"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Insufficient genes for GSEA (need at least 100)\n"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Insufficient genes for GSEA (need at least 100)</span></span></code></pre></div>
+</div>
+<div id="online-tools-for-functional-analysis" class="section level3" number="4.2.7">
+<h3>
+<span class="header-section-number">4.2.7</span> Online Tools for Functional Analysis<a class="anchor" aria-label="anchor" href="#online-tools-for-functional-analysis"><i class="fas fa-link"></i></a>
+</h3>
+<p><strong>Recommended Online Tools:</strong></p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>STRING Database</strong> (<a href="https://string-db.org/" class="uri">https://string-db.org/</a>)
+<ul>
+<li>Protein-protein interaction networks</li>
+<li>Functional enrichment</li>
+<li>Usage: Upload gene list, get interactions and pathways</li>
+</ul>
+</li>
+<li>
+<strong>g:Profiler</strong> (<a href="https://biit.cs.ut.ee/gprofiler/" class="uri">https://biit.cs.ut.ee/gprofiler/</a>)
+<ul>
+<li>Multi-functional enrichment tool</li>
+<li>Supports GO, KEGG, Reactome, etc.</li>
+<li>Usage: Upload gene list, select databases</li>
+</ul>
+</li>
+<li>
+<strong>Enrichr</strong> (<a href="https://maayanlab.cloud/Enrichr/" class="uri">https://maayanlab.cloud/Enrichr/</a>)
+<ul>
+<li>Comprehensive enrichment analysis</li>
+<li>User-friendly interface</li>
+<li>Usage: Paste gene list, run analysis</li>
+</ul>
+</li>
+</ol>
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Export gene list for online tools</span></span>
+<span><span class="va">significant_gene_list</span> <span class="op">&lt;-</span> <span class="va">de_significant</span><span class="op">$</span><span class="va">gene_symbol</span></span>
+<span></span>
+<span><span class="co"># Save for online tools</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span><span class="op">(</span><span class="va">significant_gene_list</span>, </span>
+<span>            <span class="st">"results/significant_genes_for_online_tools.txt"</span>,</span>
+<span>            row.names <span class="op">=</span> <span class="cn">FALSE</span>, col.names <span class="op">=</span> <span class="cn">FALSE</span>, quote <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Gene list saved for online tools: results/significant_genes_for_online_tools.txt\n"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="exercise-4.1-functional-interpretation" class="section level3" number="4.2.8">
+<h3>
+<span class="header-section-number">4.2.8</span> Exercise 4.1: Functional Interpretation<a class="anchor" aria-label="anchor" href="#exercise-4.1-functional-interpretation"><i class="fas fa-link"></i></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>Run GO enrichment for Molecular Function and Cellular Component</li>
+<li>Identify the top 5 most enriched pathways</li>
+<li>Compare results with online tools (STRING/g:Profiler)</li>
+<li>Create a biological interpretation report</li>
+</ol>
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Solution</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"=== FUNCTIONAL INTERPRETATION REPORT ===\n\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; === FUNCTIONAL INTERPRETATION REPORT ===</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"ego_bp"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ego_bp</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"TOP BIOLOGICAL PROCESSES:\n"</span><span class="op">)</span></span>
+<span>  <span class="va">top_bp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ego_bp</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">top_bp</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="va">i</span>, <span class="st">". "</span>, <span class="va">top_bp</span><span class="op">$</span><span class="va">Description</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">" (p.adj = "</span>, </span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span><span class="op">(</span><span class="va">top_bp</span><span class="op">$</span><span class="va">p.adjust</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, format <span class="op">=</span> <span class="st">"e"</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="st">")\n"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; TOP BIOLOGICAL PROCESSES:</span></span>
+<span><span class="co">#&gt; 1. gland development (p.adj = 3.00e-15)</span></span>
+<span><span class="co">#&gt; 2. epithelial cell proliferation (p.adj = 6.14e-15)</span></span>
+<span><span class="co">#&gt; 3. neuron apoptotic process (p.adj = 6.18e-13)</span></span>
+<span><span class="co">#&gt; 4. gliogenesis (p.adj = 2.07e-12)</span></span>
+<span><span class="co">#&gt; 5. negative regulation of cell development (p.adj = 4.97e-12)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"kk"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"\nTOP KEGG PATHWAYS:\n"</span><span class="op">)</span></span>
+<span>  <span class="va">top_kegg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">kk</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">top_kegg</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="va">i</span>, <span class="st">". "</span>, <span class="va">top_kegg</span><span class="op">$</span><span class="va">Description</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="st">" (p.adj = "</span>, </span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/formatc.html">formatC</a></span><span class="op">(</span><span class="va">top_kegg</span><span class="op">$</span><span class="va">p.adjust</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, format <span class="op">=</span> <span class="st">"e"</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="st">")\n"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; TOP KEGG PATHWAYS:</span></span>
+<span><span class="co">#&gt; 1. Breast cancer (p.adj = 9.72e-28)</span></span>
+<span><span class="co">#&gt; 2. Endometrial cancer (p.adj = 3.17e-22)</span></span>
+<span><span class="co">#&gt; 3. Colorectal cancer (p.adj = 6.80e-22)</span></span>
+<span><span class="co">#&gt; 4. Hepatocellular carcinoma (p.adj = 4.20e-21)</span></span>
+<span><span class="co">#&gt; 5. Prostate cancer (p.adj = 9.77e-21)</span></span>
+<span></span>
+<span><span class="co"># Biological insights</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"\nBIOLOGICAL INSIGHTS:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; BIOLOGICAL INSIGHTS:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"- Treatment appears to affect cellular processes related to [interpret based on top terms]\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; - Treatment appears to affect cellular processes related to [interpret based on top terms]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"- Key pathways involved: [list key pathways]\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; - Key pathways involved: [list key pathways]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"- Potential therapeutic targets: [suggest based on results]\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; - Potential therapeutic targets: [suggest based on results]</span></span></code></pre></div>
 </div>
 </div>
-<div id="module-2-public-data-integration" class="section level2" number="4.3">
+<div id="module-2-longitudinal-data-analysis" class="section level2" number="4.3">
 <h2>
-<span class="header-section-number">4.3</span> Module 2: Public Data Integration<a class="anchor" aria-label="anchor" href="#module-2-public-data-integration"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.3</span> Module 2: Longitudinal Data Analysis<a class="anchor" aria-label="anchor" href="#module-2-longitudinal-data-analysis"><i class="fas fa-link"></i></a>
 </h2>
-<p>Demonstrate downloading, cleaning, integrating a public proteomics or expression dataset (e.g. from PRIDE, GEO). Run pipeline: QC → normalization → DE → enrichment.</p>
-<div id="exercise-1" class="section level3" number="4.3.1">
+<div id="working-with-longitudinal-proteomics-data" class="section level3" number="4.3.1">
 <h3>
-<span class="header-section-number">4.3.1</span> Exercise<a class="anchor" aria-label="anchor" href="#exercise-1"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.3.1</span> Working with Longitudinal Proteomics Data<a class="anchor" aria-label="anchor" href="#working-with-longitudinal-proteomics-data"><i class="fas fa-link"></i></a>
 </h3>
-<p>Pick a public dataset, import into R, preprocess, analyze, interpret results.</p>
-
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create longitudinal dataset from our course data</span></span>
+<span><span class="va">longitudinal_data</span> <span class="op">&lt;-</span> <span class="va">protein_annotations</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">protein_id</span>, <span class="va">gene_symbol</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">processed_data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html">rownames_to_column</a></span><span class="op">(</span><span class="st">"protein_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="op">-</span><span class="va">protein_id</span>, names_to <span class="op">=</span> <span class="st">"sample_id"</span>, values_to <span class="op">=</span> <span class="st">"abundance"</span><span class="op">)</span>,</span>
+<span>    by <span class="op">=</span> <span class="st">"protein_id"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">sample_metadata</span>, by <span class="op">=</span> <span class="st">"sample_id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"Week"</span>, <span class="st">""</span>, <span class="va">timepoint</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    patient_condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="va">patient_id</span>, <span class="st">"_"</span>, <span class="va">condition</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Longitudinal dataset created:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">longitudinal_data</span><span class="op">)</span>, <span class="st">"measurements\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Longitudinal dataset created: 33192 measurements</span></span></code></pre></div>
 </div>
+<div id="visualizing-protein-trajectories" class="section level3" number="4.3.2">
+<h3>
+<span class="header-section-number">4.3.2</span> Visualizing Protein Trajectories<a class="anchor" aria-label="anchor" href="#visualizing-protein-trajectories"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Select top variable proteins for visualization</span></span>
+<span><span class="va">top_proteins</span> <span class="op">&lt;-</span> <span class="va">de_significant</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">logFC</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span><span class="op">(</span><span class="va">gene_symbol</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot trajectories for top proteins</span></span>
+<span><span class="va">trajectory_plot</span> <span class="op">&lt;-</span> <span class="va">longitudinal_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">gene_symbol</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">top_proteins</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">week</span>, y <span class="op">=</span> <span class="va">abundance</span>, color <span class="op">=</span> <span class="va">condition</span>, group <span class="op">=</span> <span class="va">patient_condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">condition</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">TRUE</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">gene_symbol</span>, scales <span class="op">=</span> <span class="st">"free_y"</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Protein Abundance Trajectories Over Time"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"Week"</span>, y <span class="op">=</span> <span class="st">"Normalized Abundance"</span>,</span>
+<span>       color <span class="op">=</span> <span class="st">"Condition"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">trajectory_plot</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="day4_functional_public_files/figure-html/longitudinal-visualization-1.png" width="1152"></div>
+</div>
+<div id="mixed-effects-modeling" class="section level3" number="4.3.3">
+<h3>
+<span class="header-section-number">4.3.3</span> Mixed Effects Modeling<a class="anchor" aria-label="anchor" href="#mixed-effects-modeling"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Fitting mixed effects models... This may take 1-2 minutes.\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Fitting mixed effects models... This may take 1-2 minutes.</span></span>
+<span></span>
+<span><span class="co"># Function to fit mixed model for a protein</span></span>
+<span><span class="va">fit_mixed_model</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">protein_data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/conditions.html">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>    <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">lmer</span><span class="op">(</span><span class="va">abundance</span> <span class="op">~</span> <span class="va">condition</span> <span class="op">*</span> <span class="va">week</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="va">week</span> <span class="op">|</span> <span class="va">patient_id</span><span class="op">)</span>, </span>
+<span>                  data <span class="op">=</span> <span class="va">protein_data</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Fit models for top proteins</span></span>
+<span><span class="va">mixed_model_results</span> <span class="op">&lt;-</span> <span class="va">longitudinal_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">gene_symbol</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">top_proteins</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">gene_symbol</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">nest</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span></span>
+<span>    model <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">fit_mixed_model</span><span class="op">)</span>,</span>
+<span>    summary <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">model</span>, <span class="op">~</span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="kw">else</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>    coefs <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">summary</span>, <span class="op">~</span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="kw">else</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Display model results</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">mixed_model_results</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">gene</span> <span class="op">&lt;-</span> <span class="va">mixed_model_results</span><span class="op">$</span><span class="va">gene_symbol</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">mixed_model_results</span><span class="op">$</span><span class="va">summary</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"\nMixed model for"</span>, <span class="va">gene</span>, <span class="st">":\n"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">mixed_model_results</span><span class="op">$</span><span class="va">summary</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">coefficients</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mixed model for AKT1 :</span></span>
+<span><span class="co">#&gt;                              Estimate Std. Error</span></span>
+<span><span class="co">#&gt; (Intercept)             19.7086884617 0.07352461</span></span>
+<span><span class="co">#&gt; conditionTreatment      -0.0517629357 0.10397950</span></span>
+<span><span class="co">#&gt; week                    -0.0042315872 0.01423798</span></span>
+<span><span class="co">#&gt; conditionTreatment:week -0.0008073289 0.02013554</span></span>
+<span><span class="co">#&gt;                              t value</span></span>
+<span><span class="co">#&gt; (Intercept)             268.05566483</span></span>
+<span><span class="co">#&gt; conditionTreatment       -0.49781866</span></span>
+<span><span class="co">#&gt; week                     -0.29720419</span></span>
+<span><span class="co">#&gt; conditionTreatment:week  -0.04009472</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mixed model for EGFR :</span></span>
+<span><span class="co">#&gt;                             Estimate Std. Error     t value</span></span>
+<span><span class="co">#&gt; (Intercept)             19.771017530 0.05798293 340.9799627</span></span>
+<span><span class="co">#&gt; conditionTreatment       0.068815718 0.08200025   0.8392135</span></span>
+<span><span class="co">#&gt; week                    -0.003050035 0.01122835  -0.2716371</span></span>
+<span><span class="co">#&gt; conditionTreatment:week  0.002105610 0.01587928   0.1326011</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mixed model for MAPK1 :</span></span>
+<span><span class="co">#&gt;                             Estimate Std. Error     t value</span></span>
+<span><span class="co">#&gt; (Intercept)             19.683277753 0.06176267 318.6921407</span></span>
+<span><span class="co">#&gt; conditionTreatment       0.101465576 0.08734561   1.1616563</span></span>
+<span><span class="co">#&gt; week                     0.004952698 0.01196029   0.4140952</span></span>
+<span><span class="co">#&gt; conditionTreatment:week -0.003730085 0.01691440  -0.2205271</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mixed model for TNF :</span></span>
+<span><span class="co">#&gt;                             Estimate Std. Error     t value</span></span>
+<span><span class="co">#&gt; (Intercept)             19.774558712 0.05801208 340.8696941</span></span>
+<span><span class="co">#&gt; conditionTreatment      -0.002040273 0.08204147  -0.0248688</span></span>
+<span><span class="co">#&gt; week                     0.005991395 0.01123399   0.5333275</span></span>
+<span><span class="co">#&gt; conditionTreatment:week -0.003955523 0.01588726  -0.2489745</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mixed model for CCND1 :</span></span>
+<span><span class="co">#&gt;                             Estimate Std. Error     t value</span></span>
+<span><span class="co">#&gt; (Intercept)             19.779745531 0.05508533 359.0746586</span></span>
+<span><span class="co">#&gt; conditionTreatment       0.224313632 0.07784138   2.8816760</span></span>
+<span><span class="co">#&gt; week                     0.008165382 0.01071033   0.7623836</span></span>
+<span><span class="co">#&gt; conditionTreatment:week -0.012905287 0.01507392  -0.8561336</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mixed model for MYC :</span></span>
+<span><span class="co">#&gt;                            Estimate Std. Error     t value</span></span>
+<span><span class="co">#&gt; (Intercept)             19.61741226 0.06252496 313.7533035</span></span>
+<span><span class="co">#&gt; conditionTreatment       0.01209204 0.08818899   0.1371151</span></span>
+<span><span class="co">#&gt; week                    -0.01373845 0.01232137  -1.1150095</span></span>
+<span><span class="co">#&gt; conditionTreatment:week  0.01950071 0.01707772   1.1418800</span></span></code></pre></div>
+</div>
+</div>
+<div id="module-3-public-data-integration" class="section level2" number="4.4">
+<h2>
+<span class="header-section-number">4.4</span> Module 3: Public Data Integration<a class="anchor" aria-label="anchor" href="#module-3-public-data-integration"><i class="fas fa-link"></i></a>
+</h2>
+<div id="downloading-data-from-geo" class="section level3" number="4.4.1">
+<h3>
+<span class="header-section-number">4.4.1</span> Downloading Data from GEO<a class="anchor" aria-label="anchor" href="#downloading-data-from-geo"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"ALERT: GEO downloads can take 5-15 minutes depending on dataset size and internet speed.\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Example: Download a real proteomics dataset from GEO</span></span>
+<span><span class="co"># GSE12345 is a placeholder - replace with actual dataset ID</span></span>
+<span><span class="va">geo_accession</span> <span class="op">&lt;-</span> <span class="st">"GSE12345"</span>  <span class="co"># Replace with real dataset</span></span>
+<span></span>
+<span><span class="co"># Download dataset (commented out to avoid accidental downloads during rendering)</span></span>
+<span><span class="co"># gse_data &lt;- getGEO(geo_accession, destdir = "data/geo/")</span></span>
+<span></span>
+<span><span class="co"># Alternative: Use a pre-downloaded example dataset</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Using simulated public dataset for demonstration...\n"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="working-with-pride-proteomics-data" class="section level3" number="4.4.2">
+<h3>
+<span class="header-section-number">4.4.2</span> Working with PRIDE Proteomics Data<a class="anchor" aria-label="anchor" href="#working-with-pride-proteomics-data"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"ALERT: PRIDE dataset processing can be computationally intensive and time-consuming.\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Example workflow for PRIDE data</span></span>
+<span><span class="co"># 1. Download from https://www.ebi.ac.uk/pride/</span></span>
+<span><span class="co"># 2. Use tools like MSstats or ProteomeDiscoverer for quantification</span></span>
+<span><span class="co"># 3. Import results into R</span></span>
+<span></span>
+<span><span class="co"># Simulated PRIDE-like dataset for demonstration</span></span>
+<span><span class="va">create_simulated_pride_data</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span>  <span class="va">n_proteins</span> <span class="op">&lt;-</span> <span class="fl">800</span></span>
+<span>  <span class="va">n_samples</span> <span class="op">&lt;-</span> <span class="fl">16</span></span>
+<span>  </span>
+<span>  <span class="va">pride_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">n_proteins</span> <span class="op">*</span> <span class="va">n_samples</span>, mean <span class="op">=</span> <span class="fl">20</span>, sd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>    nrow <span class="op">=</span> <span class="va">n_proteins</span>,</span>
+<span>    ncol <span class="op">=</span> <span class="va">n_samples</span></span>
+<span>  <span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">pride_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"PRIDE_S"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_samples</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">pride_data</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"%05d"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_proteins</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">pride_data</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">pride_matrix</span> <span class="op">&lt;-</span> <span class="fu">create_simulated_pride_data</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="complete-public-data-analysis-pipeline" class="section level3" number="4.4.3">
+<h3>
+<span class="header-section-number">4.4.3</span> Complete Public Data Analysis Pipeline<a class="anchor" aria-label="anchor" href="#complete-public-data-analysis-pipeline"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#[TO BE REVISED]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Running public data analysis pipeline...\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Simulate public dataset analysis</span></span>
+<span><span class="va">public_sample_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  sample_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"PUBLIC_S"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">16</span><span class="op">)</span>,</span>
+<span>  condition <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Disease"</span>, <span class="st">"Healthy"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">8</span><span class="op">)</span>,</span>
+<span>  batch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">30</span><span class="op">:</span><span class="fl">70</span>, <span class="fl">16</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"M"</span>, <span class="st">"F"</span><span class="op">)</span>, <span class="fl">16</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Run complete analysis pipeline on public data</span></span>
+<span><span class="va">public_de_results</span> <span class="op">&lt;-</span> <span class="op">{</span></span>
+<span>  <span class="co"># Normalization</span></span>
+<span>  <span class="va">public_normalized</span> <span class="op">&lt;-</span> <span class="fu">normalizeBetweenArrays</span><span class="op">(</span><span class="va">pride_matrix</span>, method <span class="op">=</span> <span class="st">"quantile"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Batch correction</span></span>
+<span>  <span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">condition</span>, data <span class="op">=</span> <span class="va">public_sample_metadata</span><span class="op">)</span></span>
+<span>  <span class="va">public_corrected</span> <span class="op">&lt;-</span> <span class="fu">ComBat</span><span class="op">(</span><span class="va">public_normalized</span>, </span>
+<span>                            batch <span class="op">=</span> <span class="va">public_sample_metadata</span><span class="op">$</span><span class="va">batch</span>, </span>
+<span>                            mod <span class="op">=</span> <span class="va">mod</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Differential expression</span></span>
+<span>  <span class="va">design</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">condition</span>, data <span class="op">=</span> <span class="va">public_sample_metadata</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">design</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Disease"</span>, <span class="st">"Healthy"</span><span class="op">)</span></span>
+<span>  <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">lmFit</span><span class="op">(</span><span class="va">public_corrected</span>, <span class="va">design</span><span class="op">)</span></span>
+<span>  <span class="va">contrast</span> <span class="op">&lt;-</span> <span class="fu">makeContrasts</span><span class="op">(</span>DiseaseVsHealthy <span class="op">=</span> <span class="va">Disease</span> <span class="op">-</span> <span class="va">Healthy</span>, levels <span class="op">=</span> <span class="va">design</span><span class="op">)</span></span>
+<span>  <span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu">contrasts.fit</span><span class="op">(</span><span class="va">fit</span>, <span class="va">contrast</span><span class="op">)</span></span>
+<span>  <span class="va">fit2</span> <span class="op">&lt;-</span> <span class="fu">eBayes</span><span class="op">(</span><span class="va">fit2</span><span class="op">)</span></span>
+<span>  <span class="fu">topTable</span><span class="op">(</span><span class="va">fit2</span>, number <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Public data analysis completed.\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Significant hits in public data:"</span>, </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">public_de_results</span><span class="op">$</span><span class="va">adj.P.Val</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="cross-dataset-validation" class="section level3" number="4.4.4">
+<h3>
+<span class="header-section-number">4.4.4</span> Cross-Dataset Validation<a class="anchor" aria-label="anchor" href="#cross-dataset-validation"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compare our results with public dataset (simulated overlap)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Cross-dataset validation...\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Cross-dataset validation...</span></span>
+<span></span>
+<span><span class="co"># Create simulated overlap between datasets</span></span>
+<span><span class="va">common_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">protein_annotations</span><span class="op">$</span><span class="va">gene_symbol</span>, <span class="fl">50</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">validation_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  gene <span class="op">=</span> <span class="va">common_genes</span>,</span>
+<span>  our_study_logFC <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, mean <span class="op">=</span> <span class="fl">1</span>, sd <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>  public_data_logFC <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">50</span>, mean <span class="op">=</span> <span class="fl">0.8</span>, sd <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span>,</span>
+<span>  correlation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">0.3</span>, <span class="fl">0.8</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot correlation</span></span>
+<span><span class="va">validation_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">validation_results</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">our_study_logFC</span>, y <span class="op">=</span> <span class="va">public_data_logFC</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">correlation</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_viridis</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Cross-Dataset Validation"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"Our Study logFC"</span>, </span>
+<span>       y <span class="op">=</span> <span class="st">"Public Data logFC"</span>,</span>
+<span>       color <span class="op">=</span> <span class="st">"Correlation"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">validation_results</span><span class="op">$</span><span class="va">our_study_logFC</span><span class="op">)</span>, </span>
+<span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">validation_results</span><span class="op">$</span><span class="va">public_data_logFC</span><span class="op">)</span>,</span>
+<span>           label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"r ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">validation_results</span><span class="op">$</span><span class="va">our_study_logFC</span>, </span>
+<span>                                         <span class="va">validation_results</span><span class="op">$</span><span class="va">public_data_logFC</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">validation_plot</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="day4_functional_public_files/figure-html/cross-validation-1.png" width="672"></div>
+</div>
+<div id="exercise-4.2-public-data-integration" class="section level3" number="4.4.5">
+<h3>
+<span class="header-section-number">4.4.5</span> Exercise 4.2: Public Data Integration<a class="anchor" aria-label="anchor" href="#exercise-4.2-public-data-integration"><i class="fas fa-link"></i></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>Find a relevant proteomics dataset on GEO or PRIDE</li>
+<li>Download and preprocess the data</li>
+<li>Perform differential expression analysis</li>
+<li>Compare results with your own analysis</li>
+<li>Identify conserved and novel findings</li>
+</ol>
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Solution framework</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"=== PUBLIC DATA INTEGRATION WORKFLOW ===\n\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"1. DATA SOURCING:\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Visit https://www.ncbi.nlm.nih.gov/geo/\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Search for 'proteomics cancer' (or your disease of interest)\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Select dataset with appropriate sample size and conditions\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Download matrix and metadata files\n\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"2. DATA PROCESSING:\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Load expression matrix and sample metadata\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Perform quality control (similar to Day 2)\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Normalize and batch correct if needed\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Run differential expression analysis\n\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"3. COMPARATIVE ANALYSIS:\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Identify overlapping significant proteins\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Check direction consistency of fold changes\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Perform functional enrichment on conserved hits\n"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"   - Report novel findings specific to your dataset\n"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Example code structure</span></span>
+<span><span class="co"># public_data &lt;- read.csv("downloaded_public_data.csv")</span></span>
+<span><span class="co"># public_metadata &lt;- read.csv("public_sample_sheet.csv")</span></span>
+<span><span class="co"># ... analysis steps ...</span></span></code></pre></div>
+</div>
+</div>
+<div id="online-resources-and-tools" class="section level2" number="4.5">
+<h2>
+<span class="header-section-number">4.5</span> Online Resources and Tools<a class="anchor" aria-label="anchor" href="#online-resources-and-tools"><i class="fas fa-link"></i></a>
+</h2>
+<div id="essential-online-platforms" class="section level3" number="4.5.1">
+<h3>
+<span class="header-section-number">4.5.1</span> Essential Online Platforms:<a class="anchor" aria-label="anchor" href="#essential-online-platforms"><i class="fas fa-link"></i></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<strong>GEO (Gene Expression Omnibus)</strong>
+<ul>
+<li>URL: <a href="https://www.ncbi.nlm.nih.gov/geo/" class="uri">https://www.ncbi.nlm.nih.gov/geo/</a>
+</li>
+<li>Usage: Search → Download → Analyze in R</li>
+</ul>
+</li>
+<li>
+<strong>PRIDE Proteomics Database</strong>
+<ul>
+<li>URL: <a href="https://www.ebi.ac.uk/pride/" class="uri">https://www.ebi.ac.uk/pride/</a>
+</li>
+<li>Usage: Browse datasets → Download raw or processed data</li>
+</ul>
+</li>
+<li>
+<strong>ProteomicsDB</strong>
+<ul>
+<li>URL: <a href="https://www.proteomicsdb.org/" class="uri">https://www.proteomicsdb.org/</a>
+</li>
+<li>Usage: Query protein expression across tissues/cancers</li>
+</ul>
+</li>
+<li>
+<strong>CPTAC (Clinical Proteomic Tumor Analysis Consortium)</strong>
+<ul>
+<li>URL: <a href="https://proteomics.cancer.gov/programs/cptac" class="uri">https://proteomics.cancer.gov/programs/cptac</a>
+</li>
+<li>Usage: Download cancer proteomics datasets</li>
+</ul>
+</li>
+</ol>
+</div>
+<div id="r-packages-for-public-data" class="section level3" number="4.5.2">
+<h3>
+<span class="header-section-number">4.5.2</span> R Packages for Public Data:<a class="anchor" aria-label="anchor" href="#r-packages-for-public-data"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install additional packages for public data analysis</span></span>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"GEOquery"</span>,      <span class="co"># Download GEO data</span></span>
+<span>  <span class="st">"SRAdb"</span>,         <span class="co"># Sequence Read Archive access</span></span>
+<span>  <span class="st">"proteomics"</span>,    <span class="co"># Proteomics data handling</span></span>
+<span>  <span class="st">"MSnbase"</span>        <span class="co"># Mass spectrometry data</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="day-4-summary" class="section level2" number="4.6">
+<h2>
+<span class="header-section-number">4.6</span> Day 4 Summary<a class="anchor" aria-label="anchor" href="#day-4-summary"><i class="fas fa-link"></i></a>
+</h2>
+<p>Today you learned: - ✓ Functional enrichment analysis (GO, KEGG, GSEA) - ✓ Longitudinal data analysis and mixed models - ✓ Public data integration from GEO and PRIDE - ✓ Online tools for enhanced interpretation - ✓ Cross-dataset validation techniques</p>
+<div id="key-takeaways-2" class="section level3" number="4.6.1">
+<h3>
+<span class="header-section-number">4.6.1</span> Key Takeaways<a class="anchor" aria-label="anchor" href="#key-takeaways-2"><i class="fas fa-link"></i></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Functional analysis</strong> provides biological context for DE results</li>
+<li>
+<strong>Longitudinal models</strong> capture time-dependent changes</li>
+<li>
+<strong>Public data</strong> enables validation and discovery</li>
+<li>
+<strong>Online tools</strong> complement R-based analyses</li>
+</ol>
+</div>
+<div id="homework-3" class="section level3" number="4.6.2">
+<h3>
+<span class="header-section-number">4.6.2</span> Homework<a class="anchor" aria-label="anchor" href="#homework-3"><i class="fas fa-link"></i></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>Perform functional analysis on your own DE results</li>
+<li>Download and analyze a public proteomics dataset</li>
+<li>Compare findings across multiple datasets</li>
+<li>Create a comprehensive biological interpretation report</li>
+</ol>
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Save functional analysis results</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"ego_bp"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">ego_bp</span>, <span class="st">"results/day4_go_bp.rds"</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"kk"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">kk</span>, <span class="st">"results/day4_kegg.rds"</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"gsea_go"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">gsea_go</span>, <span class="st">"results/day4_gsea.rds"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">longitudinal_data</span>, <span class="st">"results/day4_longitudinal_data.rds"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">public_de_results</span>, <span class="st">"results/day4_public_de_results.rds"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Day 4 results saved for Day 5 integration.\n"</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div id="additional-resources-3" class="section level2" number="4.7">
+<h2>
+<span class="header-section-number">4.7</span> Additional Resources<a class="anchor" aria-label="anchor" href="#additional-resources-3"><i class="fas fa-link"></i></a>
+</h2>
+<ul>
+<li><a href="https://yulab-smu.top/biomedical-knowledge-mining-book/">clusterProfiler book</a></li>
+<li><a href="https://www.bioconductor.org/packages/release/bioc/vignettes/GEOquery/inst/doc/GEOquery.html">GEO tutorial</a></li>
+<li><a href="https://www.ebi.ac.uk/pride/markdownpage/prideapipage">PRIDE API documentation</a></li>
+<li>
+<a href="https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html">Mixed models in R</a> ```</li>
+</ul>
 </div>
 </div>
   <div class="chapter-nav">
@@ -155,13 +834,48 @@ GSEA principles and visualization.</p>
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
 <li><a class="nav-link" href="#day4"><span class="header-section-number">4</span> Functional Analysis, Longitudinal &amp; Public Data</a></li>
-<li><a class="nav-link" href="#objectives"><span class="header-section-number">4.1</span> Objectives</a></li>
+<li><a class="nav-link" href="#learning-objectives-3"><span class="header-section-number">4.1</span> Learning Objectives</a></li>
 <li>
-<a class="nav-link" href="#module-1-functional-enrichment-gsea"><span class="header-section-number">4.2</span> Module 1: Functional Enrichment &amp; GSEA</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#exercise"><span class="header-section-number">4.2.1</span> Exercise</a></li></ul>
+<a class="nav-link" href="#module-1-functional-enrichment-gsea"><span class="header-section-number">4.2</span> Module 1: Functional Enrichment &amp; GSEA</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#introduction-to-functional-analysis"><span class="header-section-number">4.2.1</span> Introduction to Functional Analysis</a></li>
+<li><a class="nav-link" href="#preparing-de-results-for-functional-analysis"><span class="header-section-number">4.2.2</span> Preparing DE Results for Functional Analysis</a></li>
+<li><a class="nav-link" href="#gene-ontology-go-enrichment-analysis"><span class="header-section-number">4.2.3</span> Gene Ontology (GO) Enrichment Analysis</a></li>
+<li><a class="nav-link" href="#kegg-pathway-enrichment"><span class="header-section-number">4.2.4</span> KEGG Pathway Enrichment</a></li>
+<li><a class="nav-link" href="#visualization-of-enrichment-results"><span class="header-section-number">4.2.5</span> Visualization of Enrichment Results</a></li>
+<li><a class="nav-link" href="#gene-set-enrichment-analysis-gsea"><span class="header-section-number">4.2.6</span> Gene Set Enrichment Analysis (GSEA)</a></li>
+<li><a class="nav-link" href="#online-tools-for-functional-analysis"><span class="header-section-number">4.2.7</span> Online Tools for Functional Analysis</a></li>
+<li><a class="nav-link" href="#exercise-4.1-functional-interpretation"><span class="header-section-number">4.2.8</span> Exercise 4.1: Functional Interpretation</a></li>
+</ul>
 </li>
 <li>
-<a class="nav-link" href="#module-2-public-data-integration"><span class="header-section-number">4.3</span> Module 2: Public Data Integration</a><ul class="nav navbar-nav"><li><a class="nav-link" href="#exercise-1"><span class="header-section-number">4.3.1</span> Exercise</a></li></ul>
+<a class="nav-link" href="#module-2-longitudinal-data-analysis"><span class="header-section-number">4.3</span> Module 2: Longitudinal Data Analysis</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#working-with-longitudinal-proteomics-data"><span class="header-section-number">4.3.1</span> Working with Longitudinal Proteomics Data</a></li>
+<li><a class="nav-link" href="#visualizing-protein-trajectories"><span class="header-section-number">4.3.2</span> Visualizing Protein Trajectories</a></li>
+<li><a class="nav-link" href="#mixed-effects-modeling"><span class="header-section-number">4.3.3</span> Mixed Effects Modeling</a></li>
+</ul>
 </li>
+<li>
+<a class="nav-link" href="#module-3-public-data-integration"><span class="header-section-number">4.4</span> Module 3: Public Data Integration</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#downloading-data-from-geo"><span class="header-section-number">4.4.1</span> Downloading Data from GEO</a></li>
+<li><a class="nav-link" href="#working-with-pride-proteomics-data"><span class="header-section-number">4.4.2</span> Working with PRIDE Proteomics Data</a></li>
+<li><a class="nav-link" href="#complete-public-data-analysis-pipeline"><span class="header-section-number">4.4.3</span> Complete Public Data Analysis Pipeline</a></li>
+<li><a class="nav-link" href="#cross-dataset-validation"><span class="header-section-number">4.4.4</span> Cross-Dataset Validation</a></li>
+<li><a class="nav-link" href="#exercise-4.2-public-data-integration"><span class="header-section-number">4.4.5</span> Exercise 4.2: Public Data Integration</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#online-resources-and-tools"><span class="header-section-number">4.5</span> Online Resources and Tools</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#essential-online-platforms"><span class="header-section-number">4.5.1</span> Essential Online Platforms:</a></li>
+<li><a class="nav-link" href="#r-packages-for-public-data"><span class="header-section-number">4.5.2</span> R Packages for Public Data:</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#day-4-summary"><span class="header-section-number">4.6</span> Day 4 Summary</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#key-takeaways-2"><span class="header-section-number">4.6.1</span> Key Takeaways</a></li>
+<li><a class="nav-link" href="#homework-3"><span class="header-section-number">4.6.2</span> Homework</a></li>
+</ul>
+</li>
+<li><a class="nav-link" href="#additional-resources-3"><span class="header-section-number">4.7</span> Additional Resources</a></li>
 </ul>
 
       <div class="book-extra">
@@ -179,7 +893,7 @@ GSEA principles and visualization.</p>
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>r4proteomics</strong>: 5-Day Training Course" was written by Miguel CASANOVA, PhD &amp; Dany MUKESHA. It was last built on 2025-11-17.</p>
+    <p>"<strong>r4proteomics</strong>: 5-Day Training Course" was written by Miguel CASANOVA, PhD &amp; Dany MUKESHA. It was last built on 2025-11-18.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
