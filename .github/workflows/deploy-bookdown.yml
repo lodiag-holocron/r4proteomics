@@ -28,6 +28,16 @@ jobs:
           sudo apt-get install libfontconfig1-dev
           sudo apt-get install libharfbuzz-dev libfribidi-dev
           sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+      
+      - name: Install system dependencies for R plotting packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libcairo2-dev \
+            libfreetype6-dev \
+            libfontconfig1-dev \
+            libpng-dev \
+            pkg-config
 
       #- name: Cache R packages
       #  uses: actions/cache@v3
@@ -42,7 +52,9 @@ jobs:
             install.packages(c(
               "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
               "reshape2", "gridExtra", "tidyverse", "lme4",
-              "ggforce", "scatterpie", "png" ## not necessary for the day1
+              "ggforce", "scatterpie", "png", ## not necessary for the day1
+              "gdtools", "ggiraph", "ggtree", # for  clusterProfiler
+              "readxl", "ggrepel", "viridis"
             ))
             if (!requireNamespace("BiocManager", quietly = TRUE))
               install.packages("BiocManager")
@@ -50,9 +62,11 @@ jobs:
               "limma", "vsn",
               "sva", "clusterProfiler", "org.Hs.eg.db", "lme4", ## not necessary for the day1
               "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
-              "genefilter", "GOSemSim", "DOSE", "enrichplot"
+              "genefilter", "GOSemSim", "DOSE", "enrichplot", "GEOquery"
             ), update = TRUE, ask = FALSE)'
 
+      - uses: actions/checkout@v4
+        
       - name: Print R session info
         run: Rscript -e 'sessionInfo()'
 

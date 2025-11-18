@@ -188,7 +188,7 @@ if(length(significant_genes) >= 10) {
 
 ### Visualization of Enrichment Results
 
-```{r enrichment-visualization, fig.width=7, fig.height=12}
+```{r enrichment-visualization, fig.width=7, fig.height=8}
 # Create enrichment plots
 if(exists("ego_bp") && !is.null(ego_bp) && nrow(ego_bp) > 0) {
   
@@ -213,7 +213,7 @@ if(exists("ego_bp") && !is.null(ego_bp) && nrow(ego_bp) > 0) {
 }
 ```
 
-```{r enrichment-visualization_kegg, fig.width=6, fig.height=6}
+```{r enrichment-visualization_kegg, fig.width=7, fig.height=5}
 if(exists("kk") && !is.null(kk) && nrow(kk) > 0) {
   # KEGG dot plot
   p4 <- dotplot(kk, showCategory = 15) + 
