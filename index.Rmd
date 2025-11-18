@@ -67,6 +67,7 @@ All data files, scripts, and additional resources are available in the course re
     (R code for pipelines of genomic analyses)
   - [Introduction to Data Science](https://rafalab.github.io/dsbook/)  
     (Free online book from Rafael A. Irizarry, 2020)
+  - [Modern Statistics for Modern Biology](https://www.huber.embl.de/msmb/)
   - [Advanced R](http://adv-r.had.co.nz/) (If you want to learn R from a programmers perspective)
 
 - **Books**
@@ -80,6 +81,12 @@ All data files, scripts, and additional resources are available in the course re
   - R for Data Science: Import, Tidy, Transform, Visualize, and Model Data  
     (*O’Reilly*, Wickham and Grolemund, 2017) (for advanced users)
     
+- **Cheatsheets**
+
+  - [Base R](https://hbctraining.github.io/Intro-to-R-flipped/cheatsheets/base-r.pdf)
+  - [ggplot2](https://rstudio.github.io/cheatsheets/data-visualization.pdf)
+  - [dplyr](https://rstudio.github.io/cheatsheets/data-transformation.pdf)
+    
 ## How to Use This Book {.unnumbered}
 
 Each chapter corresponds to one day of training. Chapters include:
@@ -91,20 +98,20 @@ Each chapter corresponds to one day of training. Chapters include:
 
 ## Installation Instructions {.unnumbered}
 
-Before starting Day 1, it would be great if you could follow these instructions.
+Before starting Day 1, please follow the steps below.
 
-### 1. Install R {.unnumbered}
+### 1. Install R
 
 Download and install R from:
 **[https://cran.r-project.org/](https://cran.r-project.org/)**
 Choose your operating system and accept the default options.
 
-### 2. Install RStudio {.unnumbered}
+### 2. Install RStudio
 
 Download and install RStudio Desktop (free version) from:
 **[https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)**
 
-### 3. Install the required packages {.unnumbered}
+### 3. Install the required packages
 
 Once RStudio is installed:
 
@@ -128,14 +135,11 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 
 BiocManager::install(c(
-  "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db", "lme4",
+  "limma", "vsn", "sva", "clusterProfiler", "org.Hs.eg.db",
   "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
   "genefilter", "GOSemSim", "DOSE", "enrichplot"
 ), update = TRUE, ask = FALSE)
 ```
-
-Installation may take a few minutes.
-When the Console shows the `>` symbol again, the installation is complete.
 
 ## Acknowledgments {.unnumbered}
 
