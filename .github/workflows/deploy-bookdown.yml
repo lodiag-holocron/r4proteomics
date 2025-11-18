@@ -53,7 +53,8 @@ jobs:
               "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
               "reshape2", "gridExtra", "tidyverse", "lme4",
               "ggforce", "scatterpie", "png", ## not necessary for the day1
-              'gdtools','ggiraph','ggtree' # for  clusterProfile
+              "gdtools", "ggiraph", "ggtree", # for  clusterProfiler
+              "readxl", "ggrepel", "viridis"
             ))
             if (!requireNamespace("BiocManager", quietly = TRUE))
               install.packages("BiocManager")
@@ -61,7 +62,7 @@ jobs:
               "limma", "vsn",
               "sva", "clusterProfiler", "org.Hs.eg.db", "lme4", ## not necessary for the day1
               "KEGGREST", "AnnotationDbi", "annotate", "GO.db",
-              "genefilter", "GOSemSim", "DOSE", "enrichplot"
+              "genefilter", "GOSemSim", "DOSE", "enrichplot", "GEOquery"
             ), update = TRUE, ask = FALSE)'
 
       - uses: actions/checkout@v4
