@@ -58,7 +58,7 @@ We work with:
 
 * **PRIDE ID**: PXD052728
 * **Study**: Human 2D and 3D in vitro models of muscular dystrophies
-* **Disease models**: Duchenne (DD) and Becker (MD) muscular dystrophies
+* **Disease models**: Duchenne (DD) and Myotonic dystrophy type 1 (MD)
 * **Controls**: Healthy control (HC) samples
 * **Model types**: 2D monolayer and 3D organoid cultures
 
