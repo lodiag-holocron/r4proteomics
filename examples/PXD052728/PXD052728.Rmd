@@ -1,0 +1,877 @@
+---
+title: "External dataset analysis - PXD052728"
+description: |
+  In this practical we analyse an external MaxQuant proteinGroups.txt file
+  from PRIDE (PXD052728) and reproduce the main steps from Days 2-4:
+  data structure, quality control, exploratory analysis, differential
+  expression with limma, and functional enrichment.
+author:
+  - name: r4proteomics team
+    affiliation: Firalis Molecular Precision
+    affiliation_url: https://firalismolecularprecision.com/
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+
+install_if_missing <- function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+}
+
+required_packages <- c(
+  "tidyverse",
+  "pheatmap",
+  "ggplot2",
+  "limma",
+  "reshape2",
+  "readr",
+  "ggrepel",
+  "gprofiler2",
+  "rmdformats" 
+  )
+
+invisible(lapply(required_packages, install_if_missing))
+
+library(tidyverse)
+library(pheatmap)
+library(ggplot2)
+library(limma)
+library(readr)
+library(reshape2)
+library(ggrepel)
+library(gprofiler2)
+```
+
+# 1. Dataset and goal
+
+We work with:
+
+* **PRIDE ID**: PXD052728
+* **Study**: Human 2D and 3D in vitro models of muscular dystrophies
+* **Disease models**: Duchenne (DD) and Myotonic dystrophy type 1 (MD)
+* **Controls**: Healthy control (HC) samples
+* **Model types**: 2D monolayer and 3D organoid cultures
+
+This dataset is particularly relevant for studying dystrophin-associated protein changes, extracellular matrix remodeling, and muscle fiber degeneration markers in cellular models.
+
+Goal for students:
+
+* Load and clean a MaxQuant proteinGroups file.
+* Build a `protein_matrix` and `sample_metadata`.
+* Reproduce key QC and EDA plots from Day 2.
+* Fit a limma model (Day 3) and inspect a volcano plot and a heatmap.
+* Perform a simple functional enrichment (Day 4).
+
+> **Exercise 1.1**
+> What are the main differences between this dataset and the internal one used on Day 2
+> (organism, model, number of samples)?
+
+# 2. Loading and preprocessing proteinGroups
+
+## 2.1 Read proteinGroups
+
+Students should make sure the correct file is present in the working folder. 
+
+```{r load-proteingroups}
+file_path <- "proteinGroups.txt"   # adapt if needed
+
+pg_raw <- readr::read_tsv(
+  file_path,
+  col_types = cols(.default = "c"),
+  na = c("", "NA", "NaN")
+) |>
+  readr::type_convert()
+
+dim(pg_raw)
+head(colnames(pg_raw))
+```
+
+## 2.2 Remove contaminants, reverse, site only
+
+Same cleaning rules as in the course: remove proteins identified by site only,
+reverse database hits, and potential contaminants.
+
+```{r filter-proteins}
+pg_filtered <- pg_raw |>
+  dplyr::filter(
+    is.na(`Only identified by site`),
+    is.na(Reverse),
+    is.na(`Potential contaminant`)
+  )
+
+dim(pg_filtered)
+```
+
+> **Exercise 2.1**
+> How many rows are removed by this filtering step?
+> Hint: compare `nrow(pg_raw)` and `nrow(pg_filtered)`.
+> What percentage of the original dataset is retained?
+
+## 2.3 Intensity columns and sample IDs
+
+```{r intensity-columns}
+# Intensity columns
+intensity_cols <- grep("^Intensity ", colnames(pg_filtered), value = TRUE)
+
+# Raw labels like "Intensity 2D,DD-1" -> "2D,DD-1"
+raw_labels <- gsub("^Intensity\\s+", "", intensity_cols)
+
+# Sample IDs like "2D,DD-1" -> "2D_DD_1"
+sample_ids <- raw_labels |>
+  gsub(",", "_", x = _) |>
+  gsub("-", "_", x = _)
+
+intensity_cols
+sample_ids
+```
+
+## 2.4 Filter proteins by quantification rate
+
+We keep proteins quantified in at least 80% of samples to ensure robust quantification.
+
+```{r filter-quant-rate}
+quant_per_protein <- rowSums(!is.na(pg_filtered[intensity_cols])) /
+  length(intensity_cols)
+
+summary(quant_per_protein)
+
+good_protein_ids <- pg_filtered$`Majority protein IDs`[quant_per_protein >= 0.8]
+
+pg_good <- pg_filtered |>
+  dplyr::filter(`Majority protein IDs` %in% good_protein_ids)
+
+dim(pg_good)
+```
+
+> **Exercise 2.2**
+> Change the threshold from 80 percent to 60 percent and see how the number of proteins changes.
+> What is the trade off between more proteins and missing values?
+
+## 2.5 Build protein_matrix and annotation
+
+We use stable protein IDs as row names and keep gene names in a separate table.
+
+```{r build-matrix-annotation}
+protein_matrix <- pg_good |>
+  dplyr::select(all_of(intensity_cols)) |>
+  as.matrix()
+
+rownames(protein_matrix) <- pg_good$`Majority protein IDs`
+colnames(protein_matrix) <- sample_ids
+
+# log2 transform
+protein_matrix <- log2(protein_matrix + 1)
+
+cat("Matrix dimensions:", dim(protein_matrix), "\n")
+cat("Number of missing values:", sum(is.na(protein_matrix)), "\n")
+
+protein_annotation <- pg_good |>
+  dplyr::transmute(
+    protein_id   = `Majority protein IDs`,
+    gene_names   = `Gene names`,
+    gene_symbol  = sub(";.*", "", `Gene names`),
+    protein_name = `Protein names`
+  )
+
+head(protein_annotation)
+```
+
+## 2.6 Build sample_metadata
+
+Extract metadata from sample names to create a structured annotation table.
+
+```{r sample-metadata}
+sample_metadata <- data.frame(
+  sample_id = sample_ids,
+  raw_label = raw_labels,
+  stringsAsFactors = FALSE
+)
+
+# Extract dimension (2D vs 3D)
+sample_metadata$dimension <- ifelse(
+  startsWith(sample_metadata$raw_label, "2D"),
+  "2D",
+  "3D"
+)
+
+# Extract condition (DD, HC, MD)
+sample_metadata$condition <- dplyr::case_when(
+  grepl("DD", sample_metadata$raw_label) ~ "DD",
+  grepl("HC", sample_metadata$raw_label) ~ "HC",
+  grepl("MD", sample_metadata$raw_label) ~ "MD",
+  TRUE ~ NA_character_
+)
+
+# Extract level (H, L, or None)
+sample_metadata$level <- dplyr::case_when(
+  grepl(",H-", sample_metadata$raw_label) ~ "H",
+  grepl(",L-", sample_metadata$raw_label) ~ "L",
+  TRUE ~ "None"
+)
+
+# Extract replicate number
+sample_metadata$replicate <- as.numeric(
+  sub(".*-(\\d+)$", "\\1", sample_metadata$raw_label)
+)
+
+sample_metadata
+```
+
+> **Exercise 2.3**
+> How many samples are 2D vs 3D? How many are DD, HC, MD?
+> Are the replicates balanced across conditions?
+
+# 3. Day 2 style QC and EDA
+
+## 3.1 Summary statistics per sample
+
+```{r data-overview}
+summary_stats <- data.frame(
+  sample_id  = colnames(protein_matrix),
+  mean       = apply(protein_matrix, 2, mean,   na.rm = TRUE),
+  median     = apply(protein_matrix, 2, median, na.rm = TRUE),
+  sd         = apply(protein_matrix, 2, sd,     na.rm = TRUE),
+  n_missing  = apply(protein_matrix, 2, function(x) sum(is.na(x)))
+) |>
+  dplyr::left_join(sample_metadata, by = "sample_id")
+
+summary_stats
+```
+
+> **Exercise 3.1**
+> Compare the medians and standard deviations between samples.
+> Do you see clear differences in overall intensity between groups?
+> Which sample has the most missing values?
+
+## 3.2 Missing data pattern
+
+```{r missing-data}
+missing_df <- reshape2::melt(is.na(protein_matrix))
+colnames(missing_df) <- c("protein_id", "sample_id", "missing")
+
+ggplot(missing_df, aes(x = sample_id, y = protein_id, fill = missing)) +
+  geom_tile() +
+  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "grey90")) +
+  theme_minimal() +
+  theme(
+    axis.text.y  = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x  = element_text(angle = 45, vjust = 0.5, hjust = 0.5)
+  ) +
+  labs(
+    title = "Missing data pattern",
+    subtitle = paste0(
+      "Red = missing (",
+      round(mean(missing_df$missing) * 100, 1),
+      "% of all values)"
+    ),
+    x = "Sample",
+    y = "Proteins"
+  )
+```
+
+> **Exercise 3.2**
+> Are missing values evenly distributed across samples or do some samples have more missing data?
+> Do you see any horizontal bands (proteins missing in many samples)? What would this mean?
+
+## 3.3 Boxplots and density plots
+
+```{r long-format}
+protein_df <- as.data.frame(protein_matrix)
+protein_df$protein_id <- rownames(protein_df)
+
+protein_long <- tidyr::pivot_longer(
+  protein_df,
+  cols = -protein_id,
+  names_to = "sample_id",
+  values_to = "abundance"
+) |>
+  dplyr::left_join(sample_metadata, by = "sample_id")
+```
+
+```{r boxplots}
+ggplot(protein_long, aes(x = sample_id, y = abundance, fill = condition)) +
+  geom_boxplot(outlier.size = 0.5) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(
+    title = "Abundance distribution by sample",
+    x = "Sample",
+    y = "log2 intensity"
+  )
+```
+
+```{r densities}
+ggplot(protein_long, aes(x = abundance, colour = sample_id)) +
+  geom_density() +
+  theme_minimal() +
+  labs(
+    title = "Density of protein abundances",
+    x = "log2 intensity",
+    y = "Density"
+  ) +
+  theme(legend.position = "none")
+```
+
+> **Exercise 3.3**
+> Do any samples look clearly shifted in median or spread compared to the others?
+> Would normalisation help to align the distributions?
+
+
+## 3.4 Normalisation (Day 3 style)
+
+Here we apply **quantile normalisation** as in Day 3 to make intensity distributions comparable across samples.
+From this point on we will use the normalised matrix.
+
+```{r normalization}
+protein_matrix_norm <- limma::normalizeBetweenArrays(
+  protein_matrix,
+  method = "quantile"
+)
+
+cat("Dimensions after normalization:", dim(protein_matrix_norm), "\n")
+
+# Quick boxplot comparison (optional)
+par(mfrow = c(1, 2))
+boxplot(protein_matrix,
+        main = "Before quantile normalization",
+        las = 2, cex.axis = 0.6, ylab = "log2 intensity")
+boxplot(protein_matrix_norm,
+        main = "After quantile normalization",
+        las = 2, cex.axis = 0.6, ylab = "normalized intensity")
+par(mfrow = c(1, 1))
+```
+
+> **Exercise 3.4**
+> Compare the boxplots before and after normalisation.
+> How does quantile normalisation change the global intensity distributions?
+> Are the medians now aligned?
+
+## 3.5 PCA
+
+We use the normalised matrix and remove proteins with zero variance.
+
+```{r pca}
+var_per_protein <- apply(protein_matrix_norm, 1, var, na.rm = TRUE)
+non_zero_var    <- var_per_protein > 0
+
+pca_data <- t(protein_matrix_norm[non_zero_var, ])
+
+pca_result <- prcomp(pca_data, scale. = FALSE)
+
+pca_df <- data.frame(
+  PC1       = pca_result$x[, 1],
+  PC2       = pca_result$x[, 2],
+  sample_id = rownames(pca_result$x)
+) |>
+  dplyr::left_join(sample_metadata, by = "sample_id") |>
+  dplyr::mutate(
+    condition = factor(condition, levels = c("HC", "DD", "MD")),
+    dimension = factor(dimension, levels = c("2D", "3D")),
+    level     = factor(level,     levels = c("H", "L", "None"))
+  )
+
+var_explained <- summary(pca_result)$importance[2, 1:2] * 100
+
+ggplot(
+  pca_df,
+  aes(x = PC1, y = PC2, colour = condition, shape = dimension)
+) +
+  geom_point(size = 4) +
+  theme_minimal() +
+  labs(
+    title = "PCA of samples",
+    x = paste0("PC1 (", round(var_explained[1], 1), "%)"),
+    y = paste0("PC2 (", round(var_explained[2], 1), "%)")
+  ) +
+  scale_color_brewer(palette = "Set1")
+```
+
+```{r pca-biological, fig.width=10}
+ggplot(
+  pca_df,
+  aes(x = PC1, y = PC2, colour = condition, shape = level)
+) +
+  geom_point(size = 4) +
+  ggrepel::geom_text_repel(
+    aes(label = sample_id),
+    size = 3,
+    show.legend = FALSE,
+    max.overlaps = Inf
+  ) +
+  facet_wrap(~ dimension) +
+  theme_minimal() +
+  labs(
+    title = "PCA analysis - biological conditions",
+    x = paste0("PC1 (", round(var_explained[1], 1), "%)"),
+    y = paste0("PC2 (", round(var_explained[2], 1), "%)")
+  ) +
+  scale_color_brewer(palette = "Dark2")
+```
+
+> **Exercise 3.5**
+> Do samples cluster more by condition (DD, HC, MD) or by dimension (2D vs 3D)?
+> Do you see any sample that does not group with its expected class?
+> What does PC1 vs PC2 tell you about the dominant sources of variation?
+
+## 3.6 Sample correlation heatmap
+
+```{r sample-correlation, fig.height=7, fig.width=8}
+cor_matrix <- cor(protein_matrix_norm, use = "pairwise.complete.obs")
+
+ann_cols <- sample_metadata |>
+  dplyr::select(sample_id, condition, dimension, level) |>
+  as.data.frame()
+rownames(ann_cols) <- ann_cols$sample_id
+ann_cols$sample_id <- NULL
+
+ann_colors <- list(
+  condition = c(DD = "#E41A1C", HC = "#377EB8", MD = "#4DAF4A"),
+  dimension = c(`2D` = "#984EA3", `3D` = "#FF7F00"),
+  level     = c(H = "#E41A1C", L = "#377EB8", None = "grey70")
+)
+
+pheatmap(
+  cor_matrix,
+  annotation_col    = ann_cols,
+  annotation_row    = ann_cols,
+  annotation_colors = ann_colors,
+  color             = colorRampPalette(c("blue", "white", "red"))(50),
+  main              = "Sample correlation matrix"
+)
+```
+
+> **Exercise 3.6**
+> Which samples show the highest similarity?
+> Do any samples have systematically lower correlations to all others?
+> Do samples cluster by biological condition or technical factors?
+
+## 3.7 Hierarchical clustering heatmap
+
+Here we perform a simple imputation (row mean) for proteins that still have a few missing values.
+
+```{r clustering, fig.height=8, fig.width=7}
+complete_proteins <- rowSums(is.na(protein_matrix_norm)) <= ncol(protein_matrix_norm) * 0.3
+filtered_matrix <- protein_matrix_norm[complete_proteins, ]
+
+for (i in seq_len(nrow(filtered_matrix))) {
+  missing_idx <- is.na(filtered_matrix[i, ])
+  if (any(missing_idx)) {
+    row_mean <- mean(filtered_matrix[i, ], na.rm = TRUE)
+    if (is.finite(row_mean)) {
+      filtered_matrix[i, missing_idx] <- row_mean
+    }
+  }
+}
+
+filtered_matrix <- filtered_matrix[
+  apply(filtered_matrix, 1, function(x) sd(x, na.rm = TRUE) > 0),
+]
+
+annotation_col <- sample_metadata |>
+  dplyr::select(sample_id, condition, dimension, level) |>
+  as.data.frame()
+rownames(annotation_col) <- annotation_col$sample_id
+annotation_col$sample_id <- NULL
+
+pheatmap(
+  filtered_matrix,
+  scale                    = "row",
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  annotation_col           = annotation_col,
+  show_rownames            = FALSE,
+  main                     = "Hierarchical clustering of samples",
+  color                    = colorRampPalette(c("blue", "white", "red"))(50)
+)
+```
+
+> **Exercise 3.7**
+> Do samples form clear clusters by condition or by dimension in this heatmap?
+> Are there any samples that cluster unexpectedly?
+
+# 4. Day 3 style differential expression with limma
+
+We focus on a clear contrast:
+
+* **3D samples only** (more physiologically relevant)
+* **DD vs HC** (disease vs healthy control)
+* **level "None"** (baseline, no additional treatment)
+
+## 4.1 Subset data
+
+```{r subset-analysis}
+analysis_samples <- sample_metadata |>
+  dplyr::filter(
+    dimension == "3D",
+    condition %in% c("DD", "HC"),
+    level == "None"
+  )
+
+analysis_samples
+
+expr_mat <- protein_matrix_norm[, analysis_samples$sample_id]
+dim(expr_mat)
+```
+
+## 4.2 Design matrix
+
+```{r design}
+group <- factor(analysis_samples$condition, levels = c("HC", "DD"))
+
+design <- model.matrix(~ group)
+colnames(design) <- c("Intercept", "DD_vs_HC")
+
+design
+```
+
+> **Exercise 4.1**
+> Why is it important to set the reference level to HC here?
+> What would change if we set DD as the reference?
+
+## 4.3 Fit limma model
+
+```{r limma-fit}
+# Data are already quantile-normalised, so we fit limma directly
+fit <- lmFit(expr_mat, design)
+fit <- eBayes(fit)
+
+de_results <- topTable(
+  fit,
+  coef   = "DD_vs_HC",
+  number = Inf
+)
+
+de_results <- de_results |>
+  dplyr::mutate(protein_id = rownames(de_results)) |>
+  dplyr::left_join(protein_annotation, by = "protein_id")
+
+head(de_results)
+```
+
+> **Exercise 4.2**
+> How many proteins have adjusted p value below 0.05?
+> How many have both adjusted p value < 0.05 and absolute log2 fold change > log2(1.5)?
+> What percentage of tested proteins are significant?
+
+## 4.4 Volcano plot with gene names and significance
+
+This follows the style of Day 3 section 3.4.3 in the course.
+
+```{r volcano}
+volcano_data <- de_results |>
+  dplyr::mutate(
+    significance = dplyr::case_when(
+      adj.P.Val < 0.05 & logFC >  log2(1.5) ~ "Up",
+      adj.P.Val < 0.05 & logFC < -log2(1.5) ~ "Down",
+      TRUE                                   ~ "NS"
+    ),
+    label = dplyr::if_else(
+      !is.na(gene_symbol) & gene_symbol != "",
+      gene_symbol,
+      protein_id
+    )
+  )
+
+ggplot(volcano_data, aes(x = logFC, y = -log10(adj.P.Val), colour = significance)) +
+  geom_point(alpha = 0.6, size = 2) +
+  scale_color_manual(values = c("Up" = "red", "Down" = "blue", "NS" = "grey")) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
+  geom_vline(xintercept = c(-log2(1.5), log2(1.5)), linetype = "dashed") +
+  theme_minimal() +
+  labs(
+    title = "Volcano plot: 3D DD vs HC",
+    x = "log2 fold change (DD vs HC)",
+    y = "-log10 adjusted p value"
+  ) +
+  theme(legend.title = element_blank())
+```
+
+Optional labels for top hits:
+
+```{r volcano-labels}
+top_labels <- volcano_data |>
+  dplyr::filter(significance != "NS") |>
+  dplyr::arrange(adj.P.Val) |>
+  dplyr::slice(1:15)
+
+ggplot(volcano_data, aes(x = logFC, y = -log10(adj.P.Val), colour = significance)) +
+  geom_point(alpha = 0.6, size = 2) +
+  scale_color_manual(values = c("Up" = "red", "Down" = "blue", "NS" = "grey")) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
+  geom_vline(xintercept = c(-log2(1.5), log2(1.5)), linetype = "dashed") +
+  ggrepel::geom_text_repel(
+    data   = top_labels,
+    aes(label = label),
+    size   = 3,
+    max.overlaps = Inf
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Volcano plot with top proteins labelled",
+    x = "log2 fold change (DD vs HC)",
+    y = "-log10 adjusted p value"
+  ) +
+  theme(legend.title = element_blank())
+```
+
+> **Exercise 4.3**
+> Look at the proteins highlighted in the labelled volcano.
+> Can you recognise any genes related to muscle structure or dystrophy?
+
+## 4.5 Heatmap of top proteins with gene names
+
+```{r de-heatmap, fig.height=8, fig.width=7}
+top_proteins <- de_results |>
+  dplyr::arrange(adj.P.Val) |>
+  dplyr::slice(1:50) |>
+  dplyr::pull(protein_id)
+
+heatmap_mat <- expr_mat[top_proteins, analysis_samples$sample_id]
+
+row_genes <- protein_annotation$gene_symbol[
+  match(top_proteins, protein_annotation$protein_id)
+]
+
+row_labels <- ifelse(
+  is.na(row_genes) | row_genes == "",
+  top_proteins,
+  row_genes
+)
+
+rownames(heatmap_mat) <- make.unique(row_labels)
+
+ann_col <- analysis_samples |>
+  dplyr::select(sample_id, condition, dimension, level) |>
+  as.data.frame()
+rownames(ann_col) <- ann_col$sample_id
+ann_col$sample_id <- NULL
+
+pheatmap(
+  heatmap_mat,
+  annotation_col = ann_col,
+  show_rownames  = TRUE,
+  main           = "Top 50 proteins - 3D DD vs HC",
+  color          = colorRampPalette(c("blue", "white", "red"))(50)
+)
+```
+
+> **Exercise 4.4**
+> Do DD and HC samples form separate clusters based on the top 50 proteins?
+> Are there any samples that do not follow the general pattern?
+
+# 5. Day 4 style Functional enrichment
+
+## 5.1 Functional enrichment (g:Profiler)
+
+Differential expression highlights individual proteins that change between
+conditions. Functional enrichment aims to understand whether groups of these
+proteins participate in related biological processes, pathways or phenotypes.
+
+Here we follow a structure similar to Day 4 of the r4proteomics course:
+1. Build a set of significantly changed genes for ORA.
+2. Create a ranked gene list using the limma moderated t statistic.
+3. Run g:Profiler on the significant gene set.
+4. Visualise results with both `gostplot()` and a publication-style barplot.
+5. Export gene lists for external tools.
+
+### 5.1.1 Prepare gene sets for ORA and ranked analysis
+
+We select significantly changed proteins using an adjusted p value cutoff
+and a minimum fold change. We also build a ranked list of genes using the
+moderated t statistic, which is the recommended signed statistic for
+GSEA-style analyses.
+
+**Note:** Often, when performing enrichment analysis it is good to provide a list 
+of genes or proteins to use as background. 
+This is a list of all genes or proteins for which we have detected signal.
+
+```{r enrichment-prepare}
+# Significant proteins for ORA (over-representation analysis)
+de_significant <- de_results |>
+  dplyr::filter(
+    !is.na(gene_symbol),
+    gene_symbol != "",
+    adj.P.Val < 0.05,
+    abs(logFC) > log2(1.5)
+  ) |>
+  dplyr::arrange(adj.P.Val)
+
+cat("Significant DE proteins for ORA:", nrow(de_significant), "\n")
+
+sig_genes <- unique(de_significant$gene_symbol)
+length(sig_genes)
+head(sig_genes)
+
+# Background: all quantified proteins with a gene symbol
+bg_genes <- de_results |>
+  dplyr::filter(!is.na(gene_symbol), gene_symbol != "") |>
+  dplyr::pull(gene_symbol) |>
+  unique()
+
+cat("Background genes (custom_bg):", length(bg_genes), "\n")
+
+# Ranked gene list for GSEA-style workflows using moderated t-statistic
+ranked_tbl <- de_results |>
+  dplyr::filter(!is.na(gene_symbol), gene_symbol != "") |>
+  dplyr::select(gene_symbol, t) |>
+  dplyr::group_by(gene_symbol) |>
+  dplyr::summarise(t_stat = t[which.max(abs(t))], .groups = "drop") |>
+  dplyr::arrange(dplyr::desc(t_stat))
+
+gene_list <- ranked_tbl$t_stat
+names(gene_list) <- ranked_tbl$gene_symbol
+
+cat("Ranked list genes:", length(gene_list), "\n")
+head(gene_list)
+```
+
+> **Exercise 5.1**
+> Change the thresholds for selecting significant proteins and check how
+> `length(sig_genes)` changes. What impact do you expect on the enrichment?
+
+### 5.1.2 Run g:Profiler ORA (GO, Reactome, HP)
+
+We now perform over-representation analysis with gprofiler2.
+It includes multiple annotation sources including GO, KEGG, Reactome,
+Human Phenotype Ontology (HP), among others. We use all proteins that are quantified
+in the dataset (and kept after filtering) as a custom background.
+
+```{r enrichment-gost, message=FALSE, warning=FALSE}
+if (length(sig_genes) >= 10) {
+  gost_res <- gprofiler2::gost(
+    query             = sig_genes,
+    custom_bg         = bg_genes,
+    domain_scope      = "custom",
+    organism          = "hsapiens",
+    correction_method = "fdr")
+
+  enrich_tbl <- gost_res$result |>
+    dplyr::arrange(p_value) |>
+    dplyr::mutate(
+      term_name = stringr::str_trunc(term_name, 60)
+    )
+
+  head(enrich_tbl[, c("term_name", "source", "p_value", "intersection_size")])
+} else {
+  gost_res   <- NULL
+  enrich_tbl <- NULL
+  cat("Too few significant genes for a meaningful enrichment analysis.\n")
+}
+```
+
+> **Exercise 5.2**
+> Which annotation sources dominate the top enriched terms?
+> Do you see processes or phenotypes that are relevant for muscle or dystrophy?
+
+### 5.1.3 Visualisation with `gostplot()`
+
+gProfiler provides a built-in visualisation that summarises enriched terms.
+
+```{r enrichment-gostplot, eval=!is.null(gost_res)}
+if (!is.null(gost_res)) {
+  gprofiler2::gostplot(
+    gost_res,
+    capped      = TRUE,
+    interactive = TRUE
+  )
+}
+```
+
+> **Exercise 5.3**
+> What can you interpret from the global enrichment plot?
+> What additional insight do the phenotype terms provide?
+
+### 5.1.4 Publication-style barplot of top enriched terms
+
+In addition to the gProfiler visualisation, it is useful to include a
+compact barplot showing the top enriched terms ranked by significance.
+This is the same type of plot used in Day 4.
+
+```{r enrichment-barplot, eval=!is.null(enrich_tbl)}
+if (!is.null(enrich_tbl)) {
+  top_terms <- enrich_tbl[1:min(30, nrow(enrich_tbl)), ]
+
+  ggplot(
+    top_terms,
+    aes(
+      x    = reorder(term_name, -log10(p_value)),
+      y    = -log10(p_value),
+      fill = source
+    )
+  ) +
+    geom_col() +
+    coord_flip() +
+    theme_minimal() +
+    labs(
+      title = "Top enriched terms (g:Profiler)",
+      x     = "Term",
+      y     = "-log10 p value"
+    )
+}
+```
+
+> **Exercise 5.4**
+> Compare this barplot with the gProfiler visualisation.
+> Which representation do you find easier to interpret?
+
+### 5.1.5 Export gene lists for online tools
+
+We export both the significant gene set and the ranked list.
+These can be used for STRING, g:Profiler web, Enrichr or GSEA-like tools.
+
+```{r enrichment-export}
+dir.create("results", showWarnings = FALSE, recursive = TRUE)
+
+# Simple list of significant genes
+out_sig <- "results/PXD052728_3D_DD_vs_HC_sig_genes.txt"
+write.table(
+  sig_genes,
+  file      = out_sig,
+  row.names = FALSE,
+  col.names = FALSE,
+  quote     = FALSE
+)
+cat("Significant gene list saved to:", out_sig, "\n")
+
+# Ranked list using moderated t-statistics
+out_ranked <- "results/PXD052728_3D_DD_vs_HC_ranked_genes.tsv"
+ranked_out <- tibble::tibble(
+  gene   = names(gene_list),
+  t_stat = as.numeric(gene_list)
+)
+readr::write_tsv(ranked_out, out_ranked)
+cat("Ranked gene list saved to:", out_ranked, "\n")
+```
+
+> **Exercise 5.5**
+> Upload your gene lists to online tools such as STRING, Enrichr or g:Profiler web.
+> Which tool gives the clearest representation of the biological themes?
+> Are the main biological themes consistent with what you see in the R-based
+> g:Profiler analysis?
+> Which visualisations help you most to explain the biology to someone else?
+
+# 6. Extensions
+
+Ideas for students to explore on their own:
+
+* Repeat the whole workflow for 2D samples only.
+* Compare H vs L within DD or MD in 3D.
+* Change thresholds in the volcano plot (for example 1.2 instead of 1.5 fold change) and see how the number of significant proteins changes.
+* Export the list of significant genes to external tools such as Enrichr or DAVID and compare the enrichment results.
+
+# 7. Session Information
+
+```{r}
+sessionInfo()
+```
