@@ -1,8 +1,6 @@
 # Introduction to R and RStudio {#day1}
 
-```{r setup-day1, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-```
+
 
 ## Learning Objectives
 
@@ -105,30 +103,47 @@ Use forward slashes (`/`) and put the path in quotes.
 - R is case sensitive - be aware of capital letters (**b is different from B**).
 - All R code lines starting with the **#** (hash) sign are interpreted as comments, and therefore not evaluated.
 
-```{r basic-operators}
+
+``` r
 # Arithmetic operators
 5 + 3        # Addition
+#> [1] 8
 10 - 4       # Subtraction
+#> [1] 6
 6 * 7        # Multiplication
+#> [1] 42
 20 / 4       # Division
+#> [1] 5
 2 ^ 3        # Exponentiation
+#> [1] 8
 17 %% 5      # Modulo (remainder)
+#> [1] 2
 
 # Comparison operators
 5 == 5       # Equal to
+#> [1] TRUE
 5 != 3       # Not equal to
+#> [1] TRUE
 7 > 3        # Greater than
+#> [1] TRUE
 4 < 8        # Less than
+#> [1] TRUE
 5 >= 5       # Greater than or equal
+#> [1] TRUE
 3 <= 10      # Less than or equal
+#> [1] TRUE
 
 # Logical operators
 TRUE & FALSE  # AND
+#> [1] FALSE
 TRUE | FALSE  # OR
+#> [1] TRUE
 !TRUE         # NOT
+#> [1] FALSE
 
 # Scientific notation
 1.5e6  # 1,500,000
+#> [1] 1500000
 ```
 
 ### Variables & Assignment
@@ -138,7 +153,8 @@ TRUE | FALSE  # OR
 - Spaces matter in variable names. Use a dot or underscore to create longer names to make the variables more descriptive, e.g. `my.variable_name`.
 - Spaces between variables and operators do not matter: `3+2` is the same as `3 + 2`, and `function (arg1 , arg2)` is the same as `function(arg1,arg2)`.
 
-```{r}
+
+``` r
 # Assignment operator
 x <- 10      # Assign 10 to x
 y = 5        # Alternative (but <- is preferred)
@@ -153,38 +169,48 @@ study_name <- "Proteomics_2025"
 
 ## View variables
 protein_count
+#> [1] 800
 sample_size
+#> [1] 12
 
 ## Use variables in calculations
 total_measurements <- protein_count * sample_size
 total_measurements
+#> [1] 9600
 ```
 
 ### Data Types
 
 The major data types are: Numeric (e.g. 1,2,3…); Character (e.g. “p”, “ro”, “teomics”) and Logical (TRUE or FALSE).
 
-```{r data_types}
+
+``` r
 # Numeric
 intensity <- 25114306.44
 class(intensity)
+#> [1] "numeric"
 
 # Character (text)
 accession <- "F1LMU0"
 class(accession)
+#> [1] "character"
 
 # Logical
 is_significant <- TRUE
 class(is_significant)
+#> [1] "logical"
 
 # Check type
 is.numeric(intensity)
+#> [1] TRUE
 is.character(accession)
+#> [1] TRUE
 ```
 
 ### Creating Your First Script
 
-```{r first-script, eval=FALSE}
+
+``` r
 # Create a new R script: File > New File > R Script
 # Or use Ctrl+Shift+N (Windows/Linux) or Cmd+Shift+N (Mac)
 
@@ -204,14 +230,17 @@ Create a new R script and:
 3.  Print the value of `total`
 4.  Calculate what percentage 123 is of the total
 
-```{r exercise-1-1-solution, class.source="fold-hide"}
+
+```{.r .fold-hide}
 # Solution
 result1 <- 123 + 456
 total <- result1
 print(total)
+#> [1] 579
 
 percentage <- (123 / total) * 100
 print(paste0("123 is ", round(percentage, 2), "% of the total"))
+#> [1] "123 is 21.24% of the total"
 ```
 
 ## Module 2: Data Types and Structures {#day1-mod2}
@@ -222,18 +251,22 @@ Vectors are the most basic data structure in R. They contain elements of the sam
 
 If a vector contains multiple elements, you define them in R with a `c(elm1, elm2, elm3 ... elmN)`.
 
-```{r vectors}
+
+``` r
 # Numeric vectors
 ages <- c(25, 30, 35, 40, 45)
 print(ages)
+#> [1] 25 30 35 40 45
 
 # Character vectors
 names <- c("Alice", "Bob", "Charlie", "Diana", "Eve")
 print(names)
+#> [1] "Alice"   "Bob"     "Charlie" "Diana"   "Eve"
 
 # Logical vectors
 passed_qc <- c(TRUE, TRUE, FALSE, TRUE, TRUE)
 print(passed_qc)
+#> [1]  TRUE  TRUE FALSE  TRUE  TRUE
 
 # Sequences
 seq_1_10 <- 1:10
@@ -241,31 +274,40 @@ seq_custom <- seq(from = 0, to = 100, by = 10)
 
 # Vector operations
 mean(ages)
+#> [1] 35
 ```
 
 ### Indexing and Subsetting
 
 **Tip:** In R vectors are 1-based, i.e. the first index position is number 1 (as opposed to other programming languages whose indexes start at zero).
 
-```{r indexing}
+
+``` r
 # Access elements by position (1-indexed!)
 ages[1]           # First element
+#> [1] 25
 ages[c(1, 3, 5)]  # Multiple elements
+#> [1] 25 35 45
 ages[-2]          # All except second element
+#> [1] 25 35 40 45
 
 # Logical indexing
 ages[ages > 35]   # Elements greater than 35
+#> [1] 40 45
 
 # Named vectors
 protein_abundance <- c(ACTB = 1500, GAPDH = 2000, MYC = 800)
 protein_abundance["ACTB"]
+#> ACTB 
+#> 1500
 ```
 
 ### Data Frames
 
 Data frames are the most common structure for storing tabular data.
 
-```{r dataframes}
+
+``` r
 # Create a data frame
 patient_data <- data.frame(
   patient_id = 1:5,
@@ -277,12 +319,38 @@ patient_data <- data.frame(
 )
 
 print(patient_data)
+#>   patient_id    name age treatment response
+#> 1          1   Alice  25         A     TRUE
+#> 2          2     Bob  30         B     TRUE
+#> 3          3 Charlie  35         A    FALSE
+#> 4          4   Diana  40         B     TRUE
+#> 5          5     Eve  45         A    FALSE
 
 # View structure
 str(patient_data)
+#> 'data.frame':	5 obs. of  5 variables:
+#>  $ patient_id: int  1 2 3 4 5
+#>  $ name      : chr  "Alice" "Bob" "Charlie" "Diana" ...
+#>  $ age       : num  25 30 35 40 45
+#>  $ treatment : chr  "A" "B" "A" "B" ...
+#>  $ response  : logi  TRUE TRUE FALSE TRUE FALSE
 
 # Summary statistics
 summary(patient_data)
+#>    patient_id     name                age    
+#>  Min.   :1    Length:5           Min.   :25  
+#>  1st Qu.:2    Class :character   1st Qu.:30  
+#>  Median :3    Mode  :character   Median :35  
+#>  Mean   :3                       Mean   :35  
+#>  3rd Qu.:4                       3rd Qu.:40  
+#>  Max.   :5                       Max.   :45  
+#>   treatment          response      
+#>  Length:5           Mode :logical  
+#>  Class :character   FALSE:2        
+#>  Mode  :character   TRUE :3        
+#>                                    
+#>                                    
+#> 
 ```
 
 **Please note:**
@@ -290,60 +358,101 @@ summary(patient_data)
 - Data frames are easily subset by index number using the square brackets notation `[]`, or by column name using the dollar sign `$`.
 - The arguments inside the square brackets are the `[row_number, column_number]`. If any of these is omitted, R assumes that all values are to be used.
 
-```{r dataframes_access}
+
+``` r
 # Access columns
 patient_data$age
+#> [1] 25 30 35 40 45
 patient_data[, "name"]
+#> [1] "Alice"   "Bob"     "Charlie" "Diana"   "Eve"
 patient_data[, 2]
+#> [1] "Alice"   "Bob"     "Charlie" "Diana"   "Eve"
 
 # Access rows
 patient_data[1, ]           # First row
+#>   patient_id  name age treatment response
+#> 1          1 Alice  25         A     TRUE
 patient_data[1:3, ]         # First three rows
+#>   patient_id    name age treatment response
+#> 1          1   Alice  25         A     TRUE
+#> 2          2     Bob  30         B     TRUE
+#> 3          3 Charlie  35         A    FALSE
 
 # Access specific cells
 patient_data[2, 3]          # Row 2, Column 3
+#> [1] 30
 patient_data[2, "age"]      # Same, using column name
+#> [1] 30
 
 # Subset by condition
 patient_data[patient_data$age > 30, ]
+#>   patient_id    name age treatment response
+#> 3          3 Charlie  35         A    FALSE
+#> 4          4   Diana  40         B     TRUE
+#> 5          5     Eve  45         A    FALSE
 patient_data[patient_data$treatment == "A", ]
+#>   patient_id    name age treatment response
+#> 1          1   Alice  25         A     TRUE
+#> 3          3 Charlie  35         A    FALSE
+#> 5          5     Eve  45         A    FALSE
 ```
 
 #### Exploring Data Frames
 
-```{r explore_df}
+
+``` r
 # View first rows
 head(patient_data, 2)
+#>   patient_id  name age treatment response
+#> 1          1 Alice  25         A     TRUE
+#> 2          2   Bob  30         B     TRUE
 
 # Dimensions
 dim(patient_data)
+#> [1] 5 5
 nrow(patient_data)
+#> [1] 5
 ncol(patient_data)
+#> [1] 5
 
 # Column names
 colnames(patient_data)
+#> [1] "patient_id" "name"       "age"        "treatment" 
+#> [5] "response"
 ```
 
 #### Accessing Data Frame Elements
 
-```{r access_df}
+
+``` r
 # Access column by name
 patient_data$name
+#> [1] "Alice"   "Bob"     "Charlie" "Diana"   "Eve"
 
 # Access using brackets [row, column]
 patient_data[1, 3]        # Row 1, column 3
+#> [1] 25
 patient_data[1:2, ]       # First 2 rows, all columns
+#>   patient_id  name age treatment response
+#> 1          1 Alice  25         A     TRUE
+#> 2          2   Bob  30         B     TRUE
 patient_data[, "treatment"]    # All rows, Mass column
+#> [1] "A" "B" "A" "B" "A"
 
 # Subset data
 patient_data[patient_data$age > 30, ]
+#>   patient_id    name age treatment response
+#> 3          3 Charlie  35         A    FALSE
+#> 4          4   Diana  40         B     TRUE
+#> 5          5     Eve  45         A    FALSE
 ```
 
 ### Lists
 
 Lists can contain elements of different types and structures.
 
-```{r lists}
+
+``` r
 # Create a list
 experiment <- list(
   experiment_id = "EXP001",
@@ -355,21 +464,28 @@ experiment <- list(
 
 # Access list elements
 experiment$experiment_id
+#> [1] "EXP001"
 experiment[[1]]
+#> [1] "EXP001"
 experiment[["samples"]]
+#> [1] "S1" "S2" "S3"
 ```
 
 ### Factors
 
 Factors are variables in R which take on a limited number of different values- Such variables are often refered to as categorical variables.
 
-```{r factors}
+
+``` r
 # Create factor
 treatment_factor <- factor(c("Control", "Drug A", "Drug B", "Control", "Drug A"))
 print(treatment_factor)
+#> [1] Control Drug A  Drug B  Control Drug A 
+#> Levels: Control Drug A Drug B
 
 # Check levels
 levels(treatment_factor)
+#> [1] "Control" "Drug A"  "Drug B"
 
 # Ordered factors
 severity <- factor(
@@ -378,24 +494,32 @@ severity <- factor(
   ordered = TRUE
 )
 print(severity)
+#> [1] Mild     Severe   Moderate Mild     Severe  
+#> Levels: Mild < Moderate < Severe
 ```
 
 ### Type Coercion
 
-```{r coercion}
+
+``` r
 # Implicit coercion
 mixed <- c(1, 2, "three", 4)  # All converted to character
 print(mixed)
+#> [1] "1"     "2"     "three" "4"
 
 # Explicit coercion
 numbers_char <- c("1", "2", "3", "4")
 numbers_num <- as.numeric(numbers_char)
 print(numbers_num)
+#> [1] 1 2 3 4
 
 # Check types
 class(mixed)
+#> [1] "character"
 is.numeric(mixed)
+#> [1] FALSE
 is.character(mixed)
+#> [1] TRUE
 ```
 
 ### Exercise 1.2: Data Structures
@@ -407,7 +531,8 @@ Create a data frame for a proteomic experiment with:
 -   Random p-values between 0 and 1
 -   Significance status (TRUE if p-value \< 0.05)
 
-```{r exercise-1-2-solution, class.source="fold-hide"}
+
+```{.r .fold-hide}
 # Solution
 set.seed(42)  # For reproducibility
 
@@ -421,9 +546,22 @@ proteins <- data.frame(
 proteins$significant <- proteins$p_value < 0.05
 
 print(proteins)
+#>    protein_id abundance   p_value significant
+#> 1        P001   4582.55 0.4577418       FALSE
+#> 2        P002   4691.67 0.7191123       FALSE
+#> 3        P003   1502.08 0.9346722       FALSE
+#> 4        P004   4169.19 0.2554288       FALSE
+#> 5        P005   3244.55 0.4622928       FALSE
+#> 6        P006   2643.57 0.9400145       FALSE
+#> 7        P007   3709.28 0.9782264       FALSE
+#> 8        P008    759.87 0.1174874       FALSE
+#> 9        P009   3319.26 0.4749971       FALSE
+#> 10       P010   3554.82 0.5603327       FALSE
 
 # Summary
 cat("\nNumber of significant proteins:", sum(proteins$significant), "\n")
+#> 
+#> Number of significant proteins: 0
 ```
 
 ## Module 3: Control Flow and Functions {#day1-mod3}
@@ -432,13 +570,15 @@ cat("\nNumber of significant proteins:", sum(proteins$significant), "\n")
 
 Conditionals allow running commands only when certain conditions are TRUE. The syntax is: `if (condition) { code-block }`.
 
-```{r conditionals}
+
+``` r
 # if statement
 x <- 10
 
 if (x > 5) {
   print("x is greater than 5")
 }
+#> [1] "x is greater than 5"
 
 # if-else
 if (x > 15) {
@@ -446,6 +586,7 @@ if (x > 15) {
 } else {
   print("x is 15 or less")
 }
+#> [1] "x is 15 or less"
 
 # if-else if-else
 score <- 75
@@ -461,32 +602,44 @@ if (score >= 90) {
 }
 
 print(paste("Grade:", grade))
+#> [1] "Grade: C"
 ```
 
 The `ifelse` function combines element-wise operations (vectorized) and filtering with a condition that is evaluated. The major advantage of the ifelse over the standard if-then-else statement is that it is vectorized. The syntax is: `ifelse (condition-to-test, value-for-true, value-for-false)`.
 
-```{r conditionals_ifelse}
+
+``` r
 # Vectorized ifelse
 values <- c(1, 5, 10, 15, 20)
 categories <- ifelse(values > 10, "High", "Low")
 print(categories)
+#> [1] "Low"  "Low"  "Low"  "High" "High"
 ```
 
 ### Loops
 
 R allows the implementation of **loops**, i.e. replicating instructions in an iterative way (also called cycles). The most common ones are `for ()` loops and `while ()` loops. The syntax for these loops is: `for (condition) { code-block } and while (condition) { code-block }`.
 
-```{r loops}
+
+``` r
 # for loop
 for (i in 1:5) {
   print(paste("Iteration:", i))
 }
+#> [1] "Iteration: 1"
+#> [1] "Iteration: 2"
+#> [1] "Iteration: 3"
+#> [1] "Iteration: 4"
+#> [1] "Iteration: 5"
 
 # Loop through vector
 proteins <- c("ACTB", "GAPDH", "MYC")
 for (protein in proteins) {
   print(paste("Processing:", protein))
 }
+#> [1] "Processing: ACTB"
+#> [1] "Processing: GAPDH"
+#> [1] "Processing: MYC"
 
 # while loop
 counter <- 1
@@ -494,6 +647,11 @@ while (counter <= 5) {
   print(paste("Counter:", counter))
   counter <- counter + 1
 }
+#> [1] "Counter: 1"
+#> [1] "Counter: 2"
+#> [1] "Counter: 3"
+#> [1] "Counter: 4"
+#> [1] "Counter: 5"
 
 # Mixing loop with condition
 numbers <- 1:10
@@ -504,6 +662,16 @@ for (num in numbers) {
     print(paste(num, "is odd"))
   }
 }
+#> [1] "1 is odd"
+#> [1] "2 is even"
+#> [1] "3 is odd"
+#> [1] "4 is even"
+#> [1] "5 is odd"
+#> [1] "6 is even"
+#> [1] "7 is odd"
+#> [1] "8 is even"
+#> [1] "9 is odd"
+#> [1] "10 is even"
 ```
 
 ### Functions
@@ -518,7 +686,8 @@ R allows defining new functions using the function command. The syntax (in pseud
   }
 ```
 
-```{r functions}
+
+``` r
 # Basic function
 greet <- function(name) {
   message <- paste("Hello,", name, "!")
@@ -526,6 +695,7 @@ greet <- function(name) {
 }
 
 greet("Alice")
+#> [1] "Hello, Alice !"
 
 # Function with multiple parameters
 calculate_fold_change <- function(treatment, control) {
@@ -535,6 +705,7 @@ calculate_fold_change <- function(treatment, control) {
 }
 
 calculate_fold_change(treatment = 200, control = 100)
+#> [1] 1
 
 # Function with default parameters
 normalize_abundance <- function(abundance, method = "median") {
@@ -550,14 +721,17 @@ normalize_abundance <- function(abundance, method = "median") {
 
 values <- c(100, 200, 300, 400, 500)
 normalize_abundance(values)
+#> [1] 0.3333333 0.6666667 1.0000000 1.3333333 1.6666667
 normalize_abundance(values, method = "mean")
+#> [1] 0.3333333 0.6666667 1.0000000 1.3333333 1.6666667
 ```
 
 ### Apply Family Functions
 
 The `apply` family of functions lets you perform calculations efficiently across rows, columns, or lists.
 
-```{r apply-functions}
+
+``` r
 # Create sample data
 protein_matrix <- matrix(
   c(100, 150, 200, 250, 
@@ -569,22 +743,40 @@ colnames(protein_matrix) <- c("Sample1", "Sample2", "Sample3", "Sample4")
 rownames(protein_matrix) <- c("Protein1", "Protein2", "Protein3")
 
 print(protein_matrix)
+#>          Sample1 Sample2 Sample3 Sample4
+#> Protein1     100     150     200     250
+#> Protein2     110     160     210     260
+#> Protein3     120     170     220     270
 
 # apply: apply function to rows or columns
 row_means <- apply(protein_matrix, 1, mean)  # 1 = rows
 col_means <- apply(protein_matrix, 2, mean)  # 2 = columns
 
 print(row_means)
+#> Protein1 Protein2 Protein3 
+#>      175      185      195
 print(col_means)
+#> Sample1 Sample2 Sample3 Sample4 
+#>     110     160     210     260
 
 # lapply: apply function to list, returns list
 my_list <- list(a = 1:5, b = 6:10, c = 11:15)
 list_means <- lapply(my_list, mean)
 print(list_means)
+#> $a
+#> [1] 3
+#> 
+#> $b
+#> [1] 8
+#> 
+#> $c
+#> [1] 13
 
 # sapply: simplified version of lapply
 vector_means <- sapply(my_list, mean)
 print(vector_means)
+#>  a  b  c 
+#>  3  8 13
 ```
 
 ### Exercise 1.3: Functions and Loops
@@ -597,7 +789,8 @@ Write a function that:
 
 Apply this function to multiple samples using a loop.
 
-```{r exercise-1-3-solution, class.source="fold-hide"}
+
+```{.r .fold-hide}
 # Solution
 calculate_cv_status <- function(abundances) {
   cv <- (sd(abundances, na.rm = TRUE) / mean(abundances, na.rm = TRUE)) * 100
@@ -623,6 +816,9 @@ for (sample_name in names(sample_data)) {
   result <- calculate_cv_status(sample_data[[sample_name]])
   cat(sample_name, "- CV:", result$cv, "% - Status:", result$status, "\n")
 }
+#> sample1 - CV: 2.75 % - Status: Pass 
+#> sample2 - CV: 40.56 % - Status: Fail 
+#> sample3 - CV: 0.7 % - Status: Pass
 ```
 
 ## Module 4: Data Visualization with `ggplot2` {#day1-mod5}
@@ -637,7 +833,8 @@ You can read more about the grammar concept in the official [ggplot2 documentati
 
 ### Loading Required Packages
 
-```{r load-libraries}
+
+``` r
 # Load necessary library
 library(ggplot2)
 ```
@@ -673,7 +870,8 @@ Each `+` adds a new layer or visual element (title, theme, labels, etc.).
 
 We'll first create an example dataset representing protein abundance under two conditions: *Control* and *Treatment*.
 
-```{r create-example-data}
+
+``` r
 set.seed(42)
 
 # Simulate realistic protein abundance data
@@ -695,6 +893,13 @@ protein_data$abundance[outlier_indices] <-
   protein_data$abundance[outlier_indices] * runif(3, 1.5, 2)
 
 head(protein_data)
+#>   protein_id abundance condition
+#> 1       P001 1205.6438   Control
+#> 2       P002  915.2953   Control
+#> 3       P003 1054.4693   Control
+#> 4       P004 1094.9294   Control
+#> 5       P005 1060.6402   Control
+#> 6       P006  984.0813   Control
 ```
 
 ------------------------------------------------------------------------
@@ -703,7 +908,8 @@ head(protein_data)
 
 A **histogram** helps visualize the distribution of continuous variables such as protein abundance.
 
-```{r ggplot-histogram}
+
+``` r
 ggplot(protein_data, aes(x = abundance)) +
   geom_histogram(binwidth = 100, fill = "steelblue", color = "white") +
   labs(
@@ -714,13 +920,16 @@ ggplot(protein_data, aes(x = abundance)) +
   theme_minimal()
 ```
 
+<img src="day1_intro_to_r_files/figure-html/ggplot-histogram-1.png" width="672" />
+
 ------------------------------------------------------------------------
 
 ### Boxplot: Comparing Conditions
 
 A **boxplot** provides a compact summary of abundance values across conditions.
 
-```{r ggplot-boxplot}
+
+``` r
 ggplot(protein_data, aes(x = condition, y = abundance, fill = condition)) +
   geom_boxplot(alpha = 0.7) +
   labs(
@@ -732,13 +941,16 @@ ggplot(protein_data, aes(x = condition, y = abundance, fill = condition)) +
   theme(legend.position = "none")
 ```
 
+<img src="day1_intro_to_r_files/figure-html/ggplot-boxplot-1.png" width="672" />
+
 ------------------------------------------------------------------------
 
 ### Scatter Plot: Individual Points with Mean Values
 
 A **scatter plot** with **jittering** can display individual data points while avoiding overlap. Adding **mean points** provides an overview of group averages.
 
-```{r ggplot-scatter}
+
+``` r
 ggplot(protein_data, aes(x = condition, y = abundance, color = condition)) +
   geom_jitter(width = 0.2, alpha = 0.6) +
   stat_summary(fun = mean, geom = "point", size = 4, shape = 18, color = "black") +
@@ -750,13 +962,16 @@ ggplot(protein_data, aes(x = condition, y = abundance, color = condition)) +
   theme_minimal()
 ```
 
+<img src="day1_intro_to_r_files/figure-html/ggplot-scatter-1.png" width="672" />
+
 ------------------------------------------------------------------------
 
 ### Density Plot: Distribution by Condition
 
 A **density plot** shows the smoothed distribution of abundance values for each condition.
 
-```{r ggplot-density}
+
+``` r
 ggplot(protein_data, aes(x = abundance, fill = condition)) +
   geom_density(alpha = 0.5) +
   labs(
@@ -766,6 +981,8 @@ ggplot(protein_data, aes(x = abundance, fill = condition)) +
   ) +
   theme_minimal()
 ```
+
+<img src="day1_intro_to_r_files/figure-html/ggplot-density-1.png" width="672" />
 
 ------------------------------------------------------------------------
 
@@ -787,7 +1004,8 @@ Most R users need to load their own datasets, usually saved as table files (e.g.
 
 ### Reading common file types
 
-```{r import-data, eval=FALSE}
+
+``` r
 # CSV / TSV (readr is faster and friendlier than base R)
 library(readr)
 
@@ -802,7 +1020,8 @@ proteins_csv_base <- read.csv("data/proteins.csv")              # comma
 proteins_tsv_base <- read.delim("data/proteins.tsv", sep = "\t")# tab
 ```
 
-```{r import-data_xlsx, eval=FALSE}
+
+``` r
 # Excel (readxl does not require Java)
 library(readxl)
 
@@ -812,7 +1031,8 @@ proteins_xlsx <- read_excel("data/proteins.xlsx")
 
 ### Saving data
 
-```{r write_file, eval=FALSE}
+
+``` r
 # CSV / TSV
 write_csv(proteins_csv, "results/proteins_clean.csv")
 write_tsv(proteins_csv, "results/proteins_clean.tsv")
@@ -829,7 +1049,8 @@ reloaded <- readRDS("results/proteins_clean.rds")
 
 ### Basic Data Exploration
 
-```{r explore-data}
+
+``` r
 # Create example data
 set.seed(123)
 protein_data <- data.frame(
@@ -840,18 +1061,45 @@ protein_data <- data.frame(
 
 # Dimensions
 dim(protein_data)
+#> [1] 100   3
 nrow(protein_data)
+#> [1] 100
 ncol(protein_data)
+#> [1] 3
 
 # First and last rows
 head(protein_data)
+#>   protein_id abundance condition
+#> 1         P1  887.9049   Control
+#> 2         P2  953.9645   Control
+#> 3         P3 1311.7417   Control
+#> 4         P4 1014.1017   Control
+#> 5         P5 1025.8575   Control
+#> 6         P6 1343.0130   Control
 tail(protein_data)
+#>     protein_id abundance condition
+#> 95         P95 1272.1305 Treatment
+#> 96         P96  879.9481 Treatment
+#> 97         P97 1437.4666 Treatment
+#> 98         P98 1306.5221 Treatment
+#> 99         P99  952.8599 Treatment
+#> 100       P100  794.7158 Treatment
 
 # Summary statistics
 summary(protein_data)
+#>   protein_id          abundance       condition        
+#>  Length:100         Min.   : 538.2   Length:100        
+#>  Class :character   1st Qu.: 901.2   Class :character  
+#>  Mode  :character   Median :1012.4   Mode  :character  
+#>                     Mean   :1018.1                     
+#>                     3rd Qu.:1138.4                     
+#>                     Max.   :1437.5
 
 # Table for categorical data
 table(protein_data$condition)
+#> 
+#>   Control Treatment 
+#>        50        50
 ```
 
 ## Module 6: Data Wrangling with tidyverse
@@ -871,11 +1119,10 @@ table(protein_data$condition)
 -   Faster learning curve
 -   Industry standard
 
-```{r, setup, include=FALSE}
-#knitr::opts_knit$set(root.dir = '/08_pkgs/r4proteomics/') # may need to avoid re-setup
-```
 
-```{r load_tidyverse}
+
+
+``` r
 library(tidyverse)
 ```
 
@@ -885,20 +1132,24 @@ library(tidyverse)
 
 **Traditional approach:**
 
-```{r no_pipe}
+
+``` r
 x <- c(1, 2, 3, 4, 5)
 result <- mean(log10(sqrt(x)))
 result
+#> [1] 0.2079181
 ```
 
 **With pipe operator from `tidyverse` (`magrittr`):**
 
-```{r with_pipe}
+
+``` r
 result <- x %>% 
   sqrt() %>% 
   log10() %>% 
   mean()
 result
+#> [1] 0.2079181
 ```
 
 **Read as:** "Take x, THEN take square root, THEN take log10, THEN calculate mean"
@@ -908,7 +1159,8 @@ result
 
 ### Your Actual Proteomics Data Structure
 
-```{r create_sample_data}
+
+``` r
 # Simulate your data structure
 set.seed(123)
 proteomics_data <- readxl::read_excel(
@@ -921,11 +1173,24 @@ proteomics_data <- proteomics_data %>%
     dplyr::select(dplyr::where(~ any(!is.na(.))))
 
 head(proteomics_data[, 1:10])
+#> # A tibble: 6 × 10
+#>   Accession  Gene       `Peptide count` `Unique peptides`
+#>   <chr>      <chr>                <dbl>             <dbl>
+#> 1 F1LMU0     F1LMU0                 338               138
+#> 2 G3V8V3     G3V8V3                 146               113
+#> 3 A0A0G2JSP8 A0A0G2JSP8             117               109
+#> 4 Q64578     AT2A1                  126                89
+#> 5 D4AEH9     D4AEH9                  87                83
+#> 6 P15429     ENOB                   110                83
+#> # ℹ 6 more variables: `Confidence score` <dbl>, Mass <dbl>,
+#> #   Description <chr>, `2126001_029_F5` <dbl>,
+#> #   `2126001_359_F9` <dbl>, `2126001_401_F1` <dbl>
 ```
 
 Good practice: Convert all column names to lowercase and replace spaces with underscores `_`, to keep the naming of colmuns cleaner and more consistent.
 
-```{r}
+
+``` r
 # Clean column names: lowercase + underscores
 #colnames(proteomics_data) <- tolower(colnames(proteomics_data))
 colnames(proteomics_data) <- gsub(" ", "_", tolower(colnames(proteomics_data)))
@@ -948,85 +1213,171 @@ colnames(proteomics_data) <- gsub(" ", "_", tolower(colnames(proteomics_data)))
 
 ### select(): Choose Columns
 
-```{r select_demo}
+
+``` r
 # Select specific columns
 proteomics_data %>%
   dplyr::select(accession, gene, mass, `2126001_029_f5`) %>%
   head(3)
+#> # A tibble: 3 × 4
+#>   accession  gene          mass `2126001_029_f5`
+#>   <chr>      <chr>        <dbl>            <dbl>
+#> 1 F1LMU0     F1LMU0     222850.        25114306.
+#> 2 G3V8V3     G3V8V3      97288.        18519365.
+#> 3 A0A0G2JSP8 A0A0G2JSP8  43019.       897562438.
 
 # Select range of columns
 proteomics_data %>%
   dplyr::select(accession:mass) %>%
   head(3)
+#> # A tibble: 3 × 6
+#>   accession  gene       peptide_count unique_peptides
+#>   <chr>      <chr>              <dbl>           <dbl>
+#> 1 F1LMU0     F1LMU0               338             138
+#> 2 G3V8V3     G3V8V3               146             113
+#> 3 A0A0G2JSP8 A0A0G2JSP8           117             109
+#> # ℹ 2 more variables: confidence_score <dbl>, mass <dbl>
 
 # Select columns containing "sample"
 proteomics_data %>%
   dplyr::select(accession, contains("f5")) %>%
   head(3)
+#> # A tibble: 3 × 2
+#>   accession  `2126001_029_f5`
+#>   <chr>                 <dbl>
+#> 1 F1LMU0            25114306.
+#> 2 G3V8V3            18519365.
+#> 3 A0A0G2JSP8       897562438.
 ```
 
 ------------------------------------------------------------------------
 
 ### filter(): Choose Rows
 
-```{r filter_demo}
+
+``` r
 # Filter high mass proteins
 proteomics_data %>%
   dplyr::filter(mass > 100000) %>%
   dplyr::select(accession, gene, mass)
+#> # A tibble: 87 × 3
+#>    accession  gene          mass
+#>    <chr>      <chr>        <dbl>
+#>  1 F1LMU0     F1LMU0     222850.
+#>  2 Q64578     AT2A1      109409.
+#>  3 D4AEH9     D4AEH9     174331.
+#>  4 G3V7K1     G3V7K1     164712.
+#>  5 A0A0G2K5P5 A0A0G2K5P5 187602.
+#>  6 D3ZA38     D3ZA38     128936.
+#>  7 Q03626     MUG1       165326 
+#>  8 Q8R4I6     Q8R4I6     103013.
+#>  9 D3ZHA0     FLNC       290984.
+#> 10 A0A096MK15 A0A096MK15 772118.
+#> # ℹ 77 more rows
 
 # Multiple conditions (AND)
 proteomics_data %>%
   dplyr::filter(mass > 100000 & peptide_count > 100) %>%
   dplyr::select(accession, gene, mass, peptide_count)
+#> # A tibble: 7 × 4
+#>   accession  gene          mass peptide_count
+#>   <chr>      <chr>        <dbl>         <dbl>
+#> 1 F1LMU0     F1LMU0     222850.           338
+#> 2 Q64578     AT2A1      109409.           126
+#> 3 A0A096MK15 A0A096MK15 772118.           133
+#> 4 F1LRV9     F1LRV9     223400.           240
+#> 5 G3V6E1     G3V6E1     219575.           173
+#> 6 F1LMY4     RYR1       565491.           104
+#> 7 A0A0G2K5J1 A0A0G2K5J1 563314.           102
 
 # OR conditions
 proteomics_data %>%
   dplyr::filter(mass > 200000 | peptide_count > 300) %>%
   dplyr::select(accession, gene, mass, peptide_count)
+#> # A tibble: 29 × 4
+#>    accession  gene          mass peptide_count
+#>    <chr>      <chr>        <dbl>         <dbl>
+#>  1 F1LMU0     F1LMU0     222850.           338
+#>  2 D3ZHA0     FLNC       290984.            55
+#>  3 A0A096MK15 A0A096MK15 772118.           133
+#>  4 F1LRV9     F1LRV9     223400.           240
+#>  5 A0A0G2JU96 A0A0G2JU96 571866.            34
+#>  6 M0R9L0     M0R9L0     220194.            28
+#>  7 A0A0G2K7B6 A0A0G2K7B6 242460.            24
+#>  8 F7F9U6     F7F9U6     517417.            16
+#>  9 A0A0G2JUP3 A0A0G2JUP3 815466.             8
+#> 10 G3V6E1     G3V6E1     219575.           173
+#> # ℹ 19 more rows
 ```
 
 ------------------------------------------------------------------------
 
 ### mutate(): Create New Columns
 
-```{r mutate_demo}
+
+``` r
 # Calculate log10 transformed values
 proteomics_data %>%
   dplyr::mutate(log10_mass = log10(mass)) %>%
   dplyr::select(accession, mass, log10_mass, `2126001_029_f5`) %>%
   head(3)
+#> # A tibble: 3 × 4
+#>   accession     mass log10_mass `2126001_029_f5`
+#>   <chr>        <dbl>      <dbl>            <dbl>
+#> 1 F1LMU0     222850.       5.35        25114306.
+#> 2 G3V8V3      97288.       4.99        18519365.
+#> 3 A0A0G2JSP8  43019.       4.63       897562438.
 ```
 
 ------------------------------------------------------------------------
 
 ### arrange(): Sort Data
 
-```{r arrange_demo}
+
+``` r
 # Sort by mass (ascending)
 proteomics_data %>%
   dplyr::arrange(mass) %>%
   dplyr::select(accession, gene, mass) %>%
   head(3)
+#> # A tibble: 3 × 3
+#>   accession gene    mass
+#>   <chr>     <chr>  <dbl>
+#> 1 P29418    ATP5E  5767.
+#> 2 Q9JJW3    ATPMK  6408.
+#> 3 A9UMV7    A9UMV7 6539.
 
 # Sort descending
 proteomics_data %>%
   dplyr::arrange(desc(mass)) %>%
   dplyr::select(accession, gene, mass) %>%
   head(3)
+#> # A tibble: 3 × 3
+#>   accession  gene          mass
+#>   <chr>      <chr>        <dbl>
+#> 1 A0A0G2JUP3 A0A0G2JUP3 815466.
+#> 2 A0A096MK15 A0A096MK15 772118.
+#> 3 F1M1J2     F1M1J2     623402.
 
 # Sort by multiple columns
 proteomics_data %>%
   dplyr::arrange(desc(peptide_count), mass) %>%
   dplyr::select(accession, peptide_count, mass) %>%
   head(3)
+#> # A tibble: 3 × 3
+#>   accession peptide_count    mass
+#>   <chr>             <dbl>   <dbl>
+#> 1 F1LMU0              338 222850.
+#> 2 F1LRV9              240 223400.
+#> 3 G3V6E1              173 219575.
 ```
 
 ------------------------------------------------------------------------
 
 ### summarize(): Calculate Statistics
 
-```{r summarize_demo}
+
+``` r
 # Calculate summary statistics
 proteomics_data %>%
   dplyr::summarize(
@@ -1036,6 +1387,10 @@ proteomics_data %>%
     sd_mass = sd(mass),
     mean_intensity = mean(`2126001_029_f5`)
   )
+#> # A tibble: 1 × 5
+#>   n_proteins mean_mass median_mass sd_mass mean_intensity
+#>        <int>     <dbl>       <dbl>   <dbl>          <dbl>
+#> 1        824    57788.      39318.  75984.       3059149.
 
 # Multiple samples
 proteomics_data %>%
@@ -1044,13 +1399,18 @@ proteomics_data %>%
     mean_s2 = mean(`2126001_359_f9`),
     cv_s1 = sd(`2126001_029_f5`) / mean(`2126001_029_f5`) * 100
   )
+#> # A tibble: 1 × 3
+#>    mean_s1  mean_s2 cv_s1
+#>      <dbl>    <dbl> <dbl>
+#> 1 3059149. 3367563. 1102.
 ```
 
 ------------------------------------------------------------------------
 
 ### group_by(): Grouped Operations
 
-```{r groupby_demo}
+
+``` r
 # Create groups based on mass
 proteomics_data_grouped <- proteomics_data %>%
   dplyr::mutate(
@@ -1069,13 +1429,20 @@ proteomics_data_grouped %>%
     mean_peptides = mean(peptide_count),
     mean_confidence = mean(confidence_score)
   )
+#> # A tibble: 3 × 4
+#>   mass_category n_proteins mean_peptides mean_confidence
+#>   <chr>              <int>         <dbl>           <dbl>
+#> 1 High                  43         45.8            4136.
+#> 2 Low                  529          8.71            814.
+#> 3 Medium               252         13.6            1176.
 ```
 
 ------------------------------------------------------------------------
 
 ### Combining Operations: Pipeline
 
-```{r pipeline_demo}
+
+``` r
 # Complete analysis pipeline
 results <- proteomics_data %>%
   # Filter high confidence proteins
@@ -1090,6 +1457,15 @@ results <- proteomics_data %>%
   dplyr::arrange(desc(mean_intensity))
 
 head(results)
+#> # A tibble: 6 × 5
+#>   accession  gene       mass confidence_score mean_intensity
+#>   <chr>      <chr>     <dbl>            <dbl>          <dbl>
+#> 1 F1LMU0     F1LMU0   2.23e5           40162.            NaN
+#> 2 G3V8V3     G3V8V3   9.73e4           15646.            NaN
+#> 3 A0A0G2JSP8 A0A0G2J… 4.30e4           15567.            NaN
+#> 4 Q64578     AT2A1    1.09e5           14102.            NaN
+#> 5 P15429     ENOB     4.70e4           12564.            NaN
+#> 6 P05065     ALDOA    3.94e4           11642.            NaN
 ```
 
 ------------------------------------------------------------------------
@@ -1131,7 +1507,8 @@ G3V8V3     `2126001_029_f5`   1851936
 
 ### pivot_longer(): Wide to Long
 
-```{r pivot_longer_demo}
+
+``` r
 # Convert to long format
 proteomics_long <- proteomics_data %>%
   tidyr::pivot_longer(
@@ -1141,6 +1518,21 @@ proteomics_long <- proteomics_data %>%
   )
 
 head(proteomics_long, 10)
+#> # A tibble: 10 × 9
+#>    accession gene   peptide_count unique_peptides
+#>    <chr>     <chr>          <dbl>           <dbl>
+#>  1 F1LMU0    F1LMU0           338             138
+#>  2 F1LMU0    F1LMU0           338             138
+#>  3 F1LMU0    F1LMU0           338             138
+#>  4 F1LMU0    F1LMU0           338             138
+#>  5 F1LMU0    F1LMU0           338             138
+#>  6 F1LMU0    F1LMU0           338             138
+#>  7 F1LMU0    F1LMU0           338             138
+#>  8 F1LMU0    F1LMU0           338             138
+#>  9 F1LMU0    F1LMU0           338             138
+#> 10 F1LMU0    F1LMU0           338             138
+#> # ℹ 5 more variables: confidence_score <dbl>, mass <dbl>,
+#> #   description <chr>, Sample <chr>, Intensity <dbl>
 ```
 
 ------------------------------------------------------------------------
@@ -1154,7 +1546,8 @@ head(proteomics_long, 10)
 -   Facilitates statistical modeling
 -   Standard format for many tools
 
-```{r long_analysis}
+
+``` r
 # Calculate statistics by sample
 proteomics_long %>%
   dplyr::group_by(Sample) %>%
@@ -1164,13 +1557,23 @@ proteomics_long %>%
     n_proteins = n()
   ) %>%
   head(6)
+#> # A tibble: 6 × 4
+#>   Sample          mean_intensity median_intensity n_proteins
+#>   <chr>                    <dbl>            <dbl>      <int>
+#> 1 2126001_029_f5        3059149.           91354.        824
+#> 2 2126001_068_f3        3782834.           76089.        824
+#> 3 2126001_134_f11       3189430.           84892.        824
+#> 4 2126001_180_f2        2687642.          129483.        824
+#> 5 2126001_198_f12       2881252.           93655.        824
+#> 6 2126001_270_f7        2088286.           95672.        824
 ```
 
 ------------------------------------------------------------------------
 
 ### pivot_wider(): Long to Wide
 
-```{r pivot_wider_demo}
+
+``` r
 # Convert back to wide format
 proteomics_wide <- proteomics_long %>%
   tidyr::pivot_wider(
@@ -1179,13 +1582,26 @@ proteomics_wide <- proteomics_long %>%
   )
 
 head(proteomics_wide[, 1:10])
+#> # A tibble: 6 × 10
+#>   accession  gene       peptide_count unique_peptides
+#>   <chr>      <chr>              <dbl>           <dbl>
+#> 1 F1LMU0     F1LMU0               338             138
+#> 2 G3V8V3     G3V8V3               146             113
+#> 3 A0A0G2JSP8 A0A0G2JSP8           117             109
+#> 4 Q64578     AT2A1                126              89
+#> 5 D4AEH9     D4AEH9                87              83
+#> 6 P15429     ENOB                 110              83
+#> # ℹ 6 more variables: confidence_score <dbl>, mass <dbl>,
+#> #   description <chr>, `2126001_029_f5` <dbl>,
+#> #   `2126001_359_f9` <dbl>, `2126001_401_f1` <dbl>
 ```
 
 ------------------------------------------------------------------------
 
 ### Working with Strings with `stringr`
 
-```{r string_demo}
+
+``` r
 # Extract gene names
 proteomics_data %>%
   dplyr::mutate(
@@ -1198,13 +1614,20 @@ proteomics_data %>%
   ) %>%
   dplyr::select(gene, description, is_kinase, first_word) %>%
   head(3)
+#> # A tibble: 3 × 4
+#>   gene       description                is_kinase first_word
+#>   <chr>      <chr>                      <lgl>     <chr>     
+#> 1 F1LMU0     Myosin heavy chain 4       FALSE     Myosin    
+#> 2 G3V8V3     Alpha-1,4 glucan phosphor… FALSE     Alpha-1,4 
+#> 3 A0A0G2JSP8 Creatine kinase            TRUE      Creatine
 ```
 
 ------------------------------------------------------------------------
 
 ### Handling Missing Values
 
-```{r missing_values}
+
+``` r
 # Create data with missing values
 data_with_na <- proteomics_data %>%
   dplyr::mutate(
@@ -1219,16 +1642,34 @@ data_with_na %>%
     n_missing_s1 = sum(is.na(`2126001_029_f5`)),
     percent_missing = mean(is.na(`2126001_029_f5`)) * 100
   )
+#> # A tibble: 1 × 3
+#>   n_total n_missing_s1 percent_missing
+#>     <int>        <int>           <dbl>
+#> 1     824          165            20.0
 
 # Remove rows with NA
 data_with_na %>%
   dplyr::filter(!is.na(`2126001_029_f5`)) %>%
   nrow()
+#> [1] 659
 
 # Replace NA with value
 data_with_na %>%
   dplyr::mutate(`2126001_029_f5` = tidyr::replace_na(`2126001_029_f5`, 0)) %>%
   head(3)
+#> # A tibble: 3 × 19
+#>   accession  gene       peptide_count unique_peptides
+#>   <chr>      <chr>              <dbl>           <dbl>
+#> 1 F1LMU0     F1LMU0               338             138
+#> 2 G3V8V3     G3V8V3               146             113
+#> 3 A0A0G2JSP8 A0A0G2JSP8           117             109
+#> # ℹ 15 more variables: confidence_score <dbl>, mass <dbl>,
+#> #   description <chr>, `2126001_029_f5` <dbl>,
+#> #   `2126001_359_f9` <dbl>, `2126001_401_f1` <dbl>,
+#> #   `2126001_180_f2` <dbl>, `2126001_416_f6` <dbl>,
+#> #   `2126001_422_f10` <dbl>, `2126001_068_f3` <dbl>,
+#> #   `2126001_134_f11` <dbl>, `2126001_270_f7` <dbl>,
+#> #   `2126001_198_f12` <dbl>, `2126001_312_f8` <dbl>, …
 ```
 
 ------------------------------------------------------------------------
@@ -1237,7 +1678,8 @@ data_with_na %>%
 
 **Task:** Transform and analyze your proteomics data
 
-```{r day2_exercise, eval=FALSE}
+
+``` r
 # 1. Load your data
 my_data <- readxl::read_excel("your_data.xlsx")
 
@@ -1279,7 +1721,8 @@ Today you learned:
 2.  Practice writing functions for data manipulation
 3.  Explore the built-in datasets in R (use `data()` to see available datasets)
 
-```{r homework-packages, eval=FALSE}
+
+``` r
 # Install packages for Day 2
 install.packages(c("ggplot2", "dplyr", "tidyr", "pheatmap"))
 

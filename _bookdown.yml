@@ -15,5 +15,9 @@ rmd_files:
   - day5_real_data.Rmd
 files:
   - inst/
+  - inst/day1_slides_file/header-attrs-2.30/header-attrs.js
+  - inst/day1_slides_file/remark-css-0.0./default.css
+  - inst/day1_slides_file/remark-css-0.0./metropolis-fonts.css
+  - inst/day1_slides_file/remark-css-0.0./metropolis.css
   - examples/
   - exercises/

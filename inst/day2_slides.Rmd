@@ -17,8 +17,6 @@ class: inverse, center, middle
 
 # Introduction to Proteomic Data & Quality Control
 
-### Day 2
-
 ---
 
 ## Learning Objectives

@@ -2,7 +2,7 @@
 title: "r4proteomics"
 subtitle: "5-Day Training Course"
 author: "Miguel CASANOVA, PhD & Dany MUKESHA"
-date: "`r Sys.Date()`"
+date: "2025-11-23"
 documentclass: book
 description: "Proteomics data analysis with R"
 url: 'https://github.com/lodiag-holocron/r4proteomics'
@@ -12,21 +12,7 @@ cover-image: "r4proteomics.png"
 
 # Welcome <a href="https://lodiag-holocron.github.io/r4proteomics/"><img src="r4proteomics.png" align="right" height="110" alt="r4proteomics website" /></a> {.unnumbered} 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  fig.width = 8,
-  fig.height = 6,
-  fig.align = 'center',
-  cache = FALSE
-)
 
-# Load required packages
-library(knitr)
-library(rmarkdown)
-```
 
 ## About This Course {.unnumbered}
 
@@ -122,7 +108,8 @@ Once RStudio is installed:
 
 3. Copy and paste the text below into the Console and press **Enter**.
 
-```{r eval=FALSE}
+
+``` r
 # Install required CRAN packages
 install.packages(c(
   "bookdown", "rmarkdown", "knitr", "pheatmap", "ggplot2", "downlit", "xml2",
@@ -145,10 +132,4 @@ BiocManager::install(c(
 
 This course was developed to provide hands-on training in proteomics data analysis.
 
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown', 'tidyverse',
-  'limma', 'vsn', 'sva', 'clusterProfiler'
-), 'packages.bib')
-```
+
