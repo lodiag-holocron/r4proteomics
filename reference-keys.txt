@@ -9,6 +9,7 @@ installing-r-and-rstudio
 rstudio-interface-tour
 scripts-vs-console
 install-required-r-packages
+working-directory-getwd-and-setwd
 basic-operators
 variables-assignment
 data-types

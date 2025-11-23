@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Introduction to Proteomic Data &amp; Quality Control</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Miguel Casanova &amp; Dany Mukesha" />
+    <meta name="date" content="2025-11-23" />
+    <script src="day2_slides_files/header-attrs-2.30/header-attrs.js"></script>
+    <link href="day2_slides_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="day2_slides_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link href="day2_slides_files/remark-css-0.0.1/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Introduction to Proteomic Data &amp; Quality Control
+]
+.subtitle[
+## Day 2
+]
+.author[
+### Miguel Casanova &amp; Dany Mukesha
+]
+.date[
+### 2025-11-23
+]
+
+---
+
+
+class: inverse, center, middle
+
+# Introduction to Proteomic Data &amp; Quality Control
+
+---
+
+## Learning Objectives
+
+By the end of Day 2, you will be able to:
+
+- Understand the structure of proteomic data matrices
+- Identify common data quality issues
+- Perform initial quality control checks
+- Visualize data using PCA, boxplots, and heatmaps
+- Conduct exploratory data analysis (EDA)
+
+---
+
+class: inverse, center, middle
+
+# Module 1: Introduction to Proteomic Data
+
+---
+
+## From Mass Spectrometry to Quantified Proteins
+
+**Proteomics Workflow:**
+
+1. **Sample Preparation**: Protein extraction, digestion into peptides
+2. **LC-MS/MS**: Liquid chromatography coupled with tandem mass spectrometry
+3. **Peptide Identification**: Match spectra to peptide sequences
+4. **Protein Inference**: Aggregate peptides to proteins
+5. **Quantification**: Measure protein abundance
+
+**Quantification Methods:**
+- Label-free quantification (LFQ)
+- Isobaric labeling (TMT, iTRAQ)
+- SILAC
+
+---
+
+## Structure of Proteomic Data Matrices
+
+**Typical structure: Proteins × Samples**
+
+- **Rows**: Quantified proteins (or protein groups)
+- **Columns**: Biological or technical samples
+- **Additional data**: Sample metadata and protein annotations
+
+```r
+# Load data components
+protein_matrix &lt;- read.csv("data/protein_matrix.csv", 
+                          row.names = 1, check.names = FALSE)
+sample_metadata &lt;- read.csv("data/sample_metadata.csv")
+protein_annotations &lt;- read.csv("data/protein_annotations.csv")
+
+# Check dimensions
+cat("Matrix dimensions:", dim(protein_matrix))
+cat("Number of proteins:", nrow(protein_matrix))
+cat("Number of samples:", ncol(protein_matrix))
+cat("Missing values:", sum(is.na(protein_matrix)))
+```
+
+---
+
+## Understanding Your Data
+
+**Essential first steps:**
+- Explore sample metadata
+- Check protein intensity distributions
+- Identify missing value patterns
+- Detect technical/biological variation
+
+```r
+print(sample_metadata)
+
+summary_stats &lt;- data.frame(
+  Sample = colnames(protein_matrix),
+  Mean = apply(protein_matrix, 2, mean, na.rm = TRUE),
+  Median = apply(protein_matrix, 2, median, na.rm = TRUE),
+  SD = apply(protein_matrix, 2, sd, na.rm = TRUE),
+  N_Missing = apply(protein_matrix, 2, function(x) sum(is.na(x)))
+)
+
+print(summary_stats)
+```
+
+---
+
+## Exercise 2.1: Explore Your Data
+
+Given a proteomic dataset, calculate:
+
+1. Total number of proteins quantified
+2. Average number of missing values per protein
+3. Which sample has the most missing values?
+
+.footnote[Try it yourself before looking at the solution!]
+
+---
+
+## Exercise 2.1 Solution
+
+```r
+cat("1. Total proteins:", nrow(protein_matrix), "\n")
+
+missing_per_protein &lt;- apply(protein_matrix, 1, 
+                           function(x) sum(is.na(x)))
+cat("2. Average missing per protein:", 
+    round(mean(missing_per_protein), 2), "\n")
+
+missing_per_sample &lt;- apply(protein_matrix, 2, 
+                          function(x) sum(is.na(x)))
+worst_sample &lt;- names(which.max(missing_per_sample))
+cat("3. Sample with most missing:", worst_sample, 
+    "with", max(missing_per_sample), "missing values\n")
+```
+
+---
+
+class: inverse, center, middle
+
+# Module 2: Initial Quality Control
+
+---
+
+## Missing Data Analysis
+
+**Missing data is common in proteomics:**
+
+- Low-abundance proteins
+- Stochastic sampling
+- Technical artifacts
+
+```r
+# Calculate missingness
+missing_per_protein &lt;- apply(protein_matrix, 1, 
+                           function(x) sum(is.na(x)))
+missing_per_sample &lt;- apply(protein_matrix, 2, 
+                          function(x) sum(is.na(x)))
+
+# Missing data percentage
+missing_pct &lt;- mean(is.na(protein_matrix)) * 100
+cat("Total missing data:", round(missing_pct, 1), "%\n")
+```
+
+---
+
+## Visualizing Missing Data
+
+.pull-left[
+```r
+library(reshape2)
+missing_df &lt;- melt(is.na(protein_matrix))
+colnames(missing_df) &lt;- c("Protein", "Sample", "Missing")
+
+ggplot(missing_df, aes(x = Sample, y = Protein, 
+                       fill = Missing)) +
+  geom_tile() +
+  scale_fill_manual(values = 
+    c("TRUE" = "red", "FALSE" = "grey90")) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank())
+```
+]
+
+.pull-right[
+```r
+# Histogram of missing values
+hist(missing_per_protein, breaks = 20,
+     main = "Missing Values per Protein",
+     xlab = "Number of Missing Values",
+     col = "steelblue")
+```
+]
+
+---
+
+## Detecting Outliers and Extreme Values
+
+.pull-left[
+**Boxplots:**
+- Identify outlier samples
+- Check intensity distributions
+- Detect batch effects
+]
+
+.pull-right[
+```r
+library(tidyverse)
+protein_long &lt;- protein_matrix %&gt;%
+  as.data.frame() %&gt;%
+  rownames_to_column("protein_id") %&gt;%
+  pivot_longer(-protein_id, 
+               names_to = "sample_id",
+               values_to = "abundance") %&gt;%
+  merge(sample_metadata, by = "sample_id")
+
+ggplot(protein_long, aes(x = sample_id, 
+                         y = abundance, 
+                         fill = condition)) +
+  geom_boxplot(outlier.size = 0.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+]
+
+---
+
+## Density Plots for Distribution Comparison
+
+```r
+ggplot(protein_long, aes(x = abundance, 
+                         color = sample_id)) +
+  geom_density() +
+  theme_minimal() +
+  labs(title = "Protein Abundance Distributions",
+       x = "Log2 Abundance", y = "Density") +
+  theme(legend.position = "none")
+```
+
+**Useful for:**
+- Comparing sample distributions
+- Detecting shifts in intensity
+- Identifying normalization needs
+
+---
+
+## Batch Effects Detection with PCA
+
+**Batch effects** = systematic non-biological variations
+
+**PCA** projects high-dimensional data to reveal patterns
+
+```r
+pca_data &lt;- t(na.omit(protein_matrix))
+pca_result &lt;- prcomp(pca_data, scale. = TRUE)
+
+# Create PCA data frame
+pca_df &lt;- data.frame(
+  PC1 = pca_result$x[, 1],
+  PC2 = pca_result$x[, 2],
+  sample_id = rownames(pca_result$x)
+) %&gt;% merge(sample_metadata, by = "sample_id")
+
+# Variance explained
+var_explained &lt;- summary(pca_result)$importance[2, 1:2] * 100
+```
+
+---
+
+## PCA Visualization
+
+.pull-left[
+**By Batch:**
+```r
+ggplot(pca_df, aes(x = PC1, y = PC2, 
+                   color = batch, 
+                   shape = condition)) +
+  geom_point(size = 4) +
+  labs(x = paste0("PC1 (", round(var_explained[1], 1), "%)"),
+       y = paste0("PC2 (", round(var_explained[2], 1), "%)"))
+```
+]
+
+.pull-right[
+**By Condition:**
+```r
+ggplot(pca_df, aes(x = PC1, y = PC2, 
+                   color = condition, 
+                   shape = batch)) +
+  geom_point(size = 4) +
+  labs(x = paste0("PC1 (", round(var_explained[1], 1), "%)"),
+       y = paste0("PC2 (", round(var_explained[2], 1), "%)"))
+```
+]
+
+---
+
+## Sample Correlation Analysis
+
+**Correlation heatmaps** show global sample similarity
+
+```r
+library(pheatmap)
+
+cor_matrix &lt;- cor(protein_matrix, 
+                  use = "pairwise.complete.obs")
+
+rownames(sample_metadata) &lt;- sample_metadata$sample_id
+
+pheatmap(cor_matrix,
+         annotation_col = sample_metadata[, 
+                        c("condition", "batch")],
+         main = "Sample-Sample Correlation",
+         color = colorRampPalette(
+           c("blue", "white", "red"))(50))
+```
+
+---
+
+## Exercise 2.2: Quality Control Checks
+
+Perform QC on the provided dataset:
+
+1. Calculate the percentage of proteins with &gt;50% missing values
+2. Identify any outlier samples (median abundance far from others)
+3. Check for batch effects using PCA
+
+---
+
+## Exercise 2.2 Solution
+
+```r
+# 1. Proteins with &gt;50% missing
+missing_pct &lt;- apply(protein_matrix, 1, 
+                   function(x) sum(is.na(x)) / length(x))
+high_missing &lt;- sum(missing_pct &gt; 0.5)
+cat("Proteins with &gt;50% missing:", high_missing, 
+    "(", round(high_missing / nrow(protein_matrix) * 100, 1), "%)\n")
+
+# 2. Outlier samples
+sample_medians &lt;- apply(protein_matrix, 2, median, na.rm = TRUE)
+median_overall &lt;- median(sample_medians)
+mad_overall &lt;- mad(sample_medians)
+outliers &lt;- abs(sample_medians - median_overall) &gt; 3 * mad_overall
+
+if (any(outliers)) {
+  cat("Outlier samples:", names(sample_medians)[outliers], "\n")
+} else {
+  cat("No outlier samples detected\n")
+}
+
+# 3. Batch effects - check PCA plots
+```
+
+---
+
+class: inverse, center, middle
+
+# Module 3: Exploratory Data Analysis (EDA)
+
+---
+
+## Distribution of Intensities
+
+.pull-left[
+**Histogram:**
+```r
+ggplot(protein_long, aes(x = abundance)) +
+  geom_histogram(bins = 50, 
+                 fill = "steelblue", 
+                 alpha = 0.7) +
+  labs(title = "Protein Abundance Distribution")
+```
+]
+
+.pull-right[
+**Violin plots:**
+```r
+ggplot(protein_long, 
+       aes(x = condition, y = abundance, 
+           fill = condition)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1, 
+               fill = "white", 
+               outlier.size = 0.5)
+```
+]
+
+---
+
+## Hierarchical Clustering
+
+**Groups samples/proteins by similarity**
+
+```r
+# Filter proteins with many missing values
+complete_proteins &lt;- rowSums(is.na(protein_matrix)) &lt; 
+                     ncol(protein_matrix) * 0.3
+filtered_matrix &lt;- protein_matrix[complete_proteins, ]
+
+# Impute missing values
+for (i in 1:nrow(filtered_matrix)) {
+  missing_idx &lt;- is.na(filtered_matrix[i, ])
+  if (any(missing_idx)) {
+    filtered_matrix[i, missing_idx] &lt;- 
+      mean(filtered_matrix[i, ], na.rm = TRUE)
+  }
+}
+
+# Clustering heatmap
+pheatmap(filtered_matrix,
+         scale = "row",
+         annotation_col = sample_metadata[, 
+                        c("condition", "batch")],
+         show_rownames = FALSE)
+```
+
+---
+
+## Sample Similarity Analysis
+
+.pull-left[
+**Distance matrix:**
+```r
+sample_dist &lt;- dist(t(filtered_matrix))
+sample_dist_matrix &lt;- as.matrix(sample_dist)
+
+pheatmap(sample_dist_matrix,
+         annotation_col = sample_metadata[, 
+                        c("condition", "batch")],
+         main = "Sample Distance Matrix")
+```
+]
+
+.pull-right[
+**MDS plot:**
+```r
+mds_result &lt;- cmdscale(sample_dist, k = 2)
+mds_df &lt;- data.frame(
+  MDS1 = mds_result[, 1],
+  MDS2 = mds_result[, 2],
+  sample_id = colnames(filtered_matrix)
+) %&gt;% merge(sample_metadata, by = "sample_id")
+
+ggplot(mds_df, aes(x = MDS1, y = MDS2, 
+                   color = condition, 
+                   shape = batch)) +
+  geom_point(size = 4)
+```
+]
+
+---
+
+## Coefficient of Variation Analysis
+
+**CV = (SD / Mean) × 100**
+
+- High CV: Technical variability or dynamic proteins
+- Low CV: Stable proteins
+
+```r
+calculate_cv &lt;- function(x) {
+  (sd(x, na.rm = TRUE) / mean(x, na.rm = TRUE)) * 100
+}
+
+cv_by_condition &lt;- protein_long %&gt;%
+  group_by(protein_id, condition) %&gt;%
+  summarise(cv = calculate_cv(abundance), 
+            .groups = "drop")
+
+ggplot(cv_by_condition, aes(x = cv, fill = condition)) +
+  geom_histogram(bins = 30, alpha = 0.7, 
+                 position = "identity") +
+  facet_wrap(~ condition, ncol = 1)
+```
+
+---
+
+## Exercise 2.3: Complete EDA
+
+Perform a complete exploratory analysis:
+
+1. Create a report summarizing data quality
+2. Identify the top 10 most variable proteins
+3. Check if samples cluster by biological condition
+
+---
+
+## Exercise 2.3 Solution
+
+```r
+# 1. Data quality report
+cat("=== DATA QUALITY REPORT ===\n")
+cat("Dataset:", nrow(protein_matrix), 
+    "proteins x", ncol(protein_matrix), "samples\n")
+cat("Missing values:", sum(is.na(protein_matrix)), 
+    "(", round(mean(is.na(protein_matrix)) * 100, 1), "%)\n")
+
+# 2. Top variable proteins
+protein_variance &lt;- apply(filtered_matrix, 1, 
+                         var, na.rm = TRUE)
+top10_variable &lt;- names(sort(protein_variance, 
+                            decreasing = TRUE)[1:10])
+cat("Top 10 variable proteins:\n")
+print(top10_variable)
+
+# 3. Condition clustering
+cat("Check PCA and clustering plots for biological grouping\n")
+```
+
+---
+
+## Creating Quality Control Reports
+
+```r
+generate_qc_report &lt;- function(data_matrix, metadata) {
+  report &lt;- list()
+  
+  report$n_proteins &lt;- nrow(data_matrix)
+  report$n_samples &lt;- ncol(data_matrix)
+  report$missing_pct &lt;- mean(is.na(data_matrix)) * 100
+  
+  report$protein_stats &lt;- data.frame(
+    N_Complete = sum(rowSums(is.na(data_matrix)) == 0),
+    N_Partial = sum(rowSums(is.na(data_matrix)) &gt; 0 &amp; 
+                    rowSums(is.na(data_matrix)) &lt; ncol(data_matrix)),
+    N_Mostly_Missing = sum(rowSums(is.na(data_matrix)) &gt; 
+                          ncol(data_matrix) * 0.5)
+  )
+  
+  return(report)
+}
+
+qc_report &lt;- generate_qc_report(protein_matrix, sample_metadata)
+```
+
+---
+
+## QC Report Output
+
+```r
+cat("=== QUALITY CONTROL SUMMARY ===\n\n")
+cat("Total Proteins:", qc_report$n_proteins, "\n")
+cat("Total Samples:", qc_report$n_samples, "\n")
+cat("Missing Data:", round(qc_report$missing_pct, 2), "%\n\n")
+
+cat("Protein Completeness:\n")
+cat("  Complete (no missing):", 
+    qc_report$protein_stats$N_Complete, "\n")
+cat("  Partial missing:", 
+    qc_report$protein_stats$N_Partial, "\n")
+cat("  Mostly missing (&gt;50%):", 
+    qc_report$protein_stats$N_Mostly_Missing, "\n")
+```
+
+---
+
+class: inverse, center, middle
+
+# Day 2 Summary
+
+---
+
+## What We Covered Today
+
+- ✓ Structure of proteomic data matrices
+- ✓ Common data quality issues (missing values, outliers, batch effects)
+- ✓ Quality control visualization techniques
+- ✓ Exploratory data analysis methods
+- ✓ Sample correlation and clustering
+
+---
+
+## Key Takeaways
+
+1. **Missing data** is common in proteomics - understand patterns before imputation
+2. **Batch effects** can confound biological signals - always check with PCA
+3. **Quality control** should be performed before any statistical analysis
+4. **Visualization** is essential for understanding your data
+
+---
+
+## Homework
+
+1. Apply QC pipeline to a new dataset
+2. Practice identifying batch effects
+3. Create custom QC visualizations
+
+```r
+# Prepare for Day 3
+install.packages(c("preprocessCore", "matrixStats"))
+BiocManager::install(c("limma", "vsn", "sva"))
+```
+
+---
+
+## Additional Resources
+
+- [Proteomics Data Analysis Best Practices](https://www.nature.com/articles/nmeth.3901)
+- [Understanding PCA in Proteomics](https://www.mcponline.org/)
+- Kammers et al. (2015) "Detecting Significant Changes in Protein Abundance"
+
+---
+
+## Case Study: Real Proteomic Dataset
+
+```r
+# Example workflow for your own data
+# 1. Load data
+my_data &lt;- read.csv("your_protein_data.csv", row.names = 1)
+
+# 2. Load metadata
+my_metadata &lt;- read.csv("your_sample_metadata.csv")
+
+# 3. Initial QC
+qc_report &lt;- generate_qc_report(my_data, my_metadata)
+
+# 4. Visualizations
+# - PCA for batch effects
+# - Correlation heatmap
+# - Missing data patterns
+# - Distribution boxplots
+```
+
+---
+
+class: inverse, center, middle
+
+## Questions?
+
+## See you tomorrow for Day 3!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+  "highlightStyle": "github",
+  "highlightLines": true,
+  "countIncrementalSlides": false,
+  "ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

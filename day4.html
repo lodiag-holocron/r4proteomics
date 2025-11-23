@@ -104,7 +104,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.2.2</span> Preparing DE Results for Functional Analysis<a class="anchor" aria-label="anchor" href="#preparing-de-results-for-functional-analysis"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare significant DE results</span></span>
 <span><span class="va">de_significant</span> <span class="op">&lt;-</span> <span class="va">de_results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">adj.P.Val</span> <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">logFC</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="fl">1.5</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -129,7 +129,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.2.3</span> Gene Ontology (GO) Enrichment Analysis<a class="anchor" aria-label="anchor" href="#gene-ontology-go-enrichment-analysis"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Starting GO enrichment analysis... This may take 1-2 minutes.\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Starting GO enrichment analysis... This may take 1-2 minutes.</span></span>
 <span></span>
@@ -190,7 +190,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.2.4</span> KEGG Pathway Enrichment<a class="anchor" aria-label="anchor" href="#kegg-pathway-enrichment"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Starting KEGG enrichment analysis... This may take 2-3 minutes.\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Starting KEGG enrichment analysis... This may take 2-3 minutes.</span></span>
 <span></span>
@@ -232,7 +232,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.2.5</span> Visualization of Enrichment Results<a class="anchor" aria-label="anchor" href="#visualization-of-enrichment-results"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create enrichment plots</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"ego_bp"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">ego_bp</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">ego_bp</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  </span>
@@ -256,7 +256,7 @@ and functions.</p>
 <span>  <span class="co">#print(p3)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="day4_functional_public_files/figure-html/enrichment-visualization-1.png" width="672"><img src="day4_functional_public_files/figure-html/enrichment-visualization-2.png" width="672"></p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"kk"</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># KEGG dot plot</span></span>
 <span>  <span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu">dotplot</span><span class="op">(</span><span class="va">kk</span>, showCategory <span class="op">=</span> <span class="fl">15</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -269,7 +269,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.2.6</span> Gene Set Enrichment Analysis (GSEA)<a class="anchor" aria-label="anchor" href="#gene-set-enrichment-analysis-gsea"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Starting GSEA... This may take 3-5 minutes for large gene sets.\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Starting GSEA... This may take 3-5 minutes for large gene sets.</span></span>
 <span></span>
@@ -333,7 +333,7 @@ and functions.</p>
 </ul>
 </li>
 </ol>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Export gene list for online tools</span></span>
 <span><span class="va">significant_gene_list</span> <span class="op">&lt;-</span> <span class="va">de_significant</span><span class="op">$</span><span class="va">gene_symbol</span></span>
 <span></span>
@@ -354,7 +354,7 @@ and functions.</p>
 <li>Compare results with online tools (STRING/g:Profiler)</li>
 <li>Create a biological interpretation report</li>
 </ol>
-<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"=== FUNCTIONAL INTERPRETATION REPORT ===\n\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; === FUNCTIONAL INTERPRETATION REPORT ===</span></span>
@@ -410,7 +410,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.3.1</span> Working with Longitudinal Proteomics Data<a class="anchor" aria-label="anchor" href="#working-with-longitudinal-proteomics-data"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create longitudinal dataset from our course data</span></span>
 <span><span class="va">longitudinal_data</span> <span class="op">&lt;-</span> <span class="va">protein_annotations</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">protein_id</span>, <span class="va">gene_symbol</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -433,7 +433,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.3.2</span> Visualizing Protein Trajectories<a class="anchor" aria-label="anchor" href="#visualizing-protein-trajectories"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select top variable proteins for visualization</span></span>
 <span><span class="va">top_proteins</span> <span class="op">&lt;-</span> <span class="va">de_significant</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">logFC</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -461,7 +461,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.3.3</span> Mixed Effects Modeling<a class="anchor" aria-label="anchor" href="#mixed-effects-modeling"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Fitting mixed effects models... This may take 1-2 minutes.\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Fitting mixed effects models... This may take 1-2 minutes.</span></span>
 <span></span>
@@ -552,7 +552,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.4.1</span> Downloading Data from GEO<a class="anchor" aria-label="anchor" href="#downloading-data-from-geo"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"ALERT: GEO downloads can take 5-15 minutes depending on dataset size and internet speed.\n"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example: Download a real proteomics dataset from GEO</span></span>
@@ -569,7 +569,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.4.2</span> Working with PRIDE Proteomics Data<a class="anchor" aria-label="anchor" href="#working-with-pride-proteomics-data"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"ALERT: PRIDE dataset processing can be computationally intensive and time-consuming.\n"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example workflow for PRIDE data</span></span>
@@ -601,7 +601,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.4.3</span> Complete Public Data Analysis Pipeline<a class="anchor" aria-label="anchor" href="#complete-public-data-analysis-pipeline"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#[TO BE REVISED]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Running public data analysis pipeline...\n"</span><span class="op">)</span></span>
 <span></span>
@@ -643,7 +643,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.4.4</span> Cross-Dataset Validation<a class="anchor" aria-label="anchor" href="#cross-dataset-validation"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb112"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Compare our results with public dataset (simulated overlap)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Cross-dataset validation...\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Cross-dataset validation...</span></span>
@@ -687,7 +687,7 @@ and functions.</p>
 <li>Compare results with your own analysis</li>
 <li>Identify conserved and novel findings</li>
 </ol>
-<div class="sourceCode" id="cb113"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution framework</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"=== PUBLIC DATA INTEGRATION WORKFLOW ===\n\n"</span><span class="op">)</span></span>
 <span></span>
@@ -762,7 +762,7 @@ and functions.</p>
 <h3>
 <span class="header-section-number">4.5.2</span> R Packages for Public Data:<a class="anchor" aria-label="anchor" href="#r-packages-for-public-data"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb114"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb116"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install additional packages for public data analysis</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"GEOquery"</span>,      <span class="co"># Download GEO data</span></span>
@@ -802,7 +802,7 @@ and functions.</p>
 <li>Compare findings across multiple datasets</li>
 <li>Create a comprehensive biological interpretation report</li>
 </ol>
-<div class="sourceCode" id="cb115"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb117"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Save functional analysis results</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"ego_bp"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">ego_bp</span>, <span class="st">"results/day4_go_bp.rds"</span><span class="op">)</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"kk"</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">saveRDS</a></span><span class="op">(</span><span class="va">kk</span>, <span class="st">"results/day4_kegg.rds"</span><span class="op">)</span></span>

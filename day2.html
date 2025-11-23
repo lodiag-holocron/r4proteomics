@@ -114,7 +114,7 @@
 and each column corresponds to a biological or technical sample.
 Additional annotation tables typically accompany the intensity matrix
 to describe samples (metadata) and proteins.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## The simulated dataset used throughout this course can be downloaded from:</span></span>
 <span><span class="co">## https://github.com/lodiag-holocron/r4proteomics/data</span></span>
 <span><span class="co">## After downloading, save the files in your working directory or adjust the path below.</span></span>
@@ -159,7 +159,7 @@ both the sample metadata and the distribution of protein intensities
 across samples. This provides insights into sample composition,
 missing value patterns, and potential sources of technical or
 biological variation.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">sample_metadata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    sample_id condition  batch timepoint patient_id sex age</span></span>
 <span><span class="co">#&gt; 1        S01   Control Batch1     Week0          1   M  46</span></span>
@@ -235,7 +235,7 @@ biological variation.</p>
 <li>Average number of missing values per protein</li>
 <li>Which sample has the most missing values?</li>
 </ol>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"1. Total proteins:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1. Total proteins: 1500</span></span>
@@ -264,7 +264,7 @@ biological variation.</p>
 <p>Understanding how much data is missing and where it occurs is
 an essential first step in quality control, as missingness can reflect
 low-abundance proteins, stochastic sampling, or technical artifacts.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate missingness</span></span>
 <span><span class="va">missing_per_protein</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">missing_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">2</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -286,7 +286,7 @@ low-abundance proteins, stochastic sampling, or technical artifacts.</p>
 <span>       subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Red = Missing ("</span>, </span>
 <span>                        <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">missing_df</span><span class="op">$</span><span class="va">Missing</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"% total)"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/missing-data-1.png" width="672"></div>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Histogram of missing values per protein</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">missing_per_protein</span>,</span>
@@ -303,7 +303,7 @@ low-abundance proteins, stochastic sampling, or technical artifacts.</p>
 <p>Visual inspection of abundance distributions helps identify outlier
 samples, intensity shifts, and potential batch effects. Boxplots and
 density plots provide complementary views of the overall data structure.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Box plots for each sample</span></span>
 <span><span class="va">protein_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span></span>
 <span><span class="va">protein_df</span><span class="op">$</span><span class="va">protein_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">protein_df</span><span class="op">)</span></span>
@@ -325,7 +325,7 @@ density plots provide complementary views of the overall data structure.</p>
 <span>       x <span class="op">=</span> <span class="st">"Sample"</span>, y <span class="op">=</span> <span class="st">"Log2 Abundance"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/outliers-1.png" width="672"></div>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Density plots</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span>, color <span class="op">=</span> <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -346,7 +346,7 @@ or other technical steps.</p>
 <p>Principal Component Analysis (PCA) is a powerful tool to detect
 such effects by projecting high-dimensional data into lower-dimensional
 space and highlighting clustering patterns.</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># PCA colored by batch</span></span>
 <span><span class="va">pca_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pca_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/prcomp.html">prcomp</a></span><span class="op">(</span><span class="va">pca_data</span>, scale. <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -372,7 +372,7 @@ space and highlighting clustering patterns.</p>
 <span>       y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"PC2 ("</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">var_explained</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="fl">1</span><span class="op">)</span>, <span class="st">"%)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/batch-effects-1.png" width="672"></div>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># PCA plot by condition</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">pca_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">PC1</span>, y <span class="op">=</span> <span class="va">PC2</span>, color <span class="op">=</span> <span class="va">condition</span>, shape <span class="op">=</span> <span class="va">batch</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -394,7 +394,7 @@ based on protein abundance profiles.</p>
 across samples, while lower correlations may highlight outliers,
 batch effects, or technical artifacts. Heatmaps combined with metadata
 annotations offer an intuitive way to inspect these relationships.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate sample correlations</span></span>
 <span><span class="va">cor_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">protein_matrix</span>, use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span></span>
 <span></span>
@@ -419,7 +419,7 @@ annotations offer an intuitive way to inspect these relationships.</p>
 <li>Identify if there are any outlier samples (median abundance far from others)</li>
 <li>Check for batch effects using PCA</li>
 </ol>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="co"># 1. Proteins with &gt;50% missing</span></span>
 <span><span class="va">missing_pct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">protein_matrix</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
@@ -458,7 +458,7 @@ annotations offer an intuitive way to inspect these relationships.</p>
 trends, skewness, or technical artifacts in the dataset.</p>
 <p>Both histograms and violin plots provide complementary perspectives on
 the overall intensity patterns.</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Histogram of all values</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">abundance</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">50</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span>, color <span class="op">=</span> <span class="st">"black"</span>, alpha <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
@@ -466,7 +466,7 @@ the overall intensity patterns.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Distribution of Protein Abundances"</span>,</span>
 <span>       x <span class="op">=</span> <span class="st">"Log2 Abundance"</span>, y <span class="op">=</span> <span class="st">"Frequency"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/intensity-distribution-1.png" width="672"></div>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Violin plots by condition</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">protein_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">condition</span>, y <span class="op">=</span> <span class="va">abundance</span>, fill <span class="op">=</span> <span class="va">condition</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -486,7 +486,7 @@ the overall intensity patterns.</p>
 in abundance profiles.</p>
 <p>This approach helps identify natural clusters, outliers, or
 batch-related patterns in the data.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Remove proteins with too many missing values</span></span>
 <span><span class="va">complete_proteins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">protein_matrix</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.3</span></span>
 <span><span class="va">filtered_matrix</span> <span class="op">&lt;-</span> <span class="va">protein_matrix</span><span class="op">[</span><span class="va">complete_proteins</span>, <span class="op">]</span></span>
@@ -521,7 +521,7 @@ batch-related patterns in the data.</p>
 or unexpected clustering among samples.</p>
 <p>Euclidean distances and multidimensional scaling (MDS) provide
 additional overview of global relationships between samples.</p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate Euclidean distances between samples</span></span>
 <span><span class="va">sample_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">filtered_matrix</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sample_dist_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">sample_dist</span><span class="op">)</span></span>
@@ -533,7 +533,7 @@ additional overview of global relationships between samples.</p>
 <span>         main <span class="op">=</span> <span class="st">"Sample-Sample Distance Matrix"</span>,</span>
 <span>         color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"white"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/similarity-1.png" width="672"></div>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># MDS plot (alternative to PCA)</span></span>
 <span><span class="va">mds_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html">cmdscale</a></span><span class="op">(</span><span class="va">sample_dist</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -560,7 +560,7 @@ additional overview of global relationships between samples.</p>
 in protein abundances across samples.</p>
 <p>High CV values may indicate technical variability or highly dynamic
 proteins, while low CV suggests stable proteins.</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate CV for each protein</span></span>
 <span><span class="va">calculate_cv</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span>
@@ -579,7 +579,7 @@ proteins, while low CV suggests stable proteins.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">condition</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/cv-analysis-1.png" width="672"></div>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Summary statistics</span></span>
 <span><span class="va">cv_summary</span> <span class="op">&lt;-</span> <span class="va">cv_by_condition</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -607,7 +607,7 @@ proteins, while low CV suggests stable proteins.</p>
 <li>Identify the top 10 most variable proteins</li>
 <li>Check if samples cluster by biological condition</li>
 </ol>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Solution</span></span>
 <span><span class="co"># 1. Data quality report</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"=== DATA QUALITY REPORT ===\n\n"</span><span class="op">)</span></span>
@@ -646,7 +646,7 @@ proteins, while low CV suggests stable proteins.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Top 10 Most Variable Proteins"</span>, x <span class="op">=</span> <span class="st">"Sample"</span>, y <span class="op">=</span> <span class="st">"Abundance"</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-figure"><img src="day2_proteomics_qc_files/figure-html/exercise-2-3-solution-1.png" width="672"></div>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># 3. Clustering by condition</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="st">"Checking sample clustering by condition:\n"</span><span class="op">)</span></span>
@@ -661,7 +661,7 @@ proteins, while low CV suggests stable proteins.</p>
 <h2>
 <span class="header-section-number">2.5</span> Creating Quality Control Reports<a class="anchor" aria-label="anchor" href="#creating-quality-control-reports"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Function to generate QC report</span></span>
 <span><span class="va">generate_qc_report</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data_matrix</span>, <span class="va">metadata</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">report</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -800,7 +800,7 @@ proteins, while low CV suggests stable proteins.</p>
 <li>Practice identifying batch effects</li>
 <li>Create custom QC visualizations</li>
 </ol>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare for Day 3</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"preprocessCore"</span>, <span class="st">"matrixStats"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -821,7 +821,7 @@ proteins, while low CV suggests stable proteins.</p>
 <h2>
 <span class="header-section-number">2.8</span> Case Study: Real Proteomic Dataset<a class="anchor" aria-label="anchor" href="#case-study-real-proteomic-dataset"><i class="fas fa-link"></i></a>
 </h2>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example workflow for your own data</span></span>
 <span><span class="co"># 1. Load data</span></span>
 <span><span class="va">my_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"your_protein_data.csv"</span>, row.names <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>

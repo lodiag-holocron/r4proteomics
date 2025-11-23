@@ -72,7 +72,30 @@ BiocManager::install(c(
   "genefilter", "GOSemSim", "DOSE", "enrichplot"
 ), update = TRUE, ask = FALSE)
 ```
-    
+
+### Working Directory: `getwd()` and `setwd()`
+
+The working directory is the folder where R reads and saves files.
+
+Check the Current Working Directory
+
+```r
+getwd()
+```
+
+Change the Working Directory
+
+```r
+setwd("path/to/your/folder")
+```
+
+Use forward slashes (`/`) and put the path in quotes.
+
+> <span style="color:red"> Tips</span>
+
+- In RStudio: **Session → Set Working Directory → Choose Directory…**
+- Always run `getwd()` after `setwd()` to **verify the change**. 
+
 ### Basic Operators
 
 **Please note:**

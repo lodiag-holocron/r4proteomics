@@ -26,8 +26,8 @@ This course is ideal for professionals seeking to deepen their expertise in comp
 
 You will learn:
 
--   **Day 1**: R fundamentals and RStudio basics
--   **Day 2**: Understanding proteomic data and quality control
+-   **Day 1**: R fundamentals and RStudio basics [(Slides)](inst/day1_slides.html)
+-   **Day 2**: Understanding proteomic data and quality control [(Slides)](inst/day2_slides.html)
 -   **Day 3**: Data preprocessing and differential expression analysis
 -   **Day 4**: Functional analysis, longitudinal studies, and public datasets
 -   **Day 5**: Real-world applications and case studies
