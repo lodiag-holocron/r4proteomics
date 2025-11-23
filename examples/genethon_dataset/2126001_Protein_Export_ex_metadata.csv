@@ -1,0 +1,13 @@
+sample_number,proteomics_id,genotype,treatment,animal_id
+sample1,2126001_029_F5,WT,vehicle,1
+sample2,2126001_359_F9,WT,vehicle,2
+sample3,2126001_401_F1,WT,vehicle,3
+sample4,2126001_180_F2,DMD,vehicle,1
+sample5,2126001_416_F6,DMD,vehicle,2
+sample6,2126001_422_F10,DMD,vehicle,3
+sample7,2126001_068_F3,WT,AAV,1
+sample8,2126001_134_F11,WT,AAV,2
+sample9,2126001_270_F7,WT,AAV,3
+sample10,2126001_198_F12,DMD,AAV,1
+sample11,2126001_312_F8,DMD,AAV,2
+sample12,2126001_406_F4,DMD,AAV,3

@@ -1,0 +1,1143 @@
+---
+title: "Real Data Analysis: Mouse DMD Study (Genethon 2126001)"
+description: |
+  A complete proteomics analysis workflow applying concepts from Days 1-4 
+  to an external dataset from a Genethon mouse DMD study
+author:
+  - name: r4proteomics team
+    affiliation: Firalis Molecular Precision
+    affiliation_url: https://firalismolecularprecision.com/
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    toc_depth: 3
+    code_folding: show
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+
+install_if_missing <- function(pkg) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+}
+
+required_packages <- c(
+  "tidyverse",
+  "pheatmap",
+  "ggplot2",
+  "limma",
+  "reshape2",
+  "readr",
+  "readxl",
+  "data.table",
+  "ggrepel",
+  "gprofiler2",
+  "rmdformats"
+)
+
+invisible(lapply(required_packages, install_if_missing))
+
+library(tidyverse)
+library(pheatmap)
+library(ggplot2)
+library(limma)
+library(readr)
+library(readxl)
+library(reshape2)
+library(data.table)
+library(ggrepel)
+library(gprofiler2)
+```
+
+# 1. Dataset and goal
+
+We work with a proteomics dataset provided by **Genethon**:
+  
+* **Project ID**: 2126001
+* **Organism**: mouse
+* **Genotypes**: wild type (WT) and DMD (Duchenne muscular dystrophy model)
+* **Treatments**: vehicle or AAV
+* **Readouts**: protein intensities per sample (one column per sample)
+
+This dataset is relevant for studying proteomic changes associated with DMD
+and the potential effect of AAV treatment in a mouse model.
+
+Goal for students:
+  
+* Load and clean an external proteomics table from Excel.
+* Build a `protein_matrix` and `sample_metadata`.
+* Reproduce key QC and EDA plots (Day 2 style).
+* Fit a limma model (Day 3 style) and inspect a volcano plot and a heatmap.
+* Perform a simple functional enrichment analysis (Day 4 style).
+
+> **Exercise 1.1**
+> Based on the metadata, how many animals and conditions are there:
+> WT vs DMD, vehicle vs AAV?
+  
+# 2. Loading and preprocessing protein data
+  
+## 2.1 Read protein table
+  
+This dataset is an **Excel export** with one row per protein and one column
+per sample.
+
+```{r load-proteingroups}
+file_path <- "2126001_Protein Export_ex.xlsx"
+
+pg_raw <- readxl::read_xlsx(
+  file_path,
+  skip = 1   # dataset has an extra header line above the column names
+) |>
+  readr::type_convert()
+
+dim(pg_raw)
+head(colnames(pg_raw))
+```
+
+Typical columns include:
+  
+* `Accession`
+* `Gene`
+* `Peptide count`
+* `Unique peptides`
+* `Confidence score`
+* `Mass`
+* `Description`
+* one column per sample: `2126001_029_F5`, `2126001_359_F9`, ...
+
+This dataset does not have explicit contaminant or reverse flags, so we use
+simple quality filters instead.
+
+## 2.2 Remove low confidence proteins
+
+Since we do not have "Reverse" or "Potential contaminant" columns, we filter
+based on peptide information:
+  
+* at least 1 peptide
+* at least 1 unique peptide
+
+You can also tighten this later if you wish.
+
+```{r filter-proteins}
+pg_filtered <- pg_raw |>
+  dplyr::filter(
+    `Peptide count` > 0,
+    `Unique peptides` > 0
+  )
+
+dim(pg_filtered)
+```
+
+> **Exercise 2.1**
+> How many rows were removed by this filter?
+> What percentage of proteins remain in `pg_filtered`?
+  
+## 2.3 Intensity columns and sample IDs
+  
+Sample columns are the ones with IDs like `2126001_029_F5`.
+
+```{r intensity-columns}
+# Capture columns that look like proteomics sample IDs
+intensity_cols <- grep("^2126001_", colnames(pg_filtered), value = TRUE)
+
+intensity_cols
+```
+
+We will use these column names directly as `sample_ids`:
+  
+```{r}
+sample_ids <- intensity_cols
+sample_ids
+```
+
+If you want shorter IDs, you can later map them to nicer labels.
+
+## 2.4 Filter proteins by quantification rate
+
+We keep proteins that are quantified in at least 80 percent of samples to
+ensure robust quantification.
+
+```{r filter-quant-rate}
+quant_per_protein <- rowSums(!is.na(pg_filtered[intensity_cols])) /
+  length(intensity_cols)
+
+summary(quant_per_protein)
+
+good_proteins <- pg_filtered$Accession[quant_per_protein >= 0.8]
+
+pg_good <- pg_filtered |>
+  dplyr::filter(Accession %in% good_proteins)
+
+dim(pg_good)
+```
+
+> **Exercise 2.2**
+> Change the threshold from 80 percent to 60 percent and see how the number
+> of retained proteins changes.
+> What is the trade off between keeping more proteins and increasing missing values?
+  
+## 2.5 Build protein matrix and annotation
+  
+We build a numeric matrix of log2 intensities and a separate annotation table.
+
+```{r build-matrix-annotation}
+protein_matrix <- pg_good |>
+  dplyr::select(all_of(intensity_cols)) |>
+  as.matrix()
+
+rownames(protein_matrix) <- pg_good$Accession
+colnames(protein_matrix) <- sample_ids
+
+# log2 transform intensities
+protein_matrix <- log2(protein_matrix + 1)
+
+cat("Matrix dimensions:", dim(protein_matrix), "\n")
+cat("Number of missing values:", sum(is.na(protein_matrix)), "\n")
+```
+
+Protein annotation table:
+  
+```{r}
+protein_annotation <- pg_good |>
+  dplyr::transmute(
+    protein_id  = Accession,
+    gene_symbol = Gene,
+    description = Description,
+    mass        = Mass
+  )
+
+head(protein_annotation)
+```
+
+# 2.6 Build sample metadata
+
+We now load the metadata file and align it with the columns of the protein matrix.
+
+```{r sample-metadata}
+meta_path <- "2126001_Protein_Export_ex_metadata.csv"
+
+sample_metadata <- data.table::fread(meta_path) |>
+  as.data.frame()
+
+sample_metadata
+```
+
+Columns include:
+  
+* `sample_number`
+* `proteomics_id` (matches the intensity column names)
+* `genotype` (WT or DMD)
+* `treatment` (vehicle or AAV)
+* `animal_id` (biological replicate)
+
+We create a tidy annotation table aligned with `sample_ids`:
+  
+```{r}
+sample_metadata <- sample_metadata |>
+  dplyr::mutate(
+    sample_id = proteomics_id,
+    genotype  = factor(genotype,  levels = c("WT", "DMD")),
+    treatment = factor(treatment, levels = c("vehicle", "AAV")),
+    group     = paste(genotype, treatment, sep = "_"),
+    group     = factor(group, levels = c("WT_vehicle", "WT_AAV", 
+                                          "DMD_vehicle", "DMD_AAV"))
+  ) |>
+  dplyr::select(
+    sample_id,
+    sample_number,
+    proteomics_id,
+    genotype,
+    treatment,
+    animal_id,
+    group
+  )
+
+# Ensure the order matches the columns of the expression matrix
+sample_metadata <- sample_metadata[match(sample_ids, sample_metadata$sample_id), ]
+
+stopifnot(all(sample_metadata$sample_id == sample_ids))
+
+sample_metadata
+```
+
+> **Exercise 2.3**
+  >
+  > * How many samples are WT vs DMD?
+  > * How many are treated with vehicle vs AAV?
+  > * How many samples fall into each of the four groups:
+  >   WT_vehicle, WT_AAV, DMD_vehicle, DMD_AAV?
+  > * Are the animal IDs balanced across these groups?
+  
+# 3. QC and exploratory data analysis
+  
+## 3.1 Summary statistics per sample
+  
+```{r data-overview}
+summary_stats <- data.frame(
+  sample_id  = colnames(protein_matrix),
+  mean       = apply(protein_matrix, 2, mean,   na.rm = TRUE),
+  median     = apply(protein_matrix, 2, median, na.rm = TRUE),
+  sd         = apply(protein_matrix, 2, sd,     na.rm = TRUE),
+  n_missing  = apply(protein_matrix, 2, function(x) sum(is.na(x)))
+) |>
+  dplyr::left_join(sample_metadata, by = "sample_id")
+
+summary_stats
+```
+
+> **Exercise 3.1**
+> Compare the medians and standard deviations between samples.
+> Do you see clear differences in overall intensity between groups?
+> Which sample has the highest number of missing values?
+  
+## 3.2 Missing data pattern
+  
+```{r missing-data}
+missing_df <- reshape2::melt(is.na(protein_matrix))
+colnames(missing_df) <- c("protein_id", "sample_id", "missing")
+
+ggplot(missing_df, aes(x = sample_id, y = protein_id, fill = missing)) +
+  geom_tile() +
+  scale_fill_manual(values = c("TRUE" = "red", "FALSE" = "grey90")) +
+  theme_minimal() +
+  theme(
+    axis.text.y  = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x  = element_text(angle = 45, vjust = 0.5, hjust = 0.5)
+  ) +
+  labs(
+    title = "Missing data pattern",
+    subtitle = paste0(
+      "Red = missing (",
+      round(mean(missing_df$missing) * 100, 1),
+      "% of all values)"
+    ),
+    x = "Sample",
+    y = "Proteins"
+  )
+```
+
+> **Exercise 3.2**
+> Are missing values evenly distributed across samples or do some samples
+> have more missing data?
+> Do you see horizontal bands (proteins missing in many samples)?
+> What could such bands represent?
+  
+## 3.3 Boxplots and density plots
+  
+```{r long-format}
+protein_df <- as.data.frame(protein_matrix)
+protein_df$protein_id <- rownames(protein_df)
+
+protein_long <- tidyr::pivot_longer(
+  protein_df,
+  cols = -protein_id,
+  names_to = "sample_id",
+  values_to = "abundance"
+) |>
+  dplyr::left_join(sample_metadata, by = "sample_id")
+```
+
+```{r boxplots}
+ggplot(protein_long, aes(x = sample_id, y = abundance, fill = genotype)) +
+  geom_boxplot(outlier.size = 0.5) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(
+    title = "Abundance distribution by sample",
+    x = "Sample",
+    y = "log2 intensity"
+  )
+```
+
+```{r densities}
+ggplot(protein_long, aes(x = abundance, colour = sample_id)) +
+  geom_density() +
+  theme_minimal() +
+  labs(
+    title = "Density of protein abundances",
+    x = "log2 intensity",
+    y = "Density"
+  ) +
+  theme(legend.position = "none")
+```
+
+> **Exercise 3.3**
+> Do any samples look clearly shifted in median or spread compared to others?
+> Would normalisation help to make the distributions more comparable?
+  
+## 3.4 Normalisation
+  
+We apply **quantile normalisation** as in Day 3 to make intensity
+distributions comparable across samples. From this point on we use the
+normalised matrix.
+
+```{r normalization}
+protein_matrix_norm <- limma::normalizeBetweenArrays(
+  protein_matrix,
+  method = "quantile"
+)
+
+cat("Dimensions after normalization:", dim(protein_matrix_norm), "\n")
+
+par(mfrow = c(1, 2))
+boxplot(protein_matrix,
+        main = "Before quantile normalization",
+        las = 2, cex.axis = 0.6, ylab = "log2 intensity")
+boxplot(protein_matrix_norm,
+        main = "After quantile normalization",
+        las = 2, cex.axis = 0.6, ylab = "normalized intensity")
+par(mfrow = c(1, 1))
+```
+
+> **Exercise 3.4**
+> Compare the boxplots before and after normalisation.
+> How does quantile normalisation change the global distributions?
+> Are the medians more aligned?
+  
+## 3.5 PCA
+  
+We perform PCA on the normalised matrix after removing proteins with zero variance.
+
+```{r pca}
+var_per_protein <- apply(protein_matrix_norm, 1, var, na.rm = TRUE)
+non_zero_var    <- var_per_protein > 0
+
+pca_data <- t(protein_matrix_norm[non_zero_var, ])
+
+pca_result <- prcomp(pca_data, scale. = FALSE)
+
+pca_df <- data.frame(
+  PC1       = pca_result$x[, 1],
+  PC2       = pca_result$x[, 2],
+  sample_id = rownames(pca_result$x)
+) |>
+  dplyr::left_join(sample_metadata, by = "sample_id") |>
+  dplyr::mutate(
+    genotype  = factor(genotype,  levels = c("WT", "DMD")),
+    treatment = factor(treatment, levels = c("vehicle", "AAV"))
+  )
+
+var_explained <- summary(pca_result)$importance[2, 1:2] * 100
+
+ggplot(
+  pca_df,
+  aes(x = PC1, y = PC2, colour = genotype, shape = treatment)
+) +
+  geom_point(size = 4) +
+  theme_minimal() +
+  labs(
+    title = "PCA of samples",
+    x = paste0("PC1 (", round(var_explained[1], 1), "%)"),
+    y = paste0("PC2 (", round(var_explained[2], 1), "%)")
+  ) +
+  scale_color_brewer(palette = "Set1")
+```
+
+> **Exercise 3.5**
+> Do samples cluster more by genotype (WT vs DMD) or by treatment (vehicle vs AAV)?
+> Do you see any samples that look like outliers relative to their group?
+  
+## 3.6 Sample correlation heatmap
+  
+```{r sample-correlation, fig.height=7, fig.width=8}
+cor_matrix <- cor(protein_matrix_norm, use = "pairwise.complete.obs")
+
+ann_cols <- sample_metadata |>
+  dplyr::select(sample_id, genotype, treatment) |>
+  as.data.frame()
+rownames(ann_cols) <- ann_cols$sample_id
+ann_cols$sample_id <- NULL
+
+ann_colors <- list(
+  genotype  = c(DMD = "#E41A1C", WT = "#377EB8"),
+  treatment = c(vehicle = "#984EA3", AAV = "#FF7F00")
+)
+
+pheatmap(
+  cor_matrix,
+  annotation_col    = ann_cols,
+  annotation_row    = ann_cols,
+  annotation_colors = ann_colors,
+  color             = colorRampPalette(c("blue", "white", "red"))(50),
+  main              = "Sample correlation matrix"
+)
+```
+
+> **Exercise 3.6**
+> Which samples show the highest similarity?
+> Do samples cluster by genotype, by treatment, or by some other pattern?
+  
+## 3.7 Hierarchical clustering heatmap
+  
+We perform simple row mean imputation for proteins with up to 30 percent missing values.
+
+```{r clustering, fig.height=8, fig.width=7}
+complete_proteins <- rowSums(is.na(protein_matrix_norm)) <=
+  ncol(protein_matrix_norm) * 0.3
+
+filtered_matrix <- protein_matrix_norm[complete_proteins, ]
+
+for (i in seq_len(nrow(filtered_matrix))) {
+  missing_idx <- is.na(filtered_matrix[i, ])
+  if (any(missing_idx)) {
+    row_mean <- mean(filtered_matrix[i, ], na.rm = TRUE)
+    if (is.finite(row_mean)) {
+      filtered_matrix[i, missing_idx] <- row_mean
+    }
+  }
+}
+
+filtered_matrix <- filtered_matrix[
+  apply(filtered_matrix, 1, function(x) sd(x, na.rm = TRUE) > 0),
+]
+
+annotation_col <- sample_metadata |>
+  dplyr::select(sample_id, genotype, treatment) |>
+  as.data.frame()
+rownames(annotation_col) <- annotation_col$sample_id
+annotation_col$sample_id <- NULL
+
+pheatmap(
+  filtered_matrix,
+  scale                    = "row",
+  clustering_distance_rows = "euclidean",
+  clustering_distance_cols = "euclidean",
+  annotation_col           = annotation_col,
+  show_rownames            = FALSE,
+  main                     = "Hierarchical clustering of samples",
+  color                    = colorRampPalette(c("blue", "white", "red"))(50)
+)
+```
+
+> **Exercise 3.7**
+> Do samples form clear clusters by genotype or by treatment?
+> Are there any samples that cluster in unexpected positions?
+  
+# 4. Differential expression with limma
+  
+To keep the main analysis simple, we focus on a single contrast:
+  
+* **DMD vs WT**, using **vehicle treated** samples only.
+
+At the end of this section we show how to define additional contrasts
+so that you can extend the analysis to AAV effects.
+
+## 4.1 Subset data
+
+```{r subset-analysis}
+analysis_samples <- sample_metadata |>
+  dplyr::filter(
+    treatment == "vehicle",
+    genotype %in% c("WT", "DMD")
+  )
+
+analysis_samples
+
+expr_mat <- protein_matrix_norm[, analysis_samples$sample_id]
+dim(expr_mat)
+```
+
+## 4.2 Design matrix
+
+```{r design}
+group <- factor(analysis_samples$genotype, levels = c("WT", "DMD"))
+
+design <- model.matrix(~ group)
+colnames(design) <- c("Intercept", "DMD_vs_WT")
+
+design
+```
+
+> **Exercise 4.1**
+> Why is it important to set WT as the reference level here?
+> What would change in the interpretation if DMD were the reference?
+  
+## 4.3 Fit limma model
+
+```{r limma-fit}
+fit <- lmFit(expr_mat, design)
+fit <- eBayes(fit)
+
+de_results <- topTable(
+  fit,
+  coef   = "DMD_vs_WT",
+  number = Inf
+)
+
+de_results <- de_results |>
+  dplyr::mutate(protein_id = rownames(de_results)) |>
+  dplyr::left_join(protein_annotation, by = "protein_id")
+
+head(de_results)
+```
+
+> **Exercise 4.2**
+> How many proteins have adjusted p value below 0.05?
+> How many have both adjusted p value < 0.05 and absolute log2 fold change > log2(1.5)?
+> What percentage of all tested proteins does this represent?
+  
+## 4.4 Volcano plot with gene names and significance
+  
+```{r volcano}
+volcano_data <- de_results |>
+  dplyr::mutate(
+    significance = dplyr::case_when(
+      adj.P.Val < 0.05 & logFC >  log2(1.5) ~ "Up",
+      adj.P.Val < 0.05 & logFC < -log2(1.5) ~ "Down",
+      TRUE                                   ~ "NS"
+    ),
+    label = dplyr::if_else(
+      !is.na(gene_symbol) & gene_symbol != "",
+      gene_symbol,
+      protein_id
+    )
+  )
+
+ggplot(
+  volcano_data,
+  aes(x = logFC, y = -log10(adj.P.Val), colour = significance)
+) +
+  geom_point(alpha = 0.6, size = 2) +
+  scale_color_manual(values = c(Up = "red", Down = "blue", NS = "grey")) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
+  geom_vline(xintercept = c(-log2(1.5), log2(1.5)), linetype = "dashed") +
+  theme_minimal() +
+  labs(
+    title = "Volcano plot: DMD vs WT (vehicle)",
+    x = "log2 fold change (DMD vs WT)",
+    y = "-log10 adjusted p value"
+  ) +
+  theme(legend.title = element_blank())
+```
+
+Optional labels for top hits:
+  
+```{r volcano-labels}
+top_labels <- volcano_data |>
+  dplyr::filter(significance != "NS") |>
+  dplyr::arrange(adj.P.Val) |>
+  dplyr::slice(1:15)
+
+ggplot(
+  volcano_data,
+  aes(x = logFC, y = -log10(adj.P.Val), colour = significance)
+) +
+  geom_point(alpha = 0.6, size = 2) +
+  scale_color_manual(values = c(Up = "red", Down = "blue", NS = "grey")) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
+  geom_vline(xintercept = c(-log2(1.5), log2(1.5)), linetype = "dashed") +
+  ggrepel::geom_text_repel(
+    data         = top_labels,
+    aes(label    = label),
+    size         = 3,
+    max.overlaps = Inf
+  ) +
+  theme_minimal() +
+  labs(
+    title = "Volcano plot: DMD vs WT (vehicle) with top proteins labelled",
+    x = "log2 fold change (DMD vs WT)",
+    y = "-log10 adjusted p value"
+  ) +
+  theme(legend.title = element_blank())
+```
+
+> **Exercise 4.3**
+> Among the top labelled proteins, do you recognise any that are known to be
+> involved in muscle structure, metabolism, or DMD pathology?
+
+## 4.5 MA plot
+
+The MA plot shows the relationship between average expression and fold change.
+
+```{r ma-plot}
+ggplot(
+  volcano_data,
+  aes(x = AveExpr, y = logFC, colour = significance)
+) +
+  geom_point(alpha = 0.6, size = 2) +
+  scale_color_manual(values = c(Up = "red", Down = "blue", NS = "grey")) +
+  geom_hline(yintercept = 0, linetype = "solid") +
+  geom_hline(yintercept = c(-log2(1.5), log2(1.5)), linetype = "dashed") +
+  theme_minimal() +
+  labs(
+    title = "MA plot: DMD vs WT (vehicle)",
+    x = "Average expression",
+    y = "log2 fold change (DMD vs WT)"
+  ) +
+  theme(legend.title = element_blank())
+```
+
+> **Exercise 4.4**
+> Is there any relationship between protein abundance and fold change?
+> Do you see intensity-dependent bias?
+  
+## 4.6 Heatmap of top proteins with gene names
+  
+```{r de-heatmap, fig.height=8, fig.width=7}
+top_proteins <- de_results |>
+  dplyr::arrange(adj.P.Val) |>
+  dplyr::slice(1:50) |>
+  dplyr::pull(protein_id)
+
+heatmap_mat <- expr_mat[top_proteins, analysis_samples$sample_id]
+
+row_genes <- protein_annotation$gene_symbol[
+  match(top_proteins, protein_annotation$protein_id)
+]
+
+row_labels <- ifelse(
+  is.na(row_genes) | row_genes == "",
+  top_proteins,
+  row_genes
+)
+
+rownames(heatmap_mat) <- make.unique(row_labels)
+
+ann_col <- analysis_samples |>
+  dplyr::select(sample_id, genotype) |>
+  as.data.frame()
+rownames(ann_col) <- ann_col$sample_id
+ann_col$sample_id <- NULL
+
+pheatmap(
+  heatmap_mat,
+  scale          = "row",
+  annotation_col = ann_col,
+  show_rownames  = TRUE,
+  main           = "Top 50 proteins - DMD vs WT (vehicle)",
+  color          = colorRampPalette(c("blue", "white", "red"))(50)
+)
+```
+
+> **Exercise 4.5**
+> Do WT and DMD samples form separate clusters based on these top 50 proteins?
+> Does any sample behave differently from its group?
+
+## 4.7 Additional contrasts for further exploration
+
+The analysis above focused on **DMD vs WT in vehicle-treated samples**. 
+However, this dataset allows for several additional comparisons that students 
+can explore on their own:
+
+### Comparison 2: Disease effect in AAV-treated samples
+
+Does the disease phenotype persist after AAV treatment?
+
+```{r additional-contrast-1, eval=FALSE}
+# Subset to AAV-treated samples
+aav_samples <- sample_metadata |>
+  dplyr::filter(treatment == "AAV")
+
+expr_aav <- protein_matrix_norm[, aav_samples$sample_id]
+
+# Design and fit
+group_aav <- factor(aav_samples$genotype, levels = c("WT", "DMD"))
+design_aav <- model.matrix(~ group_aav)
+colnames(design_aav) <- c("Intercept", "DMD_vs_WT_AAV")
+
+fit_aav <- lmFit(expr_aav, design_aav)
+fit_aav <- eBayes(fit_aav)
+
+results_aav <- topTable(fit_aav, coef = "DMD_vs_WT_AAV", number = Inf)
+
+# Compare to vehicle results: how many proteins overlap?
+```
+
+### Comparison 3: AAV treatment effect in DMD samples
+
+Does AAV treatment change protein expression in the disease model?
+
+```{r additional-contrast-2, eval=FALSE}
+# Subset to DMD samples only
+dmd_samples <- sample_metadata |>
+  dplyr::filter(genotype == "DMD")
+
+expr_dmd <- protein_matrix_norm[, dmd_samples$sample_id]
+
+# Design and fit
+group_dmd <- factor(dmd_samples$treatment, levels = c("vehicle", "AAV"))
+design_dmd <- model.matrix(~ group_dmd)
+colnames(design_dmd) <- c("Intercept", "AAV_vs_vehicle_DMD")
+
+fit_dmd <- lmFit(expr_dmd, design_dmd)
+fit_dmd <- eBayes(fit_dmd)
+
+results_dmd <- topTable(fit_dmd, coef = "AAV_vs_vehicle_DMD", number = Inf)
+
+# Which proteins are rescued by AAV treatment?
+```
+
+### Comparison 4: AAV treatment effect in WT samples
+
+As a control, we can check if AAV affects healthy animals.
+
+```{r additional-contrast-3, eval=FALSE}
+# Subset to WT samples only
+wt_samples <- sample_metadata |>
+  dplyr::filter(genotype == "WT")
+
+expr_wt <- protein_matrix_norm[, wt_samples$sample_id]
+
+# Design and fit
+group_wt <- factor(wt_samples$treatment, levels = c("vehicle", "AAV"))
+design_wt <- model.matrix(~ group_wt)
+colnames(design_wt) <- c("Intercept", "AAV_vs_vehicle_WT")
+
+fit_wt <- lmFit(expr_wt, design_wt)
+fit_wt <- eBayes(fit_wt)
+
+results_wt <- topTable(fit_wt, coef = "AAV_vs_vehicle_WT", number = Inf)
+```
+
+### Full factorial design (advanced)
+
+For students interested in more advanced analysis, a full 2×2 factorial design
+allows testing for interaction effects:
+
+```{r factorial-design, eval=FALSE}
+# Use all samples
+expr_full <- protein_matrix_norm
+
+# Full factorial model
+design_full <- model.matrix(
+  ~ genotype * treatment,
+  data = sample_metadata
+)
+
+# This creates four coefficients:
+# 1. Intercept (WT_vehicle baseline)
+# 2. genotypeDMD (main effect of disease)
+# 3. treatmentAAV (main effect of treatment)
+# 4. genotypeDMD:treatmentAAV (interaction: does AAV work differently in DMD?)
+
+fit_full <- lmFit(expr_full, design_full)
+fit_full <- eBayes(fit_full)
+
+# Test interaction
+results_interaction <- topTable(
+  fit_full, 
+  coef = "genotypeDMD:treatmentAAV", 
+  number = Inf
+)
+
+# Proteins with significant interaction are those where AAV has a 
+# different effect in DMD compared to WT
+```
+
+> **Exercise 4.6**
+> Choose one of the additional contrasts above and:
+> 
+> * Run the analysis
+> * Create a volcano plot
+> * Identify the top 10 differentially expressed proteins
+> * Compare results to the main analysis (DMD vs WT in vehicle)
+> * What biological insights can you gain from this comparison?
+  
+# 5. Functional enrichment (g:Profiler)
+  
+Differential expression highlights individual proteins that change between
+conditions. Functional enrichment helps to see whether these proteins cluster
+into biological processes, pathways, or phenotypes.
+
+We follow a structure similar to Day 4:
+  
+1. Build a set of significantly changed genes for ORA.
+2. Create a ranked gene list using the limma moderated t statistic.
+3. Run g:Profiler on the significant gene set with a custom background.
+4. Visualise results with both `gostplot` and a barplot.
+5. Export gene lists for external tools.
+
+## 5.1 Prepare gene sets for ORA and ranked analysis
+
+We select significantly changed proteins using an adjusted p value cutoff
+and a fold change threshold. We also build a ranked list using the moderated
+t statistic.
+
+**LIMITATION WITH THIS DATASET:**
+
+**This dataset uses a mix of UniProt IDs and gene symbols that are not optimally formatted for mouse enrichment analysis. As a result, enrichment results may be limited or unreliable.** 
+
+**For demonstration purposes, we'll attempt enrichment, but students should note that in real analyses, proper gene identifier mapping is crucial.**
+
+```{r enrichment-prepare}
+# Significant proteins for ORA (over representation analysis)
+de_significant <- de_results |>
+  dplyr::filter(
+    !is.na(gene_symbol),
+    gene_symbol != "",
+    adj.P.Val < 0.05,
+    abs(logFC) > log2(1.5)
+  ) |>
+  dplyr::arrange(adj.P.Val)
+
+cat("Significant DE proteins for ORA:", nrow(de_significant), "\n")
+
+sig_genes <- unique(de_significant$gene_symbol)
+length(sig_genes)
+head(sig_genes)
+
+# Background: all quantified proteins with a gene symbol
+bg_genes <- de_results |>
+  dplyr::filter(!is.na(gene_symbol), gene_symbol != "") |>
+  dplyr::pull(gene_symbol) |>
+  unique()
+
+cat("Background genes (custom_bg):", length(bg_genes), "\n")
+
+# Ranked gene list for GSEA style workflows (moderated t statistic)
+ranked_tbl <- de_results |>
+  dplyr::filter(!is.na(gene_symbol), gene_symbol != "") |>
+  dplyr::select(gene_symbol, t) |>
+  dplyr::group_by(gene_symbol) |>
+  dplyr::summarise(
+    t_stat = t[which.max(abs(t))],
+    .groups = "drop"
+  ) |>
+  dplyr::arrange(dplyr::desc(t_stat))
+
+gene_list <- ranked_tbl$t_stat
+names(gene_list) <- ranked_tbl$gene_symbol
+
+cat("Ranked list genes:", length(gene_list), "\n")
+head(gene_list)
+```
+
+> **Exercise 5.1**
+> Change the thresholds (for example use log2 fold change > log2(1.3) instead
+> of 1.5) and see how `length(sig_genes)` changes.
+> How do you expect this to affect the enrichment results?
+  
+## 5.2 Run g:Profiler ORA
+  
+We perform over representation analysis with `gprofiler2::gost` using a custom
+background and the mouse organism code `mmusculus`.
+
+```{r enrichment-gost, message=FALSE, warning=FALSE}
+if (length(sig_genes) >= 10) {
+  gost_res <- gprofiler2::gost(
+    query             = sig_genes,
+    custom_bg         = bg_genes,
+    domain_scope      = "custom",
+    organism          = "mmusculus",
+    correction_method = "fdr"
+  )
+  
+  if (!is.null(gost_res) && nrow(gost_res$result) > 0) {
+    enrich_tbl <- gost_res$result |>
+      dplyr::arrange(p_value) |>
+      dplyr::mutate(
+        term_name = stringr::str_trunc(term_name, 60)
+      )
+    
+    head(enrich_tbl[, c("term_name", "source", "p_value", "intersection_size")])
+  } else {
+    cat("Note: Limited enrichment results due to gene identifier formatting.\n")
+    cat("For production analyses, ensure proper gene symbol mapping.\n")
+    gost_res   <- NULL
+    enrich_tbl <- NULL
+  }
+} else {
+  gost_res   <- NULL
+  enrich_tbl <- NULL
+  cat("Too few significant genes for a meaningful enrichment analysis.\n")
+}
+```
+
+> **Exercise 5.2**
+> Which annotation sources (GO, Reactome, HP, etc) dominate the top enriched terms?
+> Do the top terms make biological sense for a DMD mouse model?
+  
+## 5.3 Visualisation with `gostplot`
+  
+```{r enrichment-gostplot, eval=!is.null(gost_res)}
+if (!is.null(gost_res)) {
+  gprofiler2::gostplot(
+    gost_res,
+    capped      = TRUE,
+    interactive = TRUE
+  )
+}
+```
+
+> **Exercise 5.3**
+> What can you interpret from the global enrichment plot?
+> Can you identify broad themes such as muscle contraction, extracellular
+> matrix, or inflammation?
+  
+## 5.4 Publication style barplot of top enriched terms
+  
+```{r enrichment-barplot, eval=!is.null(enrich_tbl)}
+if (!is.null(enrich_tbl)) {
+  top_terms <- enrich_tbl[1:min(30, nrow(enrich_tbl)), ]
+  
+  ggplot(
+    top_terms,
+    aes(
+      x    = reorder(term_name, -log10(p_value)),
+      y    = -log10(p_value),
+      fill = source
+    )
+  ) +
+    geom_col() +
+    coord_flip() +
+    theme_minimal() +
+    labs(
+      title = "Top enriched terms (g:Profiler)",
+      x     = "Term",
+      y     = "-log10 p value"
+    )
+}
+```
+
+> **Exercise 5.4**
+> Compare this barplot with the `gostplot` visualisation.
+> Which representation do you find easier to interpret and to present to others?
+  
+## 5.5 Export gene lists for external tools
+  
+```{r enrichment-export}
+dir.create("results", showWarnings = FALSE, recursive = TRUE)
+
+# Simple list of significant genes
+out_sig <- "results/2126001_DMD_vs_WT_vehicle_sig_genes.txt"
+write.table(
+  sig_genes,
+  file      = out_sig,
+  row.names = FALSE,
+  col.names = FALSE,
+  quote     = FALSE
+)
+cat("Significant gene list saved to:", out_sig, "\n")
+
+# Ranked list using moderated t statistics
+out_ranked <- "results/2126001_DMD_vs_WT_vehicle_ranked_genes.tsv"
+ranked_out <- tibble::tibble(
+  gene   = names(gene_list),
+  t_stat = as.numeric(gene_list)
+)
+readr::write_tsv(ranked_out, out_ranked)
+cat("Ranked gene list saved to:", out_ranked, "\n")
+
+# Export full results table
+out_results <- "results/2126001_DMD_vs_WT_vehicle_all_results.csv"
+readr::write_csv(de_results, out_results)
+cat("Full results table saved to:", out_results, "\n")
+```
+
+> **Exercise 5.5**
+> Upload your gene lists to external tools such as STRING, Enrichr or
+> the g:Profiler web interface.
+> Are the main biological themes consistent with the R based analysis?
+> Which visualisations do you find most useful for explaining the biology?
+  
+# 6. Summary and next steps
+
+## 6.1 What we accomplished
+
+In this practical, we completed a full proteomics analysis workflow:
+
+**Data preparation:**
+
+* Loaded protein intensities from Excel
+* Applied quality filters (peptide counts, quantification rate)
+* Built a protein matrix and sample metadata table
+* Log2 transformed intensities
+
+**Quality control:**
+
+* Assessed missing data patterns
+* Examined intensity distributions
+* Performed quantile normalisation
+* Checked sample clustering with PCA and correlation heatmaps
+
+**Differential expression:**
+
+* Used limma to test for DMD vs WT differences
+* Created volcano plots and MA plots
+* Visualised top proteins in a heatmap
+* Identified 70 significantly changed proteins
+
+**Functional analysis:**
+
+* Prepared gene lists for enrichment
+* Ran g:Profiler over representation analysis
+* Exported results for external tools
+
+## 6.2 Key findings from the DMD vs WT comparison
+
+Based on the differential expression results:
+
+* **Significant proteins**: ~70 proteins changed between DMD and healthy mice
+* **Direction**: Both increases and decreases in protein abundance
+* **Biological themes**: Look at the enrichment results for pathway-level interpretation
+
+## 6.3 Ideas for further exploration
+
+Students can extend this analysis by:
+
+1. **Additional contrasts** (see section 4.7):
+   * Test DMD vs WT in AAV-treated samples
+   * Test AAV vs vehicle within DMD samples
+   * Test AAV vs vehicle within WT samples (control)
+   * Use factorial design to test for interaction effects
+
+2. **Parameter variations**:
+   * Change fold-change thresholds (1.2×, 1.5×, 2.0×)
+   * Adjust p-value cutoffs (0.01, 0.05, 0.10)
+   * Try different normalisation methods (vsn, median)
+   * Modify the quantification rate threshold (60%, 80%, 90%)
+
+3. **Advanced visualisations**:
+   * Create expression profiles for specific proteins of interest
+   * Make Venn diagrams comparing different contrasts
+   * Plot protein abundances for biological replicates
+   * Explore clustering patterns in more detail
+
+4. **Integration with other data**:
+   * Compare to published DMD proteomics studies
+   * Look up proteins in UniProt or literature
+   * Check if known DMD biomarkers appear in your results
+   * Explore protein networks in STRING
+
+5. **Statistical considerations**:
+   * Assess the impact of batch effects (if present)
+   * Consider paired analysis using animal_id
+   * Evaluate power analysis for future experiments
+   * Test robustness by leaving out one sample at a time
+
+## 6.4 Important considerations for real analyses
+
+This practical demonstrated a typical proteomics workflow, but real analyses
+require additional care:
+
+* **Gene identifiers**: Ensure proper mapping from UniProt to official gene symbols
+* **Missing data**: Consider more sophisticated imputation methods (e.g., QRILC, MinProb)
+* **Batch effects**: Check for and correct systematic technical variation
+* **Multiple testing**: Balance false discovery control with statistical power
+* **Biological validation**: Confirm key findings with orthogonal methods
+* **Reproducibility**: Document all analysis steps and software versions
+
+## 6.5 Resources for continued learning
+
+**Online resources:**
+
+* [limma User's Guide](https://bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf)
+* [g:Profiler documentation](https://biit.cs.ut.ee/gprofiler/page/docs)
+* [STRING protein networks](https://string-db.org/)
+* [UniProt protein database](https://www.uniprot.org/)
+
+---
+
+# 7. Session information
+
+```{r session-info}
+sessionInfo()
+```
