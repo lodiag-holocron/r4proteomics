@@ -13,3 +13,7 @@ rmd_files:
   - day3_preprocessing_de.Rmd
   - day4_functional_public.Rmd
   - day5_real_data.Rmd
+files:
+  - inst/
+  - examples/
+  - exercises/

@@ -1,0 +1,37 @@
+<svg width="350" height="100" viewBox="0 0 350 100" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Hexagonal Shape Around the “R” -->
+  <polygon points="150,15 120,35 120,65 150,85 180,65 180,35" fill="none" stroke="#1F77B4" stroke-width="4"/>
+
+  <!-- Letter "R" centered inside the hexagon -->
+  <text x="148" y="62" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
+        font-size="36" font-weight="bold" fill="#1F77B4">R</text>
+  <text x="166" y="68" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
+        font-size="20" font-weight="bold" fill="#333333">4</text>
+
+  <!-- Text: r4proteomics -->
+  <text x="190" y="38"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="28"
+        font-weight="700"
+        fill="#333333"></text>
+
+  <text x="186" y="70"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="22"
+        font-weight="700"
+        fill="#1F77B4">Proteomics</text>
+
+  <!-- Simple peptide chain element (a couple of bonds) -->
+  <line x1="210" y1="45" x2="270" y2="45" stroke="#1F77B4" stroke-width="3"/>
+  <circle cx="210" cy="45" r="4" fill="#1F77B4"/>
+  <circle cx="230" cy="45" r="4" fill="#1F77B4"/>
+  <circle cx="250" cy="45" r="4" fill="#1F77B4"/>
+  <circle cx="270" cy="45" r="4" fill="#1F77B4"/>
+
+  <!-- Dashed bond and arrow moved to the right of the peptide chain -->
+  <!-- line x1="170" y1="30" x2="310" y2="30" stroke="#1F77B4" stroke-width="2" stroke-dasharray="5,5"/ -->
+  <!-- polygon points="300,30 310,25 310,35" fill="#1F77B4"/>
+
+</svg>
+
