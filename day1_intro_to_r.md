@@ -1141,7 +1141,7 @@ result
 # Simulate your data structure
 set.seed(123)
 proteomics_data <- readxl::read_excel(
-    path = "examples/2126001_Protein Export_ex.xlsx", # this should be the file example that genethon provided
+    path = "examples/genethon_dataset/2126001_Protein Export_ex.xlsx", # this should be the file example that genethon provided
     skip = 1
 )
 
