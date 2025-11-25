@@ -1,0 +1,570 @@
+---
+title: "Functional Analysis, Longitudinal & Public Data"
+subtitle: "Day 4"
+author: "Miguel Casanova & Dany Mukesha"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+class: inverse, center, middle
+
+# Functional Analysis, Longitudinal & Public Data
+
+---
+
+## Learning Objectives
+
+By the end of Day 4, you will be able to:
+
+- Perform functional enrichment analysis (GO, KEGG, Reactome)
+- Conduct Gene Set Enrichment Analysis (GSEA)
+- Analyze longitudinal proteomics data
+- Download and integrate public datasets from GEO and PRIDE
+- Use online tools for enhanced functional interpretation
+
+---
+
+class: inverse, center, middle
+
+# Module 1: Functional Enrichment & GSEA
+
+---
+
+## Introduction to Functional Analysis
+
+**Functional analysis** helps interpret differential expression results in biological context.
+
+**Key Concepts:**
+
+- **Gene Ontology (GO)**: 
+  - Biological Process
+  - Molecular Function 
+  - Cellular Component
+
+- **Pathway Databases**:
+  - KEGG Pathways
+  - Reactome
+
+- **GSEA**: Gene Set Enrichment Analysis (rank-based)
+
+---
+
+## Preparing DE Results for Functional Analysis
+
+```r
+# Load previous results
+processed_data <- readRDS("results/day3_processed_data.rds")
+de_results <- readRDS("results/day3_de_results.rds")
+
+# Prepare significant DE results
+de_significant <- de_results %>%
+  filter(adj.P.Val < 0.05 & abs(logFC) > log2(1.5)) %>%
+  arrange(desc(abs(logFC)))
+
+cat("Significant DE proteins:", nrow(de_significant), "\n")
+
+# Create gene list for GSEA
+gene_list <- de_results$logFC
+names(gene_list) <- de_results$gene_symbol
+gene_list <- sort(gene_list, decreasing = TRUE)
+gene_list <- gene_list[!is.na(names(gene_list)) & !duplicated(names(gene_list))]
+
+cat("Unique genes for GSEA:", length(gene_list), "\n")
+```
+
+---
+
+## Gene Ontology (GO) Enrichment Analysis
+
+```r
+library(clusterProfiler)
+library(org.Hs.eg.db)
+
+significant_genes <- de_significant$gene_symbol
+
+if(length(significant_genes) >= 10) {
+  # GO Biological Process
+  ego_bp <- enrichGO(
+    gene = significant_genes,
+    OrgDb = org.Hs.eg.db,
+    keyType = "SYMBOL",
+    ont = "BP",
+    pvalueCutoff = 0.05,
+    qvalueCutoff = 0.05,
+    readable = TRUE
+  )
+  
+  cat("GO enrichment results:\n")
+  cat(" - BP:", nrow(ego_bp), "terms\n")
+}
+```
+
+---
+
+## KEGG Pathway Enrichment
+
+```r
+if(length(significant_genes) >= 10) {
+  # Convert gene symbols to Entrez IDs
+  gene_df <- bitr(significant_genes, 
+                  fromType = "SYMBOL", 
+                  toType = "ENTREZID", 
+                  OrgDb = org.Hs.eg.db)
+  
+  # KEGG enrichment
+  kk <- enrichKEGG(
+    gene = gene_df$ENTREZID,
+    organism = 'hsa',
+    pvalueCutoff = 0.05,
+    qvalueCutoff = 0.05
+  )
+  
+  if(!is.null(kk) && nrow(kk) > 0) {
+    cat("KEGG enrichment:", nrow(kk), "pathways\n")
+  }
+}
+```
+
+---
+
+## Visualization of Enrichment Results
+
+.pull-left[
+**Dot Plot:**
+```r
+library(enrichplot)
+dotplot(ego_bp, showCategory = 15) + 
+  ggtitle("GO Biological Process")
+```
+]
+
+.pull-right[
+**Network Plot:**
+```r
+ego_bp_sim <- pairwise_termsim(ego_bp)
+emapplot(ego_bp_sim, showCategory = 20)
+```
+]
+
+---
+
+## Gene Set Enrichment Analysis (GSEA)
+
+```r
+if(length(gene_list) >= 100) {
+  gsea_go <- gseGO(
+    geneList = gene_list,
+    OrgDb = org.Hs.eg.db,
+    ont = "BP",
+    minGSSize = 10,
+    maxGSSize = 500,
+    pvalueCutoff = 0.05,
+    verbose = FALSE
+  )
+  
+  if(!is.null(gsea_go) && nrow(gsea_go) > 0) {
+    cat("GSEA results:", nrow(gsea_go), "gene sets\n")
+    
+    # Plot top enriched term
+    gseaplot2(gsea_go, geneSetID = 1, 
+              title = gsea_go$Description[1])
+  }
+}
+```
+
+---
+
+## Online Tools for Functional Analysis
+
+**Recommended Tools:**
+
+1. **STRING Database** (https://string-db.org/)
+   - Protein-protein interaction networks
+   - Functional enrichment
+
+2. **g:Profiler** (https://biit.cs.ut.ee/gprofiler/)
+   - Multi-functional enrichment tool
+   - Supports GO, KEGG, Reactome
+
+3. **Enrichr** (https://maayanlab.cloud/Enrichr/)
+   - Comprehensive enrichment analysis
+   - User-friendly interface
+
+---
+
+## Export Gene Lists for Online Tools
+
+```r
+# Save gene list for online tools
+significant_gene_list <- de_significant$gene_symbol
+
+write.table(significant_gene_list, 
+            "results/significant_genes_for_online_tools.txt",
+            row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+cat("Gene list saved for online tools\n")
+```
+
+---
+
+## Exercise 4.1: Functional Interpretation
+
+1. Run GO enrichment for Molecular Function and Cellular Component
+2. Identify the top 5 most enriched pathways
+3. Compare results with online tools (STRING/g:Profiler)
+4. Create a biological interpretation report
+
+.footnote[Try it yourself before looking at the solution!]
+
+---
+
+## Exercise 4.1 Solution
+
+```r
+cat("=== FUNCTIONAL INTERPRETATION REPORT ===\n\n")
+
+if (exists("ego_bp") && nrow(ego_bp) > 0) {
+  cat("TOP BIOLOGICAL PROCESSES:\n")
+  top_bp <- head(ego_bp, 5)
+  for(i in 1:nrow(top_bp)) {
+    cat(i, ". ", top_bp$Description[i], 
+        " (p.adj = ", formatC(top_bp$p.adjust[i], 
+        format = "e", digits = 2), ")\n", sep = "")
+  }
+}
+
+cat("\nBIOLOGICAL INSIGHTS:\n")
+cat("- Treatment affects cellular processes related to [top terms]\n")
+cat("- Key pathways: [list key pathways]\n")
+cat("- Potential therapeutic targets: [suggest based on results]\n")
+```
+
+---
+
+class: inverse, center, middle
+
+# Module 2: Longitudinal Data Analysis
+
+---
+
+## Working with Longitudinal Proteomics Data
+
+```r
+# Create longitudinal dataset
+longitudinal_data <- protein_annotations %>%
+  select(protein_id, gene_symbol) %>%
+  inner_join(
+    as.data.frame(processed_data) %>%
+      rownames_to_column("protein_id") %>%
+      pivot_longer(cols = -protein_id, 
+                   names_to = "sample_id", 
+                   values_to = "abundance"),
+    by = "protein_id"
+  ) %>%
+  left_join(sample_metadata, by = "sample_id") %>%
+  mutate(
+    week = as.numeric(gsub("Week", "", timepoint)),
+    patient_condition = paste0("P", patient_id, "_", condition)
+  )
+
+cat("Longitudinal dataset:", nrow(longitudinal_data), "measurements\n")
+```
+
+---
+
+## Visualizing Protein Trajectories
+
+```r
+# Select top variable proteins
+top_proteins <- de_significant %>%
+  arrange(desc(abs(logFC))) %>%
+  head(12) %>%
+  pull(gene_symbol)
+
+# Plot trajectories
+longitudinal_data %>%
+  filter(gene_symbol %in% top_proteins) %>%
+  ggplot(aes(x = week, y = abundance, 
+             color = condition, 
+             group = patient_condition)) +
+  geom_line(alpha = 0.6) +
+  geom_point(size = 1) +
+  geom_smooth(aes(group = condition), method = "lm") +
+  facet_wrap(~ gene_symbol, scales = "free_y", ncol = 4) +
+  labs(title = "Protein Abundance Trajectories Over Time",
+       x = "Week", y = "Normalized Abundance")
+```
+
+---
+
+## Mixed Effects Modeling (1)
+
+```r
+library(lme4)
+
+# Function to fit mixed model
+fit_mixed_model <- function(protein_data) {
+  tryCatch({
+    model <- lmer(abundance ~ condition * week + 
+                  (1 + week | patient_id), 
+                  data = protein_data)
+    return(model)
+  }, error = function(e) {
+    return(NULL)
+  })
+}
+```
+---
+
+## Mixed Effects Modeling (2)
+
+```r
+# Fit models for top proteins
+mixed_model_results <- longitudinal_data %>%
+  filter(gene_symbol %in% head(top_proteins, 6)) %>%
+  group_by(gene_symbol) %>%
+  nest() %>%
+  mutate(
+    model = map(data, fit_mixed_model),
+    summary = map(model, ~if(!is.null(.)) summary(.) else NULL)
+  )
+```
+
+---
+
+class: inverse, center, middle
+
+# Module 3: Public Data Integration
+
+---
+
+## Downloading Data from GEO
+
+```r
+library(GEOquery)
+
+# Example GEO download (commented out for demo)
+# geo_accession <- "GSE12345"  # Replace with real dataset
+# gse_data <- getGEO(geo_accession, destdir = "data/geo/")
+
+cat("GEO workflow:\n")
+cat("1. Visit https://www.ncbi.nlm.nih.gov/geo/\n")
+cat("2. Search for proteomics datasets\n")
+cat("3. Download matrix and metadata\n")
+cat("4. Import into R for analysis\n")
+```
+
+---
+
+## Working with PRIDE Proteomics Data
+
+```r
+cat("PRIDE Database:\n")
+cat("URL: https://www.ebi.ac.uk/pride/\n")
+cat("Workflow:\n")
+cat("1. Browse datasets\n")
+cat("2. Download raw or processed data\n")
+cat("3. Use tools like MSstats for quantification\n")
+cat("4. Import results into R\n")
+
+# Simulated PRIDE-like data for demonstration
+create_simulated_pride_data <- function() {
+  set.seed(123)
+  pride_data <- matrix(
+    rnorm(800 * 16, mean = 20, sd = 2),
+    nrow = 800, ncol = 16
+  )
+  colnames(pride_data) <- paste0("PRIDE_S", 1:16)
+  rownames(pride_data) <- paste0("P", sprintf("%05d", 1:800))
+  return(pride_data)
+}
+pride_matrix <- create_simulated_pride_data()
+```
+
+---
+
+## Public Data Analysis Pipeline
+
+```r
+# Simulate public dataset analysis
+public_sample_metadata <- data.frame(
+  sample_id = paste0("PUBLIC_S", 1:16),
+  condition = rep(c("Disease", "Healthy"), each = 8),
+  batch = rep(1:4, each = 4)
+)
+
+# Run analysis pipeline on public data
+public_normalized <- normalizeBetweenArrays(pride_matrix, 
+                                           method = "quantile")
+
+mod <- model.matrix(~ condition, data = public_sample_metadata)
+public_corrected <- ComBat(public_normalized, 
+                          batch = public_sample_metadata$batch, 
+                          mod = mod)
+
+# Differential expression
+design <- model.matrix(~ 0 + condition, data = public_sample_metadata)
+fit <- lmFit(public_corrected, design)
+# ... continue with DE analysis
+```
+
+---
+
+## Cross-Dataset Validation
+
+```r
+# Compare our results with public dataset
+common_genes <- sample(protein_annotations$gene_symbol, 50)
+
+validation_results <- data.frame(
+  gene = common_genes,
+  our_study_logFC = rnorm(50, mean = 1, sd = 0.5),
+  public_data_logFC = rnorm(50, mean = 0.8, sd = 0.6)
+)
+
+ggplot(validation_results, aes(x = our_study_logFC, 
+                               y = public_data_logFC)) +
+  geom_point(size = 3, alpha = 0.7) +
+  geom_smooth(method = "lm", color = "red") +
+  labs(title = "Cross-Dataset Validation",
+       x = "Our Study logFC", 
+       y = "Public Data logFC") +
+  annotate("text", x = min(validation_results$our_study_logFC), 
+           y = max(validation_results$public_data_logFC),
+           label = paste("r =", round(cor(validation_results$our_study_logFC, 
+                                         validation_results$public_data_logFC), 3)))
+```
+
+---
+
+## Exercise 4.2: Public Data Integration
+
+1. Find a relevant proteomics dataset on GEO or PRIDE
+2. Download and preprocess the data
+3. Perform differential expression analysis
+4. Compare results with your own analysis
+5. Identify conserved and novel findings
+
+---
+
+## Exercise 4.2 Solution Framework
+
+```r
+cat("=== PUBLIC DATA INTEGRATION WORKFLOW ===\n\n")
+
+cat("1. DATA SOURCING:\n")
+cat("   - Visit https://www.ncbi.nlm.nih.gov/geo/\n")
+cat("   - Search for relevant proteomics datasets\n")
+cat("   - Download matrix and metadata files\n\n")
+
+cat("2. DATA PROCESSING:\n")
+cat("   - Load expression matrix and metadata\n")
+cat("   - Perform quality control\n")
+cat("   - Normalize and batch correct\n")
+cat("   - Run differential expression analysis\n\n")
+
+cat("3. COMPARATIVE ANALYSIS:\n")
+cat("   - Identify overlapping significant proteins\n")
+cat("   - Check direction consistency\n")
+cat("   - Perform functional enrichment\n")
+cat("   - Report novel findings\n")
+```
+
+---
+
+## Online Resources and Tools
+
+**Essential Platforms:**
+
+1. **GEO** (Gene Expression Omnibus)
+   - https://www.ncbi.nlm.nih.gov/geo/
+
+2. **PRIDE Proteomics Database**
+   - https://www.ebi.ac.uk/pride/
+
+3. **ProteomicsDB**
+   - https://www.proteomicsdb.org/
+
+4. **CPTAC** (Clinical Proteomic Tumor Analysis Consortium)
+   - https://proteomics.cancer.gov/programs/cptac
+
+---
+
+## R Packages for Public Data
+
+```r
+# Install additional packages
+BiocManager::install(c(
+  "GEOquery",      # Download GEO data
+  "SRAdb",         # Sequence Read Archive access
+  "proteomics",    # Proteomics data handling
+  "MSnbase"        # Mass spectrometry data
+))
+```
+
+---
+
+class: inverse, center, middle
+
+# Day 4 Summary
+
+---
+
+## What We Covered Today
+
+- ✓ Functional enrichment analysis (GO, KEGG, GSEA)
+- ✓ Longitudinal data analysis and mixed models
+- ✓ Public data integration from GEO and PRIDE
+- ✓ Online tools for enhanced interpretation
+- ✓ Cross-dataset validation techniques
+
+---
+
+## Key Takeaways
+
+1. **Functional analysis** provides biological context for DE results
+2. **Longitudinal models** capture time-dependent changes
+3. **Public data** enables validation and discovery
+4. **Online tools** complement R-based analyses
+
+---
+
+## Homework
+
+1. Perform functional analysis on your own DE results
+2. Download and analyze a public proteomics dataset
+3. Compare findings across multiple datasets
+4. Create a comprehensive biological interpretation report
+
+```r
+# Save results for next session
+if(exists("ego_bp")) saveRDS(ego_bp, "results/day4_go_bp.rds")
+if(exists("kk")) saveRDS(kk, "results/day4_kegg.rds")
+saveRDS(longitudinal_data, "results/day4_longitudinal_data.rds")
+
+cat("Day 4 results saved for integration.\n")
+```
+
+---
+
+## Additional Resources
+
+- [clusterProfiler book](https://yulab-smu.top/biomedical-knowledge-mining-book/)
+- [GEO tutorial](https://www.bioconductor.org/packages/release/bioc/vignettes/GEOquery/inst/doc/GEOquery.html)
+- [PRIDE API documentation](https://www.ebi.ac.uk/pride/markdownpage/prideapipage)
+- [Mixed models in R](https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html)
+
+---
+
+class: inverse, center, middle
+
+## Questions?
+
+## See you for the final day!
