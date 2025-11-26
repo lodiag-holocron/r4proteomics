@@ -2,7 +2,7 @@
 title: "r4proteomics"
 subtitle: "5-Day Training Course"
 author: "Miguel CASANOVA, PhD & Dany MUKESHA"
-date: "2025-11-25"
+date: "2025-11-26"
 documentclass: book
 description: "Proteomics data analysis with R"
 url: 'https://github.com/lodiag-holocron/r4proteomics'
@@ -28,7 +28,7 @@ You will learn:
 
 -   **Day 1**: R fundamentals and RStudio basics [(Slides)](inst/day1_slides.html)
 -   **Day 2**: Understanding proteomic data and quality control [(Slides)](inst/day2_slides.html)
--   **Day 3**: Data preprocessing and differential expression analysis [(slides)](inst/day3_slides.html)
+-   **Day 3**: Data preprocessing and differential expression analysis [(Slides)](inst/day3_slides.html)
 -   **Day 4**: Functional analysis, longitudinal studies, and public datasets [(Slides)](inst/day4_slides.html)
 -   **Day 5**: Real-world applications and case studies
 

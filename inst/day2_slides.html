@@ -4,7 +4,7 @@
     <title>Introduction to Proteomic Data &amp; Quality Control</title>
     <meta charset="utf-8" />
     <meta name="author" content="Miguel Casanova &amp; Dany Mukesha" />
-    <meta name="date" content="2025-11-23" />
+    <meta name="date" content="2025-11-26" />
     <script src="day2_slides_files/header-attrs-2.30/header-attrs.js"></script>
     <link href="day2_slides_files/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="day2_slides_files/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
@@ -24,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### Miguel Casanova &amp; Dany Mukesha
 ]
 .date[
-### 2025-11-23
+### 2025-11-26
 ]
 
 ---
@@ -164,6 +164,7 @@ class: inverse, center, middle
 - Stochastic sampling
 - Technical artifacts
 
+.pull-left[
 ```r
 # Calculate missingness
 missing_per_protein &lt;- apply(protein_matrix, 1, 
@@ -175,6 +176,25 @@ missing_per_sample &lt;- apply(protein_matrix, 2,
 missing_pct &lt;- mean(is.na(protein_matrix)) * 100
 cat("Total missing data:", round(missing_pct, 1), "%\n")
 ```
+]
+
+.pull-right[
+```r
+na_counts &lt;- c()
+
+for (i in 1:nrow(protein_matrix)) {
+  # take one row
+  row_values &lt;- protein_matrix[i, ]
+  # count how many NAs are in the row
+  na_number &lt;- sum(is.na(row_values))
+  # save the result
+  na_counts[i] &lt;- na_number
+}
+
+# see the NA of all rows
+na_counts
+```
+]
 
 ---
 
