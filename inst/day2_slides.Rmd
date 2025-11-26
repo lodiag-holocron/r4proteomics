@@ -147,6 +147,7 @@ class: inverse, center, middle
 - Stochastic sampling
 - Technical artifacts
 
+.pull-left[
 ```r
 # Calculate missingness
 missing_per_protein <- apply(protein_matrix, 1, 
@@ -158,6 +159,25 @@ missing_per_sample <- apply(protein_matrix, 2,
 missing_pct <- mean(is.na(protein_matrix)) * 100
 cat("Total missing data:", round(missing_pct, 1), "%\n")
 ```
+]
+
+.pull-right[
+```r
+na_counts <- c()
+
+for (i in 1:nrow(protein_matrix)) {
+  # take one row
+  row_values <- protein_matrix[i, ]
+  # count how many NAs are in the row
+  na_number <- sum(is.na(row_values))
+  # save the result
+  na_counts[i] <- na_number
+}
+
+# see the NA of all rows
+na_counts
+```
+]
 
 ---
 
