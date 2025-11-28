@@ -302,11 +302,11 @@ if (exists("kk") && nrow(kk) > 0) {
 }
 #> 
 #> TOP KEGG PATHWAYS:
-#> 1. Breast cancer (p.adj = 9.66e-28)
-#> 2. Endometrial cancer (p.adj = 3.15e-22)
-#> 3. Colorectal cancer (p.adj = 6.77e-22)
-#> 4. Hepatocellular carcinoma (p.adj = 4.17e-21)
-#> 5. Prostate cancer (p.adj = 9.72e-21)
+#> 1. Breast cancer (p.adj = 9.52e-28)
+#> 2. Endometrial cancer (p.adj = 3.12e-22)
+#> 3. Colorectal cancer (p.adj = 6.70e-22)
+#> 4. Hepatocellular carcinoma (p.adj = 4.12e-21)
+#> 5. Prostate cancer (p.adj = 9.62e-21)
 
 # Biological insights
 cat("\nBIOLOGICAL INSIGHTS:\n")
